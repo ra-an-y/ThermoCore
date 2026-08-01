@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1280" viewBox="0 0 1600 1280" role="img" aria-labelledby="title desc">
+  <title id="title">Research Evidence Traceability Workflow</title>
+  <desc id="desc">Engineering workflow showing unique literature sources moving through evidence analysis, research gap analysis, decision review, and framework specification.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f9fc; }
+      .title { font: 700 34px Inter, Segoe UI, Arial, sans-serif; fill: #172033; }
+      .subtitle { font: 400 16px Inter, Segoe UI, Arial, sans-serif; fill: #536176; }
+      .section { font: 700 14px Inter, Segoe UI, Arial, sans-serif; fill: #315b87; letter-spacing: 1.5px; }
+      .node { fill: #ffffff; stroke: #6f829b; stroke-width: 2; }
+      .node-research { fill: #eef6ff; stroke: #3f78ad; stroke-width: 2; }
+      .node-review { fill: #fff6df; stroke: #bc7a16; stroke-width: 2.5; }
+      .node-spec { fill: #eef8f1; stroke: #3f8058; stroke-width: 2.5; }
+      .node-title { font: 700 19px Inter, Segoe UI, Arial, sans-serif; fill: #172033; }
+      .node-detail { font: 400 14px Inter, Segoe UI, Arial, sans-serif; fill: #536176; }
+      .small-title { font: 700 17px Inter, Segoe UI, Arial, sans-serif; fill: #172033; }
+      .small { font: 400 13px Inter, Segoe UI, Arial, sans-serif; fill: #425168; }
+      .id { font: 700 15px ui-monospace, SFMono-Regular, Consolas, monospace; fill: #245f96; }
+      .rule { fill: #fff; stroke: #8d99aa; stroke-width: 1.5; stroke-dasharray: 7 5; }
+      .rule-text { font: 600 14px Inter, Segoe UI, Arial, sans-serif; fill: #3c495d; }
+      .flow { fill: none; stroke: #51667f; stroke-width: 2.5; marker-end: url(#arrow); }
+      .trace { fill: none; stroke: #3579ad; stroke-width: 2; stroke-dasharray: 7 6; marker-end: url(#arrow-blue); }
+      .trace-label { font: 700 13px Inter, Segoe UI, Arial, sans-serif; fill: #3579ad; letter-spacing: .7px; }
+      .divider { stroke: #ccd5e1; stroke-width: 1; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#51667f"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3579ad"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="1280"/>
+  <text class="title" x="80" y="68">Research Evidence Traceability Workflow</text>
+  <text class="subtitle" x="80" y="98">ThermoCore literature identification, evidence synthesis, decision review, and specification boundary</text>
+
+  <text class="section" x="80" y="145">EVIDENCE DEVELOPMENT</text>
+  <text class="section" x="80" y="946">FRAMEWORK EVOLUTION</text>
+
+  <!-- Main workflow -->
+  <g>
+    <rect class="node-research" x="500" y="126" width="600" height="92" rx="10"/>
+    <rect class="node" x="500" y="250" width="600" height="72" rx="10"/>
+    <rect class="node" x="500" y="354" width="600" height="72" rx="10"/>
+    <rect class="node" x="500" y="458" width="600" height="72" rx="10"/>
+    <rect class="node" x="500" y="562" width="600" height="72" rx="10"/>
+    <rect class="node" x="500" y="666" width="600" height="72" rx="10"/>
+    <rect class="node-research" x="500" y="770" width="600" height="84" rx="10"/>
+    <rect class="node-review" x="500" y="962" width="600" height="84" rx="10"/>
+    <rect class="node-spec" x="500" y="1082" width="600" height="84" rx="10"/>
+  </g>
+
+  <text class="node-title" x="800" y="159" text-anchor="middle">Source Registry</text>
+  <text class="id" x="800" y="186" text-anchor="middle">P001   P002   P003   ...</text>
+  <text class="node-detail" x="800" y="207" text-anchor="middle">One Literature ID per uniquely identifiable External Source</text>
+
+  <text class="node-title" x="800" y="294" text-anchor="middle">Literature Survey</text>
+  <text class="node-title" x="800" y="398" text-anchor="middle">Evidence Matrix</text>
+  <text class="node-title" x="800" y="502" text-anchor="middle">Architecture Comparison Matrix</text>
+  <text class="node-title" x="800" y="606" text-anchor="middle">Architecture Pattern Matrix</text>
+  <text class="node-title" x="800" y="710" text-anchor="middle">Framework Evidence Summary</text>
+  <text class="node-title" x="800" y="806" text-anchor="middle">Research Gap Analysis</text>
+  <text class="node-detail" x="800" y="831" text-anchor="middle">Evidence-driven synthesis of unresolved architectural questions</text>
+  <text class="node-title" x="800" y="998" text-anchor="middle">Framework Decision Review</text>
+  <text class="node-detail" x="800" y="1023" text-anchor="middle">Evaluate accumulated evidence before normative adoption</text>
+  <text class="node-title" x="800" y="1118" text-anchor="middle">Framework Specification</text>
+  <text class="node-detail" x="800" y="1143" text-anchor="middle">Normative framework decisions</text>
+
+  <path class="flow" d="M800 218 V250"/>
+  <path class="flow" d="M800 322 V354"/>
+  <path class="flow" d="M800 426 V458"/>
+  <path class="flow" d="M800 530 V562"/>
+  <path class="flow" d="M800 634 V666"/>
+  <path class="flow" d="M800 738 V770"/>
+  <path class="flow" d="M800 854 V962"/>
+  <path class="flow" d="M800 1046 V1082"/>
+
+  <!-- Topic metadata -->
+  <g>
+    <rect class="node" x="80" y="180" width="350" height="286" rx="10"/>
+  </g>
+  <text class="small-title" x="110" y="217">Topic Classification</text>
+  <text class="small" x="110" y="244">Metadata associated with each Literature ID</text>
+  <line class="divider" x1="110" y1="260" x2="400" y2="260"/>
+  <text class="id" x="110" y="288">P004</text>
+  <text class="small" x="110" y="316">Source: Exact paper or document</text>
+  <text class="small" x="110" y="341">Type: Paper / Documentation /</text>
+  <text class="small" x="156" y="362">Standard / Report</text>
+  <text class="small" x="110" y="387">Topic: Verification</text>
+  <text class="small" x="110" y="412">Confidence: High / Medium / Low</text>
+  <text class="small" x="110" y="437">Used In: Evidence / Pattern / Gap</text>
+
+  <g>
+    <rect class="node" x="1170" y="180" width="350" height="220" rx="10"/>
+  </g>
+  <text class="small-title" x="1200" y="217">Shared Topic, Separate Sources</text>
+  <text class="small" x="1200" y="249">Topic: Verification</text>
+  <path class="divider" d="M1210 267 H1250 V350" fill="none"/>
+  <path class="divider" d="M1250 290 H1280 M1250 320 H1280 M1250 350 H1280" fill="none"/>
+  <text class="id" x="1292" y="295">P004</text>
+  <text class="id" x="1292" y="325">P005</text>
+  <text class="id" x="1292" y="355">P006</text>
+  <text class="small" x="1200" y="383">Each source retains its own Literature ID.</text>
+
+  <!-- Evidence traceability back-link -->
+  <path class="trace" d="M1130 812 H1540 V172 H1110"/>
+  <text class="trace-label" x="1560" y="492" transform="rotate(90 1560 492)" text-anchor="middle">EVIDENCE TRACEABILITY — TRACE CONCLUSIONS BACK TO SOURCE IDs</text>
+
+  <!-- Boundary rules -->
+  <rect class="rule" x="80" y="530" width="350" height="174" rx="9"/>
+  <text class="small-title" x="110" y="566">Evidence Boundary</text>
+  <text class="rule-text" x="110" y="600">A source ID identifies a source,</text>
+  <text class="rule-text" x="110" y="622">not a topic.</text>
+  <text class="small" x="110" y="655">Research documents may synthesize evidence</text>
+  <text class="small" x="110" y="677">from multiple sources, but may not replace</text>
+  <text class="small" x="110" y="699">source identities with an undefined group.</text>
+
+  <rect class="rule" x="1170" y="530" width="350" height="174" rx="9"/>
+  <text class="small-title" x="1200" y="566">Conclusion Rule</text>
+  <text class="small" x="1200" y="600">Significant research conclusions must remain</text>
+  <text class="small" x="1200" y="622">traceable through evidence artifacts to one or</text>
+  <text class="small" x="1200" y="644">more explicit Literature IDs.</text>
+  <text class="small" x="1200" y="679">Evidence strength may differ by source and is</text>
+  <text class="small" x="1200" y="701">recorded as metadata, not assumed equal.</text>
+
+  <!-- Evolution boundary -->
+  <rect class="rule" x="80" y="962" width="350" height="226" rx="9"/>
+  <text class="small-title" x="110" y="998">Framework-Change Boundary</text>
+  <text class="small" x="110" y="1032">Research Evidence</text>
+  <text class="small" x="110" y="1058">→ Research Gap Analysis</text>
+  <text class="small" x="110" y="1084">→ Framework Decision Review</text>
+  <text class="small" x="110" y="1110">→ Framework Specification</text>
+  <text class="rule-text" x="110" y="1146">A single source does not directly modify</text>
+  <text class="rule-text" x="110" y="1168">the normative Framework Specification.</text>
+
+  <text class="subtitle" x="800" y="1230" text-anchor="middle">Research → Evidence → Specification → Implementation → Verification → Validation</text>
+</svg>
