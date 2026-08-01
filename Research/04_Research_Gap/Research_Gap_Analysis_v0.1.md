@@ -57,6 +57,8 @@ The evidence supports verification and validation as necessary but distinct acti
 
 DTS adopts this established practice through staged verification and validation. The use of verification and validation is not itself a DTS contribution.
 
+Collectively, these practices define the current architectural baseline upon which RQ-001 is built.
+
 ---
 
 ## 3. Inconsistent Practices
@@ -92,6 +94,8 @@ The choice is affected by governing equations, numerical formulation, physical m
 Existing frameworks employ different runtime forms for material and state information, including direct object access, tables, indexed data, fields, and solver-specific structures.
 
 The evidence supports the need for a runtime representation but does not establish one representation as optimal or universally applicable.
+
+The inconsistency observed across existing frameworks motivates further investigation rather than indicating deficiencies in any individual architecture.
 
 ---
 
@@ -137,6 +141,8 @@ RQ-001 is motivated by the combined absence of a consistently defined boundary a
 
 The research gap is therefore not the absence of material–solver separation, modularity, interfaces, or validation. Those practices are already established. The gap concerns whether these established practices can be organized into an explicit and internally consistent thermodynamic framework architecture, and whether that architecture can be evaluated without claiming universal applicability.
 
+These unresolved boundaries constitute the architectural scope of RQ-001.
+
 ---
 
 ## 5. Candidate DTS Contribution
@@ -178,6 +184,8 @@ This candidate contribution concerns the explicit combination of responsibilitie
 The candidate contributions above require subsequent specification, implementation, verification, and validation. Their inclusion in this analysis indicates research relevance only.
 
 Failure to verify a candidate shall result in revision or rejection of that candidate rather than reinterpretation of the evidence as confirmation.
+
+Candidate contributions remain hypotheses until supported through specification, implementation, verification, and validation.
 
 ---
 
@@ -262,3 +270,5 @@ The document does not independently extend the literature set, infer absence fro
 This document completes the initial research-gap analysis step of RQ-001 and provides input to subsequent Framework Specification work.
 
 It is non-normative. Where this document and the normative Framework Principles differ in authority, the Framework Principles govern the current framework baseline. Candidate findings in this document require explicit review before they may modify or extend that baseline.
+
+Completion of this document concludes the analytical phase of RQ-001 and provides the transition into Framework Specification.
