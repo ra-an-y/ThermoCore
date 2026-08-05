@@ -33,7 +33,7 @@ ThermoCore has the following architectural goals:
 2. Keep thermodynamic computation independent of material-specific simulation logic.
 3. Preserve engine-agnostic and implementation-agnostic architecture.
 4. Maintain a stable framework core with explicit responsibilities.
-5. Support extensions through defined coupling boundaries.
+5. Support extensions through explicitly defined coupling boundaries.
 6. Enable reuse across conforming implementations and Representation Consumers.
 
 These goals define architectural direction. They do not establish performance, accuracy, or universal-applicability claims.
@@ -145,6 +145,8 @@ An extension shall not modify the core thermodynamic architecture unless the gov
 
 The identification of a possible Extension Module does not place that mechanism within the current Framework Specification.
 
+Extension Modules are optional and are not required for Framework Conformance.
+
 ## 9. Verification and Validation Philosophy
 
 The purpose of the Verification and Validation series is to determine whether a Framework implementation conforms to the Framework Specification.
@@ -186,3 +188,5 @@ Subsequent documents shall define the Core Architecture, Data Flow, Thermodynami
 Implementation details are intentionally excluded from this document. They may be defined in implementation documentation only when they do not replace or contradict normative Framework Specification requirements.
 
 Research findings and candidate ideas are non-normative. They shall remain in Research until they complete the required evidence and framework-decision process and are formally adopted into the Framework Specification.
+
+This document shall be treated as the normative parent specification for all subsequent Framework Specification documents.
