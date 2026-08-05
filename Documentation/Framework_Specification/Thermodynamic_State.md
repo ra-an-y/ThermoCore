@@ -43,6 +43,8 @@ The following concepts are fundamentally different:
 
 Configuration shall not be classified as Runtime State merely because it participates in thermodynamic evolution. Representation shall not be classified as Runtime State merely because it is derived from or informed by Thermodynamic State.
 
+The identity of a Thermodynamic State is independent of its representation, storage format, or implementation.
+
 ## 4. State Ownership
 
 Ownership of Thermodynamic State shall remain unique.
@@ -166,5 +168,7 @@ Later specifications may refine interpretation, communication, and extension beh
 This document is a normative Framework Specification derived from `Framework_Principles.md`, `Core_Architecture.md`, and `Data_Flow.md`.
 
 It defines the Thermodynamic State semantics to which later Framework Specification documents and conforming implementations shall adhere. Later specifications may refine Thermodynamic State only within the architecture, information flow, ownership, classification, lifecycle, and constraints established by the parent specifications and this document.
+
+This document is the authoritative specification for the semantics of Thermodynamic State. Later specifications may reference these semantics but shall not redefine them.
 
 This specification defines semantics only. Numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, and implementation details are intentionally outside its scope.
