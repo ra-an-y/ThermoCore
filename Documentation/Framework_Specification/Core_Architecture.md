@@ -5,6 +5,14 @@ Status: Normative Specification
 
 ---
 
+## Normative Dependencies
+
+Parent Specification:
+
+- `Framework_Principles.md`
+
+This document conforms to the parent specification and refines only the normative decomposition, responsibilities, ownership, and boundaries of the Core Architecture.
+
 ## 1. Purpose
 
 This document defines the normative architectural decomposition of ThermoCore. It assigns responsibilities, ownership, boundaries, and relationships to the framework's core architectural components.
@@ -134,6 +142,8 @@ Thermodynamic State
       ▼
 Material Representation
 ```
+
+The arrows express conceptual dependency. Communication across these dependencies shall occur through applicable Framework Interfaces.
 
 Energy Input is consumed by Thermodynamic Computation. Thermodynamic Computation evolves Thermodynamic State. Material Representation interprets Thermodynamic State and applicable material information.
 
