@@ -7,207 +7,186 @@ Status: Normative Specification
 
 ## 1. Purpose
 
-The Decoupled Thermodynamic Simulation Framework defines an engine-agnostic architectural foundation for real-time thermodynamic simulation.
+ThermoCore defines the highest-level architectural principles for a reusable thermodynamic simulation framework. It establishes the responsibilities, boundaries, and relationships that all subsequent Framework Specification documents shall preserve.
 
-Its primary objective is to separate thermodynamic computation from material representation, allowing the computational core to remain reusable, extensible, and independent of specific materials or rendering engines.
+ThermoCore is engine-agnostic, implementation-agnostic, GPU-oriented, and reusable. GPU-oriented describes an architectural objective and does not require any particular GPU API, execution model, or backend.
 
-This document defines the fundamental design principles that govern the framework architecture. All subsequent specifications, implementations, and verification activities shall conform to these principles.
-
-This framework specifies architectural principles rather than prescribing a specific numerical method or implementation.
-
----
+This framework specifies architectural principles rather than prescribing a specific implementation or numerical method.
 
 ## 2. Scope
 
-This framework specifies the architectural principles for:
+ThermoCore specifies architectural responsibilities for:
 
-- Thermodynamic computation
-- Cell-based thermodynamic state management
-- Material representation
-- Runtime data flow
-- Framework interfaces
-- Extension boundaries
+- thermodynamic computation;
+- Thermodynamic State;
+- Material Representation;
+- framework interfaces; and
+- extension boundaries.
 
-This framework does not define:
-
-- Rendering techniques
-- Engine-specific implementations
-- Numerical optimization strategies
-- Optional physical extensions
-- Application-specific behavior
-
----
+The Framework Specification defines how these responsibilities are separated and related. It does not define rendering engines, numerical optimization techniques, engine-specific implementations, API signatures, data layouts, or solver mathematics.
 
 ## 3. Design Goals
 
-The framework is designed to achieve the following objectives:
+ThermoCore has the following architectural goals:
 
-1. Separation of thermodynamic computation and material representation.
-2. Material-independent thermodynamic computation.
-3. Engine-agnostic architecture.
-4. GPU-oriented runtime design.
-5. Extensible architecture with stable core behavior.
+1. Separate thermodynamic computation from Material Representation.
+2. Keep thermodynamic computation independent of material-specific simulation logic.
+3. Preserve engine-agnostic and implementation-agnostic architecture.
+4. Maintain a stable framework core with explicit responsibilities.
+5. Support extensions through explicitly defined coupling boundaries.
+6. Enable reuse across conforming implementations and Representation Consumers.
 
----
+These goals define architectural direction. They do not establish performance, accuracy, or universal-applicability claims.
 
 ## 4. Non-goals
 
-The framework is not intended to become:
+ThermoCore is not:
 
-- A rendering engine
-- A CFD framework
-- A finite element framework
-- A general multiphysics framework
-- A game engine
+- a rendering engine;
+- a computational fluid dynamics framework;
+- a finite element method framework;
+- a general multiphysics framework;
+- a game engine; or
+- a prescription for one numerical algorithm or implementation backend.
 
-Additional physical phenomena may be integrated through extension modules without modifying the core thermodynamic framework.
-
----
+Possible future extensions are not part of the current framework scope merely because they may interact with thermodynamic phenomena. A future mechanism shall remain outside the normative core until it has completed the applicable research and framework-decision process.
 
 ## 5. Core Principles
 
-The framework follows the principles below.
+### 5.1 Separation of Computation and Representation
 
-### Principle 1 — Separation of Responsibilities
+Thermodynamic computation and Material Representation shall remain separate architectural responsibilities.
 
-Thermodynamic computation and material representation shall remain architecturally independent.
+Thermodynamic computation shall evolve Thermodynamic State. Material Representation shall interpret thermodynamic and material information for downstream use without assuming ownership of thermodynamic state evolution.
 
-Neither subsystem shall assume ownership of the other's responsibilities.
+### 5.2 Minimal Persistent State
 
----
+An implementation shall persist only the Thermodynamic State required by its conforming thermodynamic formulation and declared framework interfaces.
 
-### Principle 2 — Minimal Persistent State
+Quantities that can be derived without violating the specification should not be treated as independently owned persistent state. This principle does not prescribe one universal set of stored variables or prohibit extension-owned state.
 
-Only the minimum persistent thermodynamic state required for computation shall be stored.
+### 5.3 Explicit State Ownership
 
-All other quantities should be derived whenever possible.
+Every evolving state category shall have an explicit architectural owner.
 
----
+Material Definition shall not own per-location evolving Thermodynamic State. Extensions shall own state that exists solely for their mechanisms unless a later normative specification assigns that state elsewhere.
 
-### Principle 3 — Material Independence
+### 5.4 Material-independent Computation
 
-The computational core shall not contain material-specific simulation logic.
+The thermodynamic computational core shall not embed material-specific simulation procedures. Material-dependent information required by computation shall be supplied through specified framework interfaces.
 
-Material behavior shall be provided through standardized material representation.
+Material independence does not mean that thermodynamic results are independent of material properties.
 
----
+### 5.5 Stable Core Architecture
 
-### Principle 4 — Explicit State Ownership
+Optional capabilities shall not alter the core architectural responsibilities solely for implementation convenience. A change to the core requires a normative specification change supported by the framework governance process.
 
-Each simulation state shall have a clearly defined owner.
+## 6. Conceptual Architecture
 
-Shared material definitions shall not store per-cell evolving simulation state.
+ThermoCore distinguishes runtime flow from configuration flow.
 
----
-
-### Principle 5 — Stable Core
-
-The thermodynamic core shall remain stable regardless of optional physical extensions.
-
----
-
-## 6. Architectural Layers
-
-The framework is organized around the following primary data flow:
+### 6.1 Runtime Flow
 
 ```text
 Energy Input
-      │
-      ▼
+      ↓
 Thermodynamic Computation
-      │
-      ▼
+      ↓
 Thermodynamic State
-      │
-      ▼
+      ↓
 Material Representation
-      │
-      ▼
-Application / Visualization
+      ↓
+Representation Consumer
 ```
 
-Program-side material definitions provide material-referenced properties through specified interfaces. They support thermodynamic computation and material representation but do not own per-cell evolving thermodynamic state.
+Energy Input is runtime input to Thermodynamic Computation. Thermodynamic Computation evolves Thermodynamic State. Material Representation uses Thermodynamic State and applicable material information to provide representation for a Representation Consumer.
 
-Each layer has clearly defined responsibilities and communicates only through specified interfaces.
-
----
-
-## 7. Extension Philosophy
-
-The framework distinguishes between core functionality and optional extension modules.
-
-The core framework contains broadly applicable thermodynamic computation and minimal cell-based thermodynamic state.
-
-Additional physical mechanisms shall be implemented as independent extension modules.
-
-Typical examples include:
-
-- Thermal hysteresis
-- Moisture transport
-- Chemical reactions
-- Electromagnetic coupling
-- Mechanical behavior
-- Optical approximation
-
-Extension modules should couple to the thermodynamic core through one or more of the following mechanisms:
-
-- Property updates
-- Energy or source terms
-- Extension-owned local state
-
-Extensions may introduce additional equations or internal states but shall not modify the core enthalpy-based thermodynamic computation unless the additional mechanism fundamentally changes the governing conservation equations.
-
-Extensions shall not modify the core architectural principles.
-
----
-
-## 8. Verification Philosophy
-
-Framework development follows the process below:
+### 6.2 Configuration Flow
 
 ```text
-Research
-   │
-   ▼
-Framework Principles
-   │
-   ▼
-Framework Specification
-   │
-   ▼
-Implementation
-   │
-   ▼
-Verification
-   │
-   ▼
-Validation
+Material Definition
+      ↓
+Framework Configuration Interfaces
+      ├──→ Thermodynamic Computation
+      └──→ Material Representation
 ```
 
-Framework evolution shall be evidence-driven.
+Material Definition is reusable configuration. It supplies material-referenced information through framework interfaces and shall remain distinct from Energy Input and evolving Thermodynamic State.
 
-Architectural changes shall be supported by literature survey, evidence analysis, and architectural comparison before incorporation into the framework specification.
+The configuration flow does not prescribe how a Material Definition is authored, stored, transformed, or delivered at runtime.
 
----
+## 7. Framework Output and Representation
 
-## 9. Conformance
+The primary Framework Output is Thermodynamic State.
 
-An implementation conforms to this framework only if it satisfies the architectural principles defined in this document.
+Material Representation is not a substitute for Thermodynamic State. It is the architectural responsibility that interprets state and material information for downstream consumption.
 
-Conformance does not require a particular programming language, engine, GPU API, numerical method, discretization strategy, or rendering pipeline.
+A Representation Consumer uses framework-provided state or representation without becoming part of thermodynamic computation. Representation Consumers may include:
 
----
+- a heatmap;
+- CSV output;
+- a graphical user interface;
+- a renderer; or
+- a Reference Application.
 
-## Document Status
+Graphical output is therefore not the primary output of ThermoCore, and a Representation Consumer is not part of the framework core merely because it displays or exports framework results.
 
-This document is the root normative specification for ThermoCore 1.0.
+## 8. Extension Philosophy
 
-It defines the architectural principles that govern subsequent specifications, including:
+The core contains broadly applicable thermodynamic computation, Thermodynamic State responsibilities, Material Representation responsibilities, and the interfaces that connect them.
 
-- Core Architecture
-- Data Flow
-- State Specification
-- Material Representation
-- Extension Boundary
+An Extension Module shall couple to the core only through one or more declared mechanisms:
 
-Implementation details are intentionally omitted and are specified in subsequent Framework Specification documents.
+- property updates;
+- source terms; or
+- extension-owned state.
+
+An extension shall not modify the core thermodynamic architecture unless the governing conservation equations fundamentally change. If such a change is required, it shall be evaluated as a framework change rather than treated as an ordinary extension.
+
+The identification of a possible Extension Module does not place that mechanism within the current Framework Specification.
+
+Extension Modules are optional and are not required for Framework Conformance.
+
+## 9. Verification and Validation Philosophy
+
+The purpose of the Verification and Validation series is to determine whether a Framework implementation conforms to the Framework Specification.
+
+V01–V04 collectively evaluate:
+
+- architectural conformance;
+- Thermodynamic State evolution;
+- phase behavior; and
+- energy consistency.
+
+These activities evaluate framework-defined behavior and boundaries. They do not verify or validate:
+
+- Unity scenes;
+- Unity Physics;
+- rendering quality; or
+- engine-specific behavior.
+
+An engine-specific test environment may be used as an implementation backend, but its behavior is not the subject of Framework Conformance.
+
+Verification determines whether an implementation satisfies specified requirements. Validation evaluates whether the implemented thermodynamic behavior is adequate for the stated validation purpose. Neither activity converts a backend-specific feature into a framework requirement.
+
+## 10. Conformance
+
+An implementation conforms to ThermoCore only when it satisfies all applicable normative requirements in the Framework Specification.
+
+Conformance shall not depend on Unity, Unreal, Vulkan, CUDA, DirectX, Compute Shader, or any other specific engine, API, language, hardware vendor, or implementation technique.
+
+Use of a particular backend does not by itself establish Conformance. Likewise, an implementation is not non-conforming merely because it uses a backend different from a reference implementation.
+
+Reference Applications and Representation Consumers may demonstrate or consume a conforming implementation, but they do not define Framework Conformance.
+
+## 11. Document Status
+
+This document is the root normative specification for ThermoCore. All subsequent Framework Specification documents shall conform to it.
+
+Subsequent documents shall define the Core Architecture, Data Flow, Thermodynamic State, Material Representation, framework interfaces, and Extension Boundary at progressively greater specificity.
+
+Implementation details are intentionally excluded from this document. They may be defined in implementation documentation only when they do not replace or contradict normative Framework Specification requirements.
+
+Research findings and candidate ideas are non-normative. They shall remain in Research until they complete the required evidence and framework-decision process and are formally adopted into the Framework Specification.
+
+This document shall be treated as the normative parent specification for all subsequent Framework Specification documents.
