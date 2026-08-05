@@ -99,7 +99,25 @@ Framework Interfaces supply configuration information across defined architectur
 
 This specification does not define how Material Definition is authored, stored, transformed, transported, or made available to a conforming implementation.
 
-## 6. Information Ownership
+## 6. Information Semantics
+
+The following relationships define normative information semantics only:
+
+- **Read** means obtaining information without modifying it. Read does not imply Write or Own.
+- **Write** means modifying information within an explicitly assigned architectural responsibility. Write does not imply ownership beyond that assigned responsibility.
+- **Consume** means receiving information for downstream use. Consume does not imply modification or ownership of the information source.
+- **Supply** means making information available across an applicable architectural boundary. Supply does not imply ownership of the receiving component or responsibility.
+- **Own** means holding the architectural responsibility that governs information. Own is not established by Read, Write, Consume, or Supply alone.
+
+Accordingly:
+
+- Read does not imply Write.
+- Supply does not imply Ownership.
+- Consume does not imply Modification.
+
+These relationships shall remain distinct and shall not be mapped by this specification to APIs, storage operations, synchronization mechanisms, or backend behavior.
+
+## 7. Information Ownership
 
 Information ownership identifies the architectural responsibility that governs information. Reading, writing, consuming, or supplying information does not by itself transfer ownership.
 
@@ -118,11 +136,11 @@ A Representation Consumer consumes representation without owning Material Repres
 
 Supplying information does not imply ownership of the receiving component. Reading information does not imply ownership of the information read. Consuming information does not imply permission to modify its source.
 
-## 7. Flow Constraints
+## 8. Flow Constraints
 
 The following constraints are normative.
 
-### 7.1 Thermodynamic Computation
+### 8.1 Thermodynamic Computation
 
 Thermodynamic Computation:
 
@@ -132,7 +150,7 @@ Thermodynamic Computation:
 - shall not transfer ownership of Thermodynamic State; and
 - shall not own Material Definition or representation.
 
-### 7.2 Thermodynamic State
+### 8.2 Thermodynamic State
 
 Thermodynamic State:
 
@@ -141,7 +159,7 @@ Thermodynamic State:
 - shall not evolve itself; and
 - shall not be interpreted as configuration.
 
-### 7.3 Material Representation
+### 8.3 Material Representation
 
 Material Representation:
 
@@ -151,7 +169,7 @@ Material Representation:
 - shall not modify Thermodynamic State; and
 - shall not perform Thermodynamic Computation.
 
-### 7.4 Representation Consumer
+### 8.4 Representation Consumer
 
 A Representation Consumer:
 
@@ -161,7 +179,7 @@ A Representation Consumer:
 - shall not modify or redefine the Framework Core; and
 - shall not acquire ownership of Material Representation by consuming representation.
 
-### 7.5 Material Definition and Framework Interfaces
+### 8.5 Material Definition and Framework Interfaces
 
 Material Definition and Framework Interfaces:
 
@@ -171,7 +189,7 @@ Material Definition and Framework Interfaces:
 - shall not convert configuration supply into state-evolution responsibility; and
 - shall preserve the architectural ownership defined by `Core_Architecture.md`.
 
-### 7.6 General Constraints
+### 8.6 General Constraints
 
 A conforming information flow shall preserve all of the following:
 
@@ -184,7 +202,7 @@ A conforming information flow shall preserve all of the following:
 
 Violation of these constraints constitutes non-conformance with this specification.
 
-## 8. Relationship to Subsequent Specifications
+## 9. Relationship to Subsequent Specifications
 
 This document provides normative information-flow constraints for:
 
@@ -203,10 +221,12 @@ This document provides normative information-flow constraints for:
 
 Later specifications may refine information semantics within their assigned responsibilities. They shall not redefine the normative runtime flow, configuration flow, ownership relationships, or flow constraints established by this document.
 
-## 9. Document Status
+## 10. Document Status
 
 This document is a normative Framework Specification derived from `Framework_Principles.md` and `Core_Architecture.md`.
 
 It defines the information flow to which later Framework Specification documents and conforming implementations shall adhere. Later specifications may refine information semantics only within the architectural ownership and boundaries established by the parent specifications and this document.
 
 Implementation details remain outside the scope of this document. Conformance depends on preserving the specified information relationships and constraints, not on adopting a particular implementation, execution schedule, numerical method, API, storage layout, synchronization mechanism, or backend.
+
+This specification defines normative information movement only. Execution scheduling, synchronization, implementation ordering, and backend pipelines are intentionally outside its scope.
