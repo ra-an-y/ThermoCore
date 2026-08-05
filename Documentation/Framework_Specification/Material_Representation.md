@@ -18,9 +18,9 @@ This document conforms to the parent specifications and refines only the normati
 
 ## 2. Purpose
 
-This document defines what Material Representation means within ThermoCore. Material Representation interprets Thermodynamic State and applicable Material Definition for downstream use.
+This document defines what Material Representation means within ThermoCore. Material Representation is the architectural responsibility that interprets Thermodynamic State and applicable Material Definition to produce Representation for downstream use.
 
-Material Representation is Representation. It is not Runtime State. It is not Configuration.
+Material Representation is not Runtime State or Configuration. Representation is the information produced and owned by Material Representation.
 
 `Material_Representation.md` defines the semantics of Representation only. It shall not define rendering techniques, shaders, numerical variables, physical fields, material asset formats, storage structures, APIs, backend-specific representations, or implementation procedures.
 
@@ -77,7 +77,7 @@ No Framework Interface, Representation Consumer, Configuration, or Extension Mod
 
 ## 5. Representation Classification
 
-Material Representation has two normative classifications: Persistent Representation and Derived Representation.
+Representation has two normative classifications: Persistent Representation and Derived Representation.
 
 ### 5.1 Persistent Representation
 
@@ -116,7 +116,7 @@ This diagram represents conceptual lifecycle only. It does not define implementa
 
 ### 6.1 Creation
 
-Creation establishes the existence of valid Representation within the ownership and constraints of the Framework Specification.
+Creation establishes the framework-governed representation context within the ownership and constraints of the Framework Specification. It does not imply that interpreted Representation already exists.
 
 Creation does not prescribe allocation, initialization, authoring, loading, conversion, or storage procedures.
 
@@ -144,8 +144,8 @@ The lifecycle stages describe semantic conditions. They do not require a single 
 
 The following constraints are normative:
 
-1. Material Representation shall be Representation.
-2. Material Representation shall not be Runtime State or Configuration.
+1. Material Representation shall remain the architectural responsibility for interpretation.
+2. Representation shall remain distinct from Runtime State and Configuration.
 3. Material Representation shall own Representation.
 4. Material Representation shall not own Runtime State.
 5. Material Representation shall not modify Thermodynamic State.
