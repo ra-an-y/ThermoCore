@@ -92,7 +92,7 @@ Before repository release, ThermoCore should confirm that:
 - when the release claims completion of a Validation activity, corresponding Validation Evidence exists and identifies the evaluated baseline; and
 - release notes are complete and consistent with the content being published.
 
-Release Readiness is a ThermoCore repository practice. It is not a hosting-platform feature and does not replace the applicable specification, review, or Framework Validation process.
+Release Readiness is a ThermoCore repository practice. It is not a hosting-platform feature and does not replace the applicable Framework Specifications, Framework Conformance requirements, repository review, repository evidence-preservation rules, or applicable Validation documentation.
 
 The presence of Validation Evidence is conditional on the claims made by the release. A repository release may publish incomplete or ongoing Validation work when its status and limitations are stated accurately.
 
@@ -114,6 +114,8 @@ v1.0.1
 v1.1.0
 v2.0.0
 ```
+
+Repository compatibility is assessed against the previous published repository baseline and the documented artifact identities, contracts, and externally relied-upon organization declared by that baseline.
 
 The version components describe repository publication changes:
 
@@ -151,11 +153,11 @@ If release notes and an authoritative repository artifact appear to differ, the 
 
 ## 8. Release Tags
 
-Each repository release should have one corresponding Git tag.
+Each repository release shall have one corresponding Git tag.
 
 A tag identifies a specific repository state. The associated release record shall identify the same baseline commit.
 
-Release tags shall remain immutable after publication whenever practical.
+A published release tag shall be treated as an immutable reference.
 
 A published tag shall not be moved to conceal or replace an earlier repository state. A correction should be recorded through a new commit and, when appropriate, a new repository version and tag.
 
@@ -171,7 +173,7 @@ When release notes state a Validation status, the statement shall remain traceab
 
 A tag, release record, publication date, or persistent identifier shall not be treated as Validation Evidence merely because it identifies a fixed repository state.
 
-Validation remains governed by the Framework Validation process. This document does not define Validation procedures, acceptance criteria, evidence requirements, or conclusions.
+Validation status and associated evidence remain subject to the applicable Framework Specifications, Framework Conformance requirements, repository evidence-preservation rules in `Repository_Governance.md`, and applicable Validation documentation. This document does not define Validation procedures, acceptance criteria, evidence requirements, or conclusions.
 
 ## 10. Relationship to Framework Specifications
 

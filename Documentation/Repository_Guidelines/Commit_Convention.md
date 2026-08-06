@@ -49,16 +49,18 @@ ThermoCore supports the following commit types:
 
 | Type | Purpose |
 |---|---|
-| `feat` | Introduce new repository functionality. |
+| `feat` | Introduce new implementation functionality or repository functionality. |
 | `fix` | Correct incorrect behavior. |
 | `docs` | Add or revise documentation. |
 | `refactor` | Restructure content or code without changing intended semantics or behavior. |
 | `style` | Change formatting only. |
-| `test` | Add or revise Validation or testing material. |
+| `test` | Add or revise implementation tests or executable test support. |
 | `build` | Change the build system or continuous integration configuration. |
 | `chore` | Perform repository maintenance not covered by another supported type. |
 
 The selected type shall describe the primary purpose of the commit.
+
+The `test` type classifies test-related repository changes. Its use does not merge implementation testing with Framework Validation or imply that a test result is Validation Evidence. Validation documentation, procedures, evidence, and results retain their distinct responsibilities and should use the type that describes the committed artifact, such as `docs(validation)` for documentation.
 
 Additional Conventional Commit types may be adopted later if necessary. Any adoption shall remain consistent with `Repository_Governance.md` and shall be documented before regular use.
 
@@ -68,7 +70,7 @@ The currently supported ThermoCore scopes are:
 
 | Scope | Repository Area |
 |---|---|
-| `core` | Framework Core implementation or core repository functionality. |
+| `core` | Framework Core implementation. |
 | `spec` | Framework Specifications and specification-system documents. |
 | `validation` | Validation procedures, evidence, results, or validation support. |
 | `demo` | Demo or Sandbox Reference Applications. |
@@ -94,10 +96,10 @@ The description shall:
 Examples:
 
 ```text
-feat(spec): add framework conformance specification
+docs(spec): add framework conformance specification
 docs(cleanup): add terminology audit report
 refactor(spec): simplify governance references
-test(validation): add V01 architecture conformance
+test(core): add state update unit tests
 chore(repo): reorganize repository guidelines
 ```
 
@@ -151,14 +153,14 @@ This preserves the traceability and integrity of existing history while establis
 
 ```text
 docs(spec): clarify normative dependencies
-feat(spec): add extension boundary specification
+docs(spec): add extension boundary specification
 refactor(spec): simplify governance references
 ```
 
 ### Validation
 
 ```text
-test(validation): add V01 architecture conformance
+test(validation): add V01 architecture decoupling check
 docs(validation): record energy consistency procedure
 ```
 

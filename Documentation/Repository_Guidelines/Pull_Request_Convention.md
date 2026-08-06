@@ -267,7 +267,7 @@ Pull Requests themselves are not Validation Evidence.
 
 A Pull Request discussion, approval, or merge shall not be presented as proof of Framework Conformance or Validation success.
 
-Validation Evidence remains governed by the Framework Validation process and shall preserve the evaluated version, procedure, configuration, observations, results, and applicable conclusions.
+Validation Evidence shall be interpreted and preserved according to the applicable Framework Specifications, Framework Conformance requirements, repository evidence-preservation rules in `Repository_Governance.md`, and applicable Validation documentation. It shall preserve the evaluated version, procedure, configuration, observations, results, and applicable conclusions.
 
 ## 13. Relationship to Other Repository Guidelines
 
@@ -275,7 +275,7 @@ Repository Guideline responsibilities are separated as follows:
 
 - `Commit_Convention.md` governs commit messages and commit history.
 - `Branch_Convention.md` governs branch naming, scope, lifecycle, synchronization, and maintenance.
-- `Release_Convention.md` will govern releases, tags, versioning, and publication.
+- `Release_Convention.md` governs releases, tags, versioning, and publication.
 - This document governs Pull Request proposal, review, revision, approval, and merge procedures only.
 
 A Pull Request title, description, status, approval, or merge shall not replace a clear commit history, branch record, release record, or authoritative document status.
