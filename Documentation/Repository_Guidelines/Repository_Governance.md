@@ -31,6 +31,23 @@ These practices apply to Framework Specifications, research records, implementat
 
 Where a change affects a Framework Specification, the content of that change remains governed by the applicable Framework Specifications and `Specification_Governance.md`.
 
+### 2.1 Derived Repository Convention Documents
+
+Future repository convention documents, including `Commit_Convention.md`, `Branch_Convention.md`, `Pull_Request_Convention.md`, and `Release_Convention.md`, shall derive from this document.
+
+They may refine repository procedures within their assigned scope, but shall not redefine or contradict the repository principles established here.
+
+This establishes the following governance relationship:
+
+```text
+Repository_Governance.md
+          │
+          ├── Commit_Convention.md
+          ├── Branch_Convention.md
+          ├── Pull_Request_Convention.md
+          └── Release_Convention.md
+```
+
 ## 3. Governance Relationship
 
 The ThermoCore governance system separates semantic authority from repository operation.
