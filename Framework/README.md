@@ -1,0 +1,45 @@
+# Purpose
+
+Framework exists to contain the implementation of the ThermoCore framework.
+
+It provides the repository area in which Framework behavior is realized without making implementation artifacts a substitute for the specifications that define their intended semantics.
+
+---
+
+# Scope
+
+This directory is responsible for implementation artifacts that realize the ThermoCore Framework and its defined interfaces.
+
+Research records, material-definition artifacts, Framework Validation evidence, example applications, and repository governance do not belong here.
+
+---
+
+# Relationship
+
+Framework implementation is guided by the applicable Framework Specifications in `Documentation/`.
+
+It may consume material-related artifacts from `Materials/`, and its implementation correctness may be examined by `Tests/`. Framework Validation remains a separate responsibility from implementation and testing.
+
+---
+
+# Current Status
+
+Planned
+
+---
+
+# Notes
+
+The presence of an implementation artifact does not by itself establish Framework Conformance or Validation success.
+
+---
+
+# Document Status
+
+This document is a repository directory guide.
+
+It provides repository navigation only.
+
+It is not a Framework Specification.
+
+It does not define Framework semantics or Repository Governance.
