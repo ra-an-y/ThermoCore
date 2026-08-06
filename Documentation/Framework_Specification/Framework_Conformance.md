@@ -48,6 +48,14 @@ Framework Conformance does not prescribe an implementation. Multiple implementat
 
 Implementation differences do not establish Conformance or non-conformance unless they cause an applicable normative requirement to be satisfied or violated.
 
+### 3.1 Conformance Independence Rule
+
+Framework Conformance shall be determined solely by conformance to the normative Framework Specifications.
+
+Implementation quality, numerical performance, optimization strategy, execution backend, and demonstration complexity shall not by themselves determine Framework Conformance.
+
+These characteristics are relevant to Framework Conformance only when they cause an applicable normative requirement to be satisfied or violated.
+
 ## 4. Conformance Requirements
 
 A conforming implementation shall preserve all applicable normative requirements governing:
