@@ -180,7 +180,7 @@ An Extension Module shall own information that exists solely for its extension-s
 
 ### 8.5 Governance Rule 5 — Preserve Parent Specifications
 
-An Extension Module shall preserve every applicable parent specification. Extension-specific refinement shall not contradict, weaken, duplicate, reinterpret, or replace an authoritative framework definition.
+The Specification Dependency Rule defined by `Specification_Governance.md` applies to every Extension Module and its extension-specific refinement. Every applicable parent specification shall remain authoritative and preserved.
 
 ### 8.6 Governance Rule 6 — Preserve Implementation Independence
 
@@ -188,13 +188,13 @@ The Framework Core shall remain implementation-agnostic, backend-agnostic, and e
 
 An implementation choice made by an Extension Module shall not become a Framework Core requirement.
 
-## 9. Relationship to Verification
+## 9. Relationship to Conformance and Validation
 
-`Verification_Specification.md` verifies Framework Core Conformance independently of Extension Modules.
+`Framework_Conformance.md` determines Framework Core Conformance independently of Extension Modules. Future Validation documents provide evidence of that Conformance.
 
-The absence of an Extension Module shall not prevent verification of Framework Core Conformance. The presence of an Extension Module shall not by itself establish or invalidate Framework Core Conformance; the applicable framework boundaries shall remain subject to verification.
+The absence of an Extension Module shall not prevent determination of Framework Core Conformance. The presence of an Extension Module shall not by itself establish or invalidate Framework Core Conformance; the applicable framework boundaries shall remain subject to Conformance determination.
 
-Extension-specific verification belongs to later specifications. It shall not redefine the Extension semantics, ownership boundaries, Communication requirements, or governance rules established by this document.
+Extension-specific Validation belongs to future Validation documents. It shall not redefine the Extension semantics, ownership boundaries, Communication requirements, or governance rules established by this document.
 
 ## 10. Document Status
 
