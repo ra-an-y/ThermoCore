@@ -42,7 +42,7 @@ Framework Conformance evaluates:
 - semantic consistency;
 - ownership preservation;
 - Communication preservation; and
-- Governance compliance.
+- applicable Extension preservation.
 
 Framework Conformance does not prescribe an implementation. Multiple implementations may independently conform when each satisfies all applicable normative requirements.
 
@@ -65,9 +65,8 @@ A conforming implementation shall preserve all applicable normative requirements
 - Information Flow;
 - Runtime State semantics;
 - Representation semantics;
-- Framework Interface semantics;
-- Extension boundaries; and
-- Governance rules.
+- Framework Interface semantics; and
+- applicable Extension boundaries.
 
 Conformance applies to the complete set of applicable requirements rather than to selected specifications or categories in isolation.
 
@@ -99,33 +98,19 @@ Communication Conformance classifies requirements concerning Information Flow, F
 
 Extension Conformance classifies applicable requirements concerning Extension Module optionality, ownership, Communication, preservation of the Framework Core, and extension boundaries.
 
-### 5.6 Governance Conformance
-
-Governance Conformance classifies requirements concerning specification dependencies, authoritative definitions, semantic preservation, ownership preservation, separation of concerns, and documentation maintenance.
-
 These categories are conceptual classifications only. They are not individual Validation procedures, test cases, execution stages, or independent alternatives for establishing Framework Conformance.
 
 ## 6. Relationship to Validation
 
-Validation documents provide evidence of Framework Conformance.
+Verification and Validation activities may produce evidence relevant to Framework Conformance and to their stated Validation purposes.
 
-Validation does not define, modify, or replace Framework Conformance. Validation evidence supports a determination against requirements that remain defined by the applicable Framework Specifications and classified by this document.
+Validation does not define, modify, or replace Framework Conformance. Validation Evidence supports a determination against requirements that remain defined by the applicable Framework Specifications and classified by this document.
 
 Validation procedures may evolve independently when they continue to evaluate the same applicable normative requirements without redefining their meaning.
 
-Framework Conformance remains normative regardless of the particular Validation evidence or procedure used.
+Framework Conformance remains normative regardless of the particular Validation Evidence or procedure used.
 
-Future Validation documents may include:
-
-```text
-Validation/
-    V01_Architecture_Conformance.md
-    V02_Representation_Conformance.md
-    V03_Runtime_State_Conformance.md
-    V04_Energy_Consistency_Conformance.md
-```
-
-These documents shall reference this specification. They shall not redefine Framework Conformance, create alternative Conformance requirements, or alter the authoritative meaning of any Framework Specification.
+Future Validation documents shall reference this specification and the applicable authoritative Framework Specifications. They shall not redefine Framework Conformance, create alternative Conformance requirements, assign new Conformance categories, or alter the authoritative meaning of any Framework Specification.
 
 ## 7. Conformance Constraints
 
@@ -144,17 +129,13 @@ Framework Conformance depends only on satisfaction of all applicable normative r
 
 ## 8. Governance Relationship
 
-Framework Conformance shall preserve the Governance established by `Specification_Governance.md`, including:
+`Specification_Governance.md` governs this Conformance specification, Conformance interpretation, and maintenance of Conformance documentation.
 
-- the Specification Dependency Rule;
-- the Single Source of Truth Rule;
-- the Separation of Concerns Rule;
-- the Ownership Preservation Rule; and
-- the Semantic Preservation Rule.
+Specification Governance is not an implementation Conformance category. An implementation is evaluated against the applicable normative Framework requirements, not against specification-maintenance procedures.
 
-A Conformance interpretation shall not weaken, bypass, duplicate, reinterpret, or replace Governance requirements.
+A Conformance interpretation or documentation change shall preserve the Specification Dependency Rule, Single Source of Truth Rule, Separation of Concerns Rule, Ownership Preservation Rule, and Semantic Preservation Rule.
 
-Conformance classification, Validation evidence, or implementation choice shall not establish an alternative authoritative definition for a normative concept.
+Conformance classification, Validation Evidence, or implementation choice shall not establish an alternative authoritative definition for a normative concept.
 
 ## 9. Conformance Dependency
 

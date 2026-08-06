@@ -36,6 +36,7 @@ It identifies the Definition Owner, Primary Specification, and first normative i
 | Framework Interfaces | Framework Interfaces | `Framework_Interfaces.md` | `Framework_Principles.md` |
 | Framework Interface | Framework Interfaces | `Framework_Interfaces.md` | `Framework_Interfaces.md` |
 | Energy Input | Information Flow | `Data_Flow.md` | `Framework_Principles.md` |
+| Energy Source | Information Flow | `Data_Flow.md` | `Data_Flow.md` |
 | Material Definition | Information Flow | `Data_Flow.md` | `Framework_Principles.md` |
 | Framework Output | Framework Principles | `Framework_Principles.md` | `Framework_Principles.md` |
 | Representation Consumer | Core Architecture | `Core_Architecture.md` | `Framework_Principles.md` |
@@ -83,7 +84,6 @@ It identifies the Definition Owner, Primary Specification, and first normative i
 | Representation Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Conformance.md` |
 | Communication Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Conformance.md` |
 | Extension Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Conformance.md` |
-| Governance Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Conformance.md` |
 | Governance | Specification Governance | `Specification_Governance.md` | `Framework_Principles.md` |
 | Specification Dependency Rule | Specification Governance | `Specification_Governance.md` | `Specification_Governance.md` |
 | Semantic Preservation Rule | Specification Governance | `Specification_Governance.md` | `Specification_Governance.md` |
@@ -103,6 +103,8 @@ Later Framework Specifications, Validation documents, README material, and acade
 The Definition Owner identifies the normative concern that governs a term. The Primary Specification is the authoritative document for that concern. First Introduced records the earliest normative Framework Specification in which the concept appears; it does not transfer definition ownership or create a second authoritative source.
 
 Where Primary Specification and First Introduced differ, the earlier document introduces the concept at a higher level and the Primary Specification owns its authoritative semantics at the applicable level of specificity.
+
+An `Energy Source` is the external provider of Energy Input defined by `Data_Flow.md`. It is not a Framework Core component.
 
 `Framework Interfaces` names the normative core component collectively. `Framework Interface` refers to an applicable individual communication boundary. The singular and plural forms are related usages, not competing definitions.
 

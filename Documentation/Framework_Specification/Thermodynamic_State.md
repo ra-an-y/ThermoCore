@@ -21,9 +21,7 @@ This document defines what Thermodynamic State means within ThermoCore. Thermody
 
 Thermodynamic State is Runtime State. It is not Configuration. It is not Representation.
 
-Thermodynamic_State.md defines the semantics of Runtime State only. It shall not define storage format, numerical variables, memory layout, APIs, serialization, or backend-specific representation.
-
-This document defines state semantics only. It does not define numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, or implementation procedures.
+This document defines Runtime State semantics only. It does not define numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, or implementation procedures.
 
 ## 3. Thermodynamic State Overview
 

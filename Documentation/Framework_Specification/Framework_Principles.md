@@ -20,7 +20,7 @@ ThermoCore specifies architectural responsibilities for:
 - thermodynamic computation;
 - Thermodynamic State;
 - Material Representation;
-- framework interfaces; and
+- Framework Interfaces; and
 - extension boundaries.
 
 The Framework Specification defines how these responsibilities are separated and related. It does not define rendering engines, numerical optimization techniques, engine-specific implementations, API signatures, data layouts, or solver mathematics.
@@ -61,7 +61,7 @@ Thermodynamic computation shall evolve Thermodynamic State. Material Representat
 
 ### 5.2 Minimal Persistent State
 
-An implementation shall persist only the Thermodynamic State required by its conforming thermodynamic formulation and declared framework interfaces.
+An implementation shall persist only the Thermodynamic State required by its conforming thermodynamic formulation and declared Framework Interfaces.
 
 Quantities that can be derived without violating the specification should not be treated as independently owned persistent state. This principle does not prescribe one universal set of stored variables or prohibit extension-owned state.
 
@@ -73,7 +73,7 @@ Material Definition shall not own per-location evolving Thermodynamic State. Ext
 
 ### 5.4 Material-independent Computation
 
-The thermodynamic computational core shall not embed material-specific simulation procedures. Material-dependent information required by computation shall be supplied through specified framework interfaces.
+The thermodynamic computational core shall not embed material-specific simulation procedures. Material-dependent information required by computation shall be supplied through specified Framework Interfaces.
 
 Material independence does not mean that thermodynamic results are independent of material properties.
 
@@ -111,7 +111,7 @@ Framework Configuration Interfaces
       └──→ Material Representation
 ```
 
-Material Definition is reusable configuration. It supplies material-referenced information through framework interfaces and shall remain distinct from Energy Input and evolving Thermodynamic State.
+Material Definition is reusable configuration. It supplies material-referenced information through Framework Interfaces and shall remain distinct from Energy Input and evolving Thermodynamic State.
 
 The configuration flow does not prescribe how a Material Definition is authored, stored, transformed, or delivered at runtime.
 
@@ -149,7 +149,7 @@ Extension Modules are optional and are not required for Framework Conformance.
 
 ## 9. Verification and Validation Philosophy
 
-The purpose of the Verification and Validation series is to determine whether a Framework implementation conforms to the Framework Specification.
+The Verification and Validation series provides evidence relevant to Framework Conformance and to the stated Validation purposes.
 
 V01–V04 collectively evaluate:
 
@@ -167,7 +167,7 @@ These activities evaluate framework-defined behavior and boundaries. They do not
 
 An engine-specific test environment may be used as an implementation backend, but its behavior is not the subject of Framework Conformance.
 
-Verification determines whether an implementation satisfies specified requirements. Validation evaluates whether the implemented thermodynamic behavior is adequate for the stated validation purpose. Neither activity converts a backend-specific feature into a framework requirement.
+Verification determines whether an implementation satisfies specified requirements. Validation evaluates whether the implemented thermodynamic behavior is adequate for the stated Validation purpose. Validation Evidence produced by these activities may support a Framework Conformance determination; Verification, Validation, and Validation Evidence do not define or replace Framework Conformance. Neither activity converts a backend-specific feature into a framework requirement.
 
 ## 10. Conformance
 
@@ -183,7 +183,7 @@ Reference Applications and Representation Consumers may demonstrate or consume a
 
 This document is the root normative specification for ThermoCore. All subsequent Framework Specification documents shall conform to it.
 
-Subsequent documents shall define the Core Architecture, Data Flow, Thermodynamic State, Material Representation, framework interfaces, and Extension Boundary at progressively greater specificity.
+Subsequent documents shall define the Core Architecture, Data Flow, Thermodynamic State, Material Representation, Framework Interfaces, and Extension Boundary at progressively greater specificity.
 
 Implementation details are intentionally excluded from this document. They may be defined in implementation documentation only when they do not replace or contradict normative Framework Specification requirements.
 

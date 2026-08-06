@@ -22,7 +22,7 @@ This document defines what Material Representation means within ThermoCore. Mate
 
 Material Representation is not Runtime State or Configuration. Representation is the information produced and owned by Material Representation.
 
-`Material_Representation.md` defines the semantics of Representation only. It shall not define rendering techniques, shaders, numerical variables, physical fields, material asset formats, storage structures, APIs, backend-specific representations, or implementation procedures.
+This document defines the Material Representation responsibility and Representation semantics only. It shall not define rendering techniques, shaders, numerical variables, physical fields, material asset formats, storage structures, APIs, backend-specific representations, or implementation procedures.
 
 ## 3. Material Representation Overview
 
