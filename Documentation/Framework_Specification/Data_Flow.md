@@ -67,6 +67,8 @@ Runtime information and configuration information shall retain distinct meanings
 
 Runtime information flow concerns information that participates in the evolution or downstream interpretation of Thermodynamic State.
 
+An Energy Source is an external provider of Energy Input. It is not a Framework Core component.
+
 The normative runtime relationships are:
 
 1. Energy Input is supplied to and consumed by Thermodynamic Computation.
