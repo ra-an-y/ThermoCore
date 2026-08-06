@@ -48,7 +48,7 @@ Thermodynamic Computation
 Material Representation
 ```
 
-This figure represents communication boundaries only. It does not define execution scheduling, APIs, middleware, synchronization, message transfer, or backend communication.
+This figure presents one example communication relationship across Framework Interfaces. It is not an exhaustive Interface topology and does not define execution scheduling, APIs, middleware, synchronization, message transfer, or backend communication.
 
 Communication shall not imply ownership. Communication shall not redefine the semantics of communicated information, modify the architecture, merge responsibilities, or alter the information flow established by the parent specifications.
 
