@@ -82,11 +82,11 @@ agent/framework-conformance
 agent/documentation-cleanup-phase2a
 docs/specification-index
 research/rq-002-evidence
-validation/v01-architecture-conformance
+validation/v01-architecture-decoupling
 feature/enthalpy-update
 fix/extension-ownership-wording
 hotfix/broken-release-reference
-release/v1.0
+release/v1.0.0
 ```
 
 A branch name shall:
@@ -147,7 +147,7 @@ Implement bounded change
       ↓
 Open Draft Pull Request
       ↓
-Review and revise
+Preliminary feedback and revision
       ↓
 Ready for Review
       ↓
@@ -221,8 +221,8 @@ If material from an abandoned branch remains useful, it should be transferred to
 Repository Guideline responsibilities are separated as follows:
 
 - `Commit_Convention.md` governs commit messages and commit history.
-- `Pull_Request_Convention.md` will govern review and merge procedures.
-- `Release_Convention.md` will govern release branches, tags, and publication.
+- `Pull_Request_Convention.md` governs review and merge procedures.
+- `Release_Convention.md` governs release branches, tags, and publication.
 - This document governs branches only.
 
 A branch name shall not replace a clear commit message, Pull Request description, release record, or authoritative document status.

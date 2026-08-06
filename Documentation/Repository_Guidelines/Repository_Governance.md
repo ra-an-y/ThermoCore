@@ -33,7 +33,7 @@ Where a change affects a Framework Specification, the content of that change rem
 
 ### 2.1 Derived Repository Convention Documents
 
-Future repository convention documents, including `Commit_Convention.md`, `Branch_Convention.md`, `Pull_Request_Convention.md`, and `Release_Convention.md`, shall derive from this document.
+The repository convention documents `Commit_Convention.md`, `Branch_Convention.md`, `Pull_Request_Convention.md`, and `Release_Convention.md` derive from this document.
 
 They may refine repository procedures within their assigned scope, but shall not redefine or contradict the repository principles established here.
 
@@ -59,19 +59,19 @@ The ThermoCore governance system separates semantic authority from repository op
 | Repository Governance | Governs how changes are contributed, reviewed, recorded, maintained, and released in the repository. |
 | Git Workflow | Operationalizes Repository Governance through commits, branches, pull requests, merges, tags, and releases. |
 
-The conceptual relationship is:
+The two governance axes are:
 
 ```text
-Framework Specifications
-          ↓
-Specification Governance
-          ↓
-Repository Governance
-          ↓
-Git Workflow
+Framework meaning:                 Repository operation:
+
+Framework Specifications           Repository Governance
+          ↓                                  ↓
+Specification Governance           Git Workflow
 ```
 
-This relationship identifies governance responsibilities. It does not make Repository Governance a Framework Specification or grant it authority to define Framework semantics.
+These axes identify distinct governance responsibilities. Repository Governance is not a child of Specification Governance, is not a Framework Specification, and has no authority to define Framework semantics.
+
+When a repository change affects Framework Specifications, both axes apply. The Framework meaning axis governs the proposed normative meaning, dependencies, ownership, and semantic preservation. The repository operation axis governs how the change is proposed, reviewed, recorded, integrated, and released.
 
 Repository Governance may require a Framework Specification change to receive appropriate review and preserve traceability. It shall not determine the architectural meaning of that change.
 
