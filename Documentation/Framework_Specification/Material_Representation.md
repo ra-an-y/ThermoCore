@@ -173,15 +173,15 @@ This document provides normative Material Representation semantics for:
 
 - `Framework_Interfaces.md`;
 - `Extension_Boundary.md`; and
-- `Verification_Specification.md`.
+- `Framework_Conformance.md`.
 
 `Framework_Interfaces.md` may refine how Representation and its applicable source information are communicated while preserving their ownership and semantics.
 
 `Extension_Boundary.md` may refine how Extension Modules interact with or provide extension-specific Representation without redefining Material Representation or reassigning its ownership.
 
-`Verification_Specification.md` may define how Conformance with Material Representation semantics, ownership, classification, lifecycle, and constraints is verified.
+`Framework_Conformance.md` defines how Conformance with Material Representation semantics, ownership, classification, lifecycle, and constraints is determined. Future Validation documents may define how evidence of that Conformance is provided.
 
-Later specifications may refine communication, extension behavior, and verification within their assigned responsibilities. They shall not redefine Material Representation, transfer its ownership, merge it with Runtime State or Configuration, or contradict the semantics and constraints established by this document.
+Later specifications may refine communication, extension behavior, Conformance, and Validation within their assigned responsibilities. They shall not redefine Material Representation, transfer its ownership, merge it with Runtime State or Configuration, or contradict the semantics and constraints established by this document.
 
 ## 9. Document Status
 

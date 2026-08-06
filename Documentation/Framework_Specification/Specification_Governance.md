@@ -5,7 +5,17 @@ Status: Normative Specification
 
 ---
 
-## 1. Purpose
+## 1. Normative Dependencies
+
+Parent Specification:
+
+- `Framework_Principles.md`
+
+Specification Governance derives its governance authority from `Framework_Principles.md`.
+
+This document does not redefine or replace the Root Specification. `Framework_Principles.md` remains authoritative as the root normative specification.
+
+## 2. Purpose
 
 This document establishes the common normative governance applicable to all ThermoCore Framework Specifications.
 
@@ -13,7 +23,7 @@ It defines how Framework Specifications preserve dependency, semantics, ownershi
 
 This document governs Framework Specifications. It does not define thermodynamic architecture, information flow, Runtime State, Representation, Framework Interfaces, Extension Modules, implementations, or verification procedures.
 
-## 2. Scope
+## 3. Scope
 
 This document governs:
 
@@ -27,7 +37,7 @@ This document governs:
 
 This document does not govern implementations and shall not prescribe implementation behavior.
 
-## 3. Specification Dependency Rule
+## 4. Specification Dependency Rule
 
 Framework Specifications shall preserve their normative dependency relationships.
 
@@ -42,7 +52,7 @@ Parent specifications remain authoritative for the concepts, responsibilities, a
 
 When multiple parent specifications apply, a child specification shall conform to all of them.
 
-## 4. Semantic Preservation Rule
+## 5. Semantic Preservation Rule
 
 Terminology shall preserve identical semantics across all Framework Specifications.
 
@@ -50,7 +60,7 @@ An established term shall not be redefined, assigned a conflicting meaning, or u
 
 A reference to an established concept incorporates its authoritative semantics and applicable constraints. Repetition shall not create an alternative definition.
 
-## 5. Ownership Preservation Rule
+## 6. Ownership Preservation Rule
 
 Each architectural responsibility and governed information category shall retain the unique ownership assigned by its authoritative specification.
 
@@ -60,7 +70,7 @@ Access to information shall not imply ownership of that information, its governi
 
 A later specification shall not create a second owner for an established responsibility or information category.
 
-## 6. Information Flow Rule
+## 7. Information Flow Rule
 
 Information Flow defines semantic movement among framework responsibilities and applicable external consumers.
 
@@ -76,7 +86,7 @@ A conceptual sequence or arrow in a Framework Specification shall preserve seman
 
 Information movement shall not transfer ownership, change semantics, merge responsibilities, or imply modification authority.
 
-## 7. State Semantics Rule
+## 8. State Semantics Rule
 
 Runtime State, Configuration, and Representation are distinct normative concepts.
 
@@ -86,7 +96,7 @@ Runtime State, Configuration, and Representation are distinct normative concepts
 
 None shall replace, absorb, or be reclassified as another. Communication or dependency among them shall not merge their identities, semantics, or ownership.
 
-## 8. Interface Governance Rule
+## 9. Interface Governance Rule
 
 Framework Interfaces preserve communication across applicable architectural boundaries.
 
@@ -102,7 +112,7 @@ Communication through Framework Interfaces shall preserve the semantics, ownersh
 
 Communication shall never imply ownership.
 
-## 9. Extension Governance Rule
+## 10. Extension Governance Rule
 
 Extension Modules may refine framework capability only within applicable extension boundaries.
 
@@ -116,7 +126,7 @@ An Extension Module:
 
 A capability shall not become part of the Framework Core solely because an Extension Module communicates with or depends on it.
 
-## 10. Single Source of Truth Rule
+## 11. Single Source of Truth Rule
 
 Every normative concept shall have exactly one authoritative specification.
 
@@ -126,7 +136,7 @@ If a normative concept requires a change, the change shall be made through its a
 
 References, summaries, and constraints in later specifications shall preserve the authoritative semantics.
 
-## 11. Separation of Concerns Rule
+## 12. Separation of Concerns Rule
 
 Each Framework Specification shall define only its assigned architectural concern.
 
@@ -136,7 +146,7 @@ Refinement shall remain limited to the authority assigned by the parent specific
 
 Separation of concerns shall preserve distinct specification authority for architecture, Information Flow, Runtime State, Representation, Framework Interfaces, extension boundaries, and verification.
 
-## 12. Documentation Rule
+## 13. Documentation Rule
 
 Framework Specifications shall remain:
 
@@ -160,7 +170,7 @@ Documentation maintenance shall preserve normative dependencies, terminology, ow
 
 A documentation revision shall not alter normative meaning indirectly through terminology drift, duplicated definitions, omitted dependencies, or reassignment of responsibility.
 
-## 13. Document Status
+## 14. Document Status
 
 This document is the normative governance specification for ThermoCore Framework Specifications.
 
