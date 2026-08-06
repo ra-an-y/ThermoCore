@@ -3,9 +3,16 @@
 Version: 1.0  
 Status: Documentation Cleanup Report  
 Cleanup Phase: Documentation Cleanup v1.0 — Phase 2A  
-Source Audit: `Cross_Reference_Audit_v1.0.md`
+Source Audit: `Cross_Reference_Audit_v1.0.md`  
+Source Baseline Commit: `6c7f6120976554cd0b5cccc554f3f577319f8ab6`  
+Source Pull Request: [#12 — Add cross-reference audit report](https://github.com/ra-an-y/ThermoCore/pull/12)  
+Resulting Pull Request: [#13 — Apply documentation integrity cleanup](https://github.com/ra-an-y/ThermoCore/pull/13)  
+Resulting Commit: `927f530a766696b1bbdd928b9b6f26c1a1d02d18`  
+Cleanup Date: 2026-08-06
 
 ---
+
+> Historical baseline notice: This report records the result for the identified historical baseline and the bounded Phase 2A cleanup only. It does not certify later repository states.
 
 ## 1. Purpose
 

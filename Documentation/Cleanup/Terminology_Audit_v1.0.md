@@ -2,9 +2,16 @@
 
 Version: 1.0  
 Status: Documentation Cleanup Report  
-Cleanup Phase: Documentation Cleanup v1.0 — Phase 2B
+Cleanup Phase: Documentation Cleanup v1.0 — Phase 2B  
+Audited Baseline Commit: `927f530a766696b1bbdd928b9b6f26c1a1d02d18`  
+Source Pull Request: [#13 — Apply documentation integrity cleanup](https://github.com/ra-an-y/ThermoCore/pull/13)  
+Resulting Pull Request: [#14 — Add framework vocabulary and terminology audit](https://github.com/ra-an-y/ThermoCore/pull/14)  
+Resulting Commit: `d73cc2c559f7dc982af326655606f8f3a35a4420`  
+Audit Date: 2026-08-06
 
 ---
+
+> Historical baseline notice: This report records the result for the identified historical baseline. It does not certify later repository states.
 
 ## 1. Overall Result
 
@@ -140,7 +147,7 @@ Adopt `Framework_Vocabulary.md` as the Framework Vocabulary v1.0 reference for f
 
 Documentation Cleanup v1.0 may proceed to its next phase. The candidate items in Section 6 may be handled in a separate editorial cleanup only after each occurrence is reviewed in context.
 
-No terminology shall be mechanically replaced. Any future edit shall preserve the Definition Owner, Primary Specification, architecture, ownership, governance, and normative semantics recorded by the Framework Specification System.
+Consistent with `Specification_Governance.md`, terminology should be reviewed in context rather than mechanically replaced. Applicable preservation requirements remain defined by that authoritative specification; this historical report does not independently create them.
 
 ## 8. Semantic Change Confirmation
 

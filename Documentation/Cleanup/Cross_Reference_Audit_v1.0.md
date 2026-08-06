@@ -3,9 +3,17 @@
 Version: 1.0  
 Status: Documentation Audit  
 Audit Phase: Documentation Cleanup v1.0 — Phase 1  
-Audited Baseline: `main`
+Audited Baseline Commit: `a5a63a8d096b5822a56dc3092dfd7215c723db93`  
+Source Pull Request: [#11 — Add framework conformance specification](https://github.com/ra-an-y/ThermoCore/pull/11)  
+Resulting Pull Request: [#12 — Add cross-reference audit report](https://github.com/ra-an-y/ThermoCore/pull/12)  
+Resulting Commit: `6c7f6120976554cd0b5cccc554f3f577319f8ab6`  
+Audit Date: 2026-08-06
 
 ---
+
+> Historical baseline notice: This report records the result for the identified historical baseline. It does not certify later repository states.
+>
+> Resolution record: [`Integrity_Cleanup_v1.0.md`](Integrity_Cleanup_v1.0.md) records the bounded Phase 2A cleanup that addressed the findings reported here.
 
 ## 1. Audit Scope
 

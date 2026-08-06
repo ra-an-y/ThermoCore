@@ -2,13 +2,13 @@
 
 Materials exists to contain material definitions and related repository artifacts used by ThermoCore.
 
-It keeps material-specific representation resources separate from Framework implementation, research investigation, and authoritative specification text.
+It keeps material-specific configuration artifacts separate from Framework implementation, research investigation, and authoritative specification text.
 
 ---
 
 # Scope
 
-This directory is responsible for material definitions, material-related profiles, and supporting artifacts whose primary responsibility is to represent material-specific information.
+This directory is responsible for material definitions, material-related profiles, and supporting artifacts that carry material-specific configuration information.
 
 Framework solver implementation, general Framework semantics, research evidence, test logic, and Validation conclusions do not belong here.
 

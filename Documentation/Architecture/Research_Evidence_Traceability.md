@@ -1,5 +1,18 @@
 # Research Evidence Traceability Workflow
 
+Version: 1.0  
+Status: Informational Research Workflow Guidance
+
+---
+
+## Document Status
+
+This document records research evidence traceability and the intended evidence workflow.
+
+It is not a Framework Specification. It is not a Repository Guideline. It does not independently create normative Framework requirements.
+
+The workflow represents the intended complete evidence chain. It does not prove that every illustrated artifact currently exists or is complete.
+
 ## Figure Purpose
 
 This figure documents the ThermoCore literature-identification and evidence-traceability workflow. It shows how uniquely identifiable external sources enter the Source Registry, move through research synthesis artifacts, support Research Gap Analysis, and inform Framework Specification only after Framework Decision Review.
@@ -36,7 +49,7 @@ Research findings do not directly modify the Framework. The required transition 
 
 `Research Evidence → Research Gap Analysis → Framework Decision Review → Framework Specification`
 
-Framework Decision Review separates descriptive research analysis from normative specification. A single new source therefore cannot directly establish or change a Framework requirement. Candidate findings must be evaluated with the accumulated evidence before they are adopted as framework decisions.
+Framework Decision Review is a conceptual review gate separating descriptive research analysis from normative specification. It does not require a mandatory standalone file. A single new source therefore cannot directly establish or change a Framework requirement. Candidate findings are evaluated with the accumulated evidence before adoption through the applicable authoritative specification process.
 
 ## Figure
 

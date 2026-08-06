@@ -26,7 +26,7 @@ flowchart TD
     SG["Specification_Governance.md"]
     EB["Extension_Boundary.md"]
     FC["Framework_Conformance.md"]
-    VE["Validation Evidence (Validation/)"]
+    VE["Future Validation Evidence"]
 
     FP --> CA
     FP --> SG
@@ -88,7 +88,7 @@ Framework Specifications define normative requirements.
 
 Validation provides evidence relevant to the applicable Framework Specifications and Framework Conformance. Validation Evidence supports a Conformance determination; it does not define, replace, or modify the normative requirements or Conformance semantics.
 
-Validation documents in `Validation/` shall reference the applicable documents in the Framework Specification System and identify the requirements or Conformance concerns for which evidence is provided.
+The applicable authoritative Framework Specifications require future Validation documents to reference the relevant specifications and identify the requirements or Conformance concerns for which evidence is provided. No `Validation/` directory is represented here as a currently published artifact.
 
 Verification and Validation remain distinct activities as established by `Framework_Principles.md` and indexed by `Framework_Vocabulary.md`.
 
@@ -111,23 +111,23 @@ The following diagram shows how the Framework Specification System supports late
 flowchart TD
     FS["Framework Specifications"]
     FC["Framework Conformance"]
-    V["Validation"]
+    VE["Validation Evidence"]
     RA["Reference Applications"]
-    FE["Future Extensions"]
+    FE["Future Extension Work"]
 
     FS --> FC
-    FC --> V
-    V --> RA
-    RA --> FE
+    FC --> VE
+    FS --> RA
+    FS --> FE
 ```
 
-This diagram is informational. It represents a downstream documentation and development relationship, not a normative dependency graph, execution sequence, maturity requirement, or mandatory release pipeline.
+This diagram is informational. It shows non-linear relationships among specifications, Conformance, evidence, applications, and extension work. It does not define a normative dependency graph, execution sequence, maturity requirement, mandatory workflow, or release pipeline.
 
-Framework Specifications are the normative basis for subsequent work. Framework Conformance defines how satisfaction of applicable requirements is determined. Validation provides evidence concerning those requirements and Conformance concerns.
+Framework Specifications are the normative basis for subsequent work. Framework Conformance defines how satisfaction of applicable requirements is determined. Validation Evidence may support that determination. Reference Applications and future extension work relate directly to the Framework Specifications without depending on completion of one another.
 
 Demo and Sandbox artifacts are Reference Applications. They may demonstrate, exercise, or consume a conforming implementation, but they do not define Framework behavior or Framework Conformance.
 
-Future capabilities shall first be evaluated against the existing Core and Extension boundaries. Capabilities that satisfy the Extension Module semantics defined by [`Extension_Boundary.md`](Framework_Specification/Extension_Boundary.md) extend the framework without redefining the Framework Core. A proposed change that alters the Core is a Framework Specification change and remains subject to [`Specification_Governance.md`](Framework_Specification/Specification_Governance.md).
+The authoritative requirements for evaluating future capabilities against existing Core and Extension boundaries are defined by [`Extension_Boundary.md`](Framework_Specification/Extension_Boundary.md) and [`Specification_Governance.md`](Framework_Specification/Specification_Governance.md). This index does not create additional extension or specification-change requirements.
 
 ## 8. Document Status
 

@@ -1,8 +1,16 @@
 # Research Gap Analysis
 
 Version: 0.1  
-Status: Research Draft  
+Status: Completed Initial RQ-001 Analysis — Non-Normative Historical Record  
 Research Question: RQ-001
+
+---
+
+## Historical Naming Note
+
+`Decoupled Thermodynamic Simulation Framework (DTS)` was the working project name used during this research phase. The current repository and Framework name is ThermoCore.
+
+The historical body retains DTS terminology where it records the framing used at that time. This note supplies the current naming context without rewriting the original analysis.
 
 ---
 
@@ -252,23 +260,30 @@ When uncertainty exists, preservation of the stable thermodynamic core takes pre
 
 ## Evidence Boundary
 
-This analysis is limited to the findings consolidated in the following project artifacts:
+### Research Evidence Basis
+
+This analysis is limited to findings consolidated during the research phase through the following project artifacts:
 
 - Literature Survey
 - Evidence Matrix
 - Architecture Comparison Matrix
 - Architecture Pattern Matrix
 - Framework Evidence Summary
-- Framework Principles
+
+These referenced artifacts are not all currently published in this repository. Their mention records the evidence chain used during the analysis; it does not claim that every artifact is presently available or complete in the repository.
 
 The document does not independently extend the literature set, infer absence from unreviewed frameworks, or convert recurring patterns into novelty claims.
+
+### Normative Reference
+
+`Framework_Principles.md` is the normative reference for the current Framework baseline. It is not classified as external research evidence for this analysis.
 
 ---
 
 ## Document Status
 
-This document completes the initial research-gap analysis step of RQ-001 and provides input to subsequent Framework Specification work.
+The initial RQ-001 research-gap analysis phase recorded by this artifact was completed.
 
-It is non-normative. Where this document and the normative Framework Principles differ in authority, the Framework Principles govern the current framework baseline. Candidate findings in this document require explicit review before they may modify or extend that baseline.
+This document remains a non-normative historical research record. Where it and the current normative Framework Specifications differ in authority, the applicable Framework Specification governs the current Framework baseline. Candidate findings in this document require explicit review before they may modify or extend that baseline.
 
-Completion of this document concludes the analytical phase of RQ-001 and provides the transition into Framework Specification.
+Later research versions should be created as separate versioned artifacts and should not overwrite `Research_Gap_Analysis_v0.1.md`.
