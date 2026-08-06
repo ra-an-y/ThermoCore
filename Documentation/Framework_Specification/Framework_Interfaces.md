@@ -163,13 +163,13 @@ Use of a Framework Interface shall not permit an Extension Module to redefine, b
 This document provides normative Framework Interface semantics for:
 
 - `Extension_Boundary.md`; and
-- `Verification_Specification.md`.
+- `Framework_Conformance.md`.
 
 `Extension_Boundary.md` may refine how Extension Modules communicate with the Framework Core through applicable Framework Interfaces while preserving ownership, semantics, responsibilities, and information flow.
 
-`Verification_Specification.md` may define how Conformance with Framework Interface semantics, responsibilities, communication boundaries, governance rules, and constraints is verified.
+`Framework_Conformance.md` defines how Conformance with Framework Interface semantics, responsibilities, communication boundaries, governance rules, and constraints is determined. Future Validation documents may define how evidence of that Conformance is provided.
 
-Later specifications may refine extension communication and verification within their assigned responsibilities. They shall not redefine Framework Interfaces, transfer ownership through communication, change communicated information semantics, or contradict the boundaries and constraints established by this document.
+Later specifications may refine extension communication, Conformance, and Validation within their assigned responsibilities. They shall not redefine Framework Interfaces, transfer ownership through communication, change communicated information semantics, or contradict the boundaries and constraints established by this document.
 
 ## 9. Document Status
 
