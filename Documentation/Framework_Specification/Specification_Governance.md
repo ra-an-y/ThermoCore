@@ -144,7 +144,7 @@ Responsibilities, semantics, constraints, or procedures assigned to another spec
 
 Refinement shall remain limited to the authority assigned by the parent specifications and the declared purpose and scope of the refining document.
 
-Separation of concerns shall preserve distinct specification authority for architecture, Information Flow, Runtime State, Representation, Framework Interfaces, extension boundaries, and verification.
+Separation of concerns shall preserve distinct specification authority for architecture, Information Flow, Runtime State, Representation, Framework Interfaces, extension boundaries, and Framework Conformance.
 
 ## 13. Documentation Rule
 
