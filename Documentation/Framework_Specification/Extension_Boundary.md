@@ -190,11 +190,11 @@ An implementation choice made by an Extension Module shall not become a Framewor
 
 ## 9. Relationship to Conformance and Validation
 
-`Framework_Conformance.md` determines Framework Core Conformance independently of Extension Modules. Future Validation documents provide evidence of that Conformance.
+Framework Conformance does not require the presence of an Extension Module. The Framework Core remains complete without Extension Modules.
 
-The absence of an Extension Module shall not prevent determination of Framework Core Conformance. The presence of an Extension Module shall not by itself establish or invalidate Framework Core Conformance; the applicable framework boundaries shall remain subject to Conformance determination.
+When an implementation includes an Extension Module, the applicable Extension requirements form part of the Framework Conformance determination. The presence of an Extension Module does not by itself establish or invalidate Framework Conformance.
 
-Extension-specific Validation belongs to future Validation documents. It shall not redefine the Extension semantics, ownership boundaries, Communication requirements, or governance rules established by this document.
+Future Validation documents may provide evidence relevant to Framework Conformance and stated Validation purposes. Extension-specific Validation shall not redefine the Extension semantics, ownership boundaries, Communication requirements, or governance rules established by this document.
 
 ## 10. Document Status
 
