@@ -79,11 +79,13 @@ An Extension Module may interpret framework information only for its assigned ex
 
 Ownership shall remain separate between the Framework Core and each Extension Module.
 
-The Framework Core retains the ownership assigned by the parent specifications, including:
+The ownership assignments established by the parent specifications shall remain unchanged.
 
-- Runtime State;
-- Representation; and
-- Communication semantics.
+In particular:
+
+- Thermodynamic State retains ownership of Runtime State;
+- Material Representation retains ownership of Representation; and
+- Framework Interfaces retain their assigned communication responsibility without owning the information they communicate.
 
 Each Extension Module owns only:
 
@@ -91,7 +93,7 @@ Each Extension Module owns only:
 - information produced solely for its extension-specific responsibility; and
 - interpretation performed solely for its extension-specific purpose.
 
-Extension-owned information shall remain distinct from Runtime State, Representation, and Configuration governed by the Framework Core. An Extension Module shall not reclassify extension-owned information as framework-owned information or framework-owned information as extension-owned information.
+Extension-owned information shall remain distinct from Runtime State, Representation, and Configuration governed by their applicable authoritative specifications and ownership assignments. An Extension Module shall not reclassify extension-owned information as framework-owned information or framework-owned information as extension-owned information.
 
 Reading, supplying, communicating, consuming, or interpreting information shall not transfer, duplicate, or reassign ownership.
 
