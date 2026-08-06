@@ -8,9 +8,9 @@ It helps readers locate authoritative documents, supporting records, and reposit
 
 # Scope
 
-This directory is responsible for documentation whose primary purpose is to explain repository artifacts, their terminology, their status, or their relationships.
+This directory may contain documents that define Framework specifications, govern repository practices, explain repository artifacts, record decisions or historical work, and provide navigation for repository concerns.
 
-Research investigation, Framework implementation, material definitions, tests, and example applications do not belong here merely because they may be described by documentation.
+Research investigation, Framework implementation, material definitions, tests, and example applications do not belong here merely because documentation may describe them. The authority of any document is determined by its declared status and applicable dependencies, not by its location in this directory.
 
 ---
 

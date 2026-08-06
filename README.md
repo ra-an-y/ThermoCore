@@ -32,25 +32,37 @@ Material Representation
 
 ---
 
-## Validation
+## Documentation
 
-The framework is evaluated through a staged validation series.
+- [Specification Index](Documentation/Specification_Index.md)
+- [Framework Vocabulary](Documentation/Framework_Vocabulary.md)
+- [Repository Governance](Documentation/Repository_Guidelines/Repository_Governance.md)
+- [Research Guide](Research/README.md)
 
-| Validation | Purpose | Status |
+---
+
+## Validation Evidence
+
+The table reports Validation Evidence currently published in this repository. It does not represent assumed local progress or unpublished work.
+
+| Validation | Purpose | Repository-published Evidence |
 |---|---|---|
-| V01 | Architecture Decoupling | In development |
-| V02 | Continuous Phase Transition | Planned |
-| V03 | Thermodynamic State | Planned |
-| V04 | Energy Consistency | Planned |
-| V05 | Performance | Planned |
+| V01 | Architecture Decoupling | Not published |
+| V02 | Continuous Phase Transition | Not published |
+| V03 | Thermodynamic State | Not published |
+| V04 | Energy Consistency | Not published |
+
+A status in this table indicates repository publication only. Framework Conformance and Validation conclusions remain governed by their applicable authoritative artifacts.
 
 ---
 
 ## Repository Status
 
-Current development focuses on establishing the framework architecture and validating the thermodynamic computation model.
+The Framework Specification and repository governance baselines have been established.
 
-Future releases will include additional validation reports and demonstration scenes.
+Current work concerns implementation preparation, Framework Validation preparation, evidence development, and supporting documentation.
+
+Future releases may publish additional Validation Evidence and optional Reference Applications. Reference Applications are not mandatory release contents.
 
 ---
 

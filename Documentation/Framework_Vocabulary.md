@@ -7,7 +7,7 @@ Status: Framework Vocabulary v1.0
 
 ## Purpose
 
-This document records the authoritative normative architectural terminology used by the ThermoCore Framework Specifications.
+This document records the authoritative normative terminology used by the ThermoCore Framework Specifications.
 
 It identifies the Definition Owner, Primary Specification, and first normative introduction of each term. It does not redefine any term or replace its authoritative specification.
 
@@ -74,7 +74,7 @@ It identifies the Definition Owner, Primary Specification, and first normative i
 | Framework Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Principles.md` |
 | Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Principles.md` |
 | Non-conformance | Framework Conformance | `Framework_Conformance.md` | `Core_Architecture.md` |
-| Validation | Framework Conformance | `Framework_Conformance.md` | `Framework_Principles.md` |
+| Validation | Framework Principles | `Framework_Principles.md` | `Framework_Principles.md` |
 | Validation Evidence | Framework Conformance | `Framework_Conformance.md` | `Framework_Conformance.md` |
 | Verification | Framework Principles | `Framework_Principles.md` | `Framework_Principles.md` |
 | Conformance Independence Rule | Framework Conformance | `Framework_Conformance.md` | `Framework_Conformance.md` |
@@ -98,7 +98,7 @@ It identifies the Definition Owner, Primary Specification, and first normative i
 
 ## Usage Notes
 
-Later Framework Specifications, Validation documents, README material, and academic writing shall reference the authoritative terminology recorded here. They shall not redefine it.
+Later Framework Specifications, Validation documents, README material, and academic writing may use this document to locate authoritative terminology. Requirements concerning terminology preservation and redefinition remain established by the applicable Framework Specifications, including `Specification_Governance.md`; this Vocabulary does not independently create them.
 
 The Definition Owner identifies the normative concern that governs a term. The Primary Specification is the authoritative document for that concern. First Introduced records the earliest normative Framework Specification in which the concept appears; it does not transfer definition ownership or create a second authoritative source.
 
