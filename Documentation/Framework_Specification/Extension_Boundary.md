@@ -202,4 +202,4 @@ It is the authoritative specification for Extension Module semantics and boundar
 
 Later specifications may reference and refine these semantics within their assigned scope. They shall not redefine the Framework Core, Extension Modules, extension ownership, extension Communication, or the boundaries established here.
 
-This specification defines extension semantics only. Extension implementations, algorithms, APIs, programming interfaces, numerical formulations, plugins, rendering systems, execution mechanisms, backend-specific behavior, and Unity-specific concepts are intentionally outside its scope.
+This specification defines extension semantics only. Extension implementations, algorithms, APIs, programming interfaces, numerical formulations, rendering systems, execution mechanisms, backend-specific behavior, and Unity-specific concepts are intentionally outside its scope.
