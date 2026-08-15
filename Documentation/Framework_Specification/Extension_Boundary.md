@@ -23,11 +23,11 @@ It shall not redefine the Framework Core, architecture, ownership, Runtime State
 
 ## 2. Purpose
 
-This document defines what an Extension Module means within ThermoCore.
+This document defines the normative semantics, responsibilities, ownership boundaries, and constraints of Extension Modules within ThermoCore.
 
-Extension Modules provide optional capability outside the Framework Core. The Framework Core shall remain complete, valid, and conforming without any Extension Module.
+Extension Modules provide optional capability outside the Framework Core. The Framework Core shall remain complete, valid, and conforming without them.
 
-`Extension_Boundary.md` defines extension semantics only. It shall not define extension implementations, algorithms, APIs, programming interfaces, numerical formulations, rendering techniques, execution mechanisms, or backend-specific behavior.
+This specification does not prescribe extension implementations, algorithms, APIs, programming interfaces, numerical formulations, rendering techniques, execution mechanisms, or backend-specific behavior.
 
 ## 3. Extension Overview
 
@@ -198,10 +198,8 @@ Future Validation documents may provide evidence relevant to Framework Conforman
 
 ## 10. Document Status
 
-This document is a normative Framework Specification derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, `Thermodynamic_State.md`, `Material_Representation.md`, `Framework_Interfaces.md`, and `Specification_Governance.md`.
+This document is the authoritative normative Framework Specification for Extension Module semantics and boundaries within ThermoCore, derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, `Thermodynamic_State.md`, `Material_Representation.md`, `Framework_Interfaces.md`, and `Specification_Governance.md`.
 
-It is the authoritative specification for Extension Module semantics and boundaries within ThermoCore.
+Later specifications may refine Extension Module semantics within their assigned scope but shall not redefine the Framework Core, Extension Modules, extension ownership, extension Communication, or the boundaries established by the parent specifications and this document.
 
-Later specifications may reference and refine these semantics within their assigned scope. They shall not redefine the Framework Core, Extension Modules, extension ownership, extension Communication, or the boundaries established here.
-
-This specification defines extension semantics only. Extension implementations, algorithms, APIs, programming interfaces, numerical formulations, rendering systems, execution mechanisms, backend-specific behavior, and Unity-specific concepts are intentionally outside its scope.
+Extension implementations, algorithms, APIs, programming interfaces, numerical formulations, rendering systems, execution mechanisms, backend-specific behavior, and Unity-specific concepts are intentionally outside the scope of this specification.
