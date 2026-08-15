@@ -24,13 +24,11 @@ Each parent specification remains authoritative for the normative concepts and r
 
 ## 2. Purpose
 
-This document defines Framework Conformance for ThermoCore.
+This document defines the normative semantics of Framework Conformance within ThermoCore.
 
-Framework Conformance determines whether an implementation satisfies all applicable normative requirements of the Framework Specifications.
+Framework Conformance determines whether an implementation satisfies all applicable normative requirements of the Framework Specifications. It evaluates specification adherence, not implementation quality, numerical accuracy, performance, or suitability for a particular use.
 
-Framework Conformance evaluates adherence to specification. It does not evaluate implementation quality, numerical accuracy, performance, or suitability for a particular use.
-
-This document defines Conformance semantics only. It does not define implementation techniques, numerical methods, Validation procedures, APIs, backend behavior, or test cases.
+This specification does not prescribe implementation techniques, numerical methods, Validation procedures, APIs, backend behavior, or test cases.
 
 ## 3. Conformance Philosophy
 
@@ -157,8 +155,8 @@ Framework Specifications define the applicable normative requirements. Framework
 
 ## 10. Document Status
 
-This document is the authoritative specification for Framework Conformance within ThermoCore.
+This document is the authoritative normative Framework Specification for Framework Conformance within ThermoCore.
 
 Later Validation documents shall reference this document and the applicable authoritative Framework Specifications. They shall not redefine Framework Conformance, weaken applicable normative requirements, or establish alternative Conformance semantics.
 
-This document defines Conformance semantics only. Implementation details, algorithms, APIs, test procedures, numerical methods, performance criteria, and backend-specific behavior are intentionally outside its scope.
+Implementation details, algorithms, APIs, test procedures, numerical methods, performance criteria, and backend-specific behavior are intentionally outside the scope of this specification.
