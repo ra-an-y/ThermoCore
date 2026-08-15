@@ -7,11 +7,11 @@ Status: Normative Specification
 
 ## 1. Purpose
 
-ThermoCore defines the highest-level architectural principles for a reusable thermodynamic simulation framework. It establishes the responsibilities, boundaries, and relationships that all subsequent Framework Specification documents shall preserve.
+This document establishes the highest-level normative architectural principles for ThermoCore and the responsibilities, boundaries, and relationships that all subsequent Framework Specifications shall preserve.
 
 ThermoCore is engine-agnostic, implementation-agnostic, GPU-oriented, and reusable. GPU-oriented describes an architectural objective and does not require any particular GPU API, execution model, or backend.
 
-This framework specifies architectural principles rather than prescribing a specific implementation or numerical method.
+This specification defines architectural principles without prescribing a particular implementation or numerical method.
 
 ## 2. Scope
 
@@ -30,7 +30,7 @@ The Framework Specification defines how these responsibilities are separated and
 ThermoCore has the following architectural goals:
 
 1. Separate thermodynamic computation from Material Representation.
-2. Keep thermodynamic computation independent of material-specific simulation logic.
+2. Keep Thermodynamic Computation independent of material-specific simulation logic.
 3. Preserve engine-agnostic and implementation-agnostic architecture.
 4. Maintain a stable framework core with explicit responsibilities.
 5. Support extensions through explicitly defined coupling boundaries.
@@ -55,9 +55,9 @@ Possible future extensions are not part of the current framework scope merely be
 
 ### 5.1 Separation of Computation and Representation
 
-Thermodynamic computation and Material Representation shall remain separate architectural responsibilities.
+Thermodynamic Computation and Material Representation shall remain separate architectural responsibilities.
 
-Thermodynamic computation shall evolve Thermodynamic State. Material Representation shall interpret thermodynamic and material information for downstream use without assuming ownership of thermodynamic state evolution.
+Thermodynamic Computation shall evolve Thermodynamic State. Material Representation shall interpret thermodynamic and material information for downstream use without assuming ownership of thermodynamic state evolution.
 
 ### 5.2 Minimal Persistent State
 
@@ -188,5 +188,3 @@ Subsequent documents shall define the Core Architecture, Data Flow, Thermodynami
 Implementation details are intentionally excluded from this document. They may be defined in implementation documentation only when they do not replace or contradict normative Framework Specification requirements.
 
 Research findings and candidate ideas are non-normative. They shall remain in Research until they complete the required evidence and framework-decision process and are formally adopted into the Framework Specification.
-
-This document shall be treated as the normative parent specification for all subsequent Framework Specification documents.
