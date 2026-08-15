@@ -21,20 +21,15 @@ It shall not redefine the architecture, ownership, Runtime State, Representation
 
 ## 2. Purpose
 
-This document defines what Framework Interfaces mean within ThermoCore. Framework Interfaces are the architectural communication boundaries that enable communication among applicable framework responsibilities while preserving ownership, semantics, and responsibility boundaries.
+This document defines the normative communication semantics, responsibilities, boundaries, ownership-preservation rules, and constraints of Framework Interfaces within ThermoCore.
 
-Framework Interfaces are not Runtime State, Representation, or Configuration. Communication through Framework Interfaces shall not convert communicated information into an Interface responsibility or transfer ownership of that information.
+Framework Interfaces are architectural communication boundaries among applicable framework responsibilities. They do not acquire ownership of Runtime State, Representation, or Configuration by communicating that information, and communication through them does not transfer ownership.
 
-`Framework_Interfaces.md` defines communication semantics only. It shall not define APIs, function signatures, protocols, synchronization mechanisms, middleware, message formats, backend communication, or implementation details.
+This specification does not prescribe APIs, function signatures, protocols, synchronization mechanisms, middleware, message formats, backend communication, or implementation details.
 
 ## 3. Framework Interface Overview
 
-Framework Interfaces exist to enable communication while maintaining:
-
-- ownership;
-- semantics;
-- architectural responsibility; and
-- information flow.
+Framework Interfaces enable communication while preserving the ownership, semantics, architectural responsibilities, and information flow established by the applicable parent specifications.
 
 The conceptual communication relationship is:
 
@@ -103,7 +98,7 @@ Communicate does not imply modification, ownership transfer, responsibility tran
 
 Consume means that an applicable framework responsibility or Representation Consumer uses communicated information for a purpose permitted by the Framework Specification.
 
-Consume does not imply ownership, modification, responsibility transfer, or membership in the framework core.
+Consume does not imply ownership, modification, responsibility transfer, or membership in the Framework Core.
 
 Write is not a Framework Interface semantic. The authority to write information belongs only to the owner or responsibility explicitly permitted by the applicable parent specification. Communication through a Framework Interface shall not grant write authority.
 
@@ -125,7 +120,7 @@ The following constraints are normative:
 12. Reading, supplying, communicating, or consuming information shall not imply ownership.
 13. Communication shall not grant modification authority.
 14. Write authority shall remain with the owner or responsibility explicitly permitted by the applicable parent specification.
-15. A Representation Consumer shall remain outside the framework core when consuming information through Framework Interfaces.
+15. A Representation Consumer shall remain outside the Framework Core when consuming information through Framework Interfaces.
 16. An Extension Module shall not use Framework Interfaces to violate or bypass core ownership, semantics, responsibilities, or information flow.
 
 These constraints are conceptual and apply independently of implementation technique, numerical formulation, storage model, execution backend, or communication mechanism.
@@ -173,10 +168,8 @@ Later specifications may refine extension communication, Conformance, and Valida
 
 ## 9. Document Status
 
-This document is a normative Framework Specification derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, `Thermodynamic_State.md`, and `Material_Representation.md`.
+This document is the authoritative normative Framework Specification for Framework Interfaces, derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, `Thermodynamic_State.md`, and `Material_Representation.md`.
 
-It is the authoritative specification for the semantics of Framework Interfaces. Later specifications may reference these semantics but shall not redefine them.
+Later Framework Specifications and conforming implementations shall preserve the communication responsibilities, ownership-preservation rules, semantic relationships, governance rules, and constraints established by the parent specifications and this document. Later specifications may refine Framework Interfaces within their assigned scope but shall not redefine their authoritative semantics.
 
-Conforming implementations and subsequent Framework Specification documents shall preserve the communication responsibilities, ownership-preservation rules, semantic relationships, governance rules, and constraints defined here.
-
-This specification defines communication semantics only. APIs, function signatures, protocols, synchronization mechanisms, middleware, message formats, backend-specific communication, Unity-specific concepts, and implementation details are intentionally outside its scope.
+APIs, function signatures, protocols, synchronization mechanisms, middleware, message formats, backend-specific communication, Unity-specific concepts, and implementation details are intentionally outside the scope of this specification.
