@@ -17,17 +17,17 @@ This document conforms to the parent specifications and refines only the normati
 
 ## 2. Purpose
 
-This document defines what Thermodynamic State means within ThermoCore. Thermodynamic State represents the evolving runtime thermodynamic condition governed by the framework.
+This document defines the normative semantics, ownership, classification, and lifecycle of Thermodynamic State within ThermoCore.
 
-Thermodynamic State is Runtime State. It is not Configuration. It is not Representation.
+Thermodynamic State is Runtime State. It is not Configuration or Representation.
 
-This document defines Runtime State semantics only. It does not define numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, or implementation procedures.
+This specification does not prescribe numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, or implementation procedures.
 
 ## 3. Thermodynamic State Overview
 
-Thermodynamic State represents the current thermodynamic condition governed by ThermoCore. It is the framework information whose evolution is determined by Thermodynamic Computation and whose interpretation may be performed by Material Representation.
+Thermodynamic State is the framework information whose evolution is determined by Thermodynamic Computation and whose interpretation may be performed by Material Representation.
 
-Thermodynamic State is distinct from both the reusable information that configures framework responsibilities and the interpretation supplied for downstream consumption.
+It remains distinct from the reusable Configuration supplied to framework responsibilities and from Representation produced for downstream consumption.
 
 This specification does not prescribe which quantities constitute Thermodynamic State, how those quantities are expressed, where they reside, or how they are accessed.
 
@@ -163,10 +163,8 @@ Later specifications may refine interpretation, communication, and extension beh
 
 ## 9. Document Status
 
-This document is a normative Framework Specification derived from `Framework_Principles.md`, `Core_Architecture.md`, and `Data_Flow.md`.
+This document is the authoritative normative Framework Specification for Thermodynamic State, derived from `Framework_Principles.md`, `Core_Architecture.md`, and `Data_Flow.md`.
 
-It defines the Thermodynamic State semantics to which later Framework Specification documents and conforming implementations shall adhere. Later specifications may refine Thermodynamic State only within the architecture, information flow, ownership, classification, lifecycle, and constraints established by the parent specifications and this document.
+Later Framework Specifications and conforming implementations shall preserve the architecture, information flow, ownership, classification, lifecycle, and constraints established by the parent specifications and this document. Later specifications may refine Thermodynamic State within their assigned scope but shall not redefine its authoritative semantics.
 
-This document is the authoritative specification for the semantics of Thermodynamic State. Later specifications may reference these semantics but shall not redefine them.
-
-This specification defines semantics only. Numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, and implementation details are intentionally outside its scope.
+Numerical variables, physical fields, algorithms, storage structures, memory layouts, serialization, APIs, backend-specific representations, and implementation details are intentionally outside the scope of this specification.
