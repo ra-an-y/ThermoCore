@@ -106,7 +106,7 @@ Energy Input is runtime input to Thermodynamic Computation. Thermodynamic Comput
 ```text
 Material Definition
       ↓
-Framework Configuration Interfaces
+Framework Interfaces
       ├──→ Thermodynamic Computation
       └──→ Material Representation
 ```
