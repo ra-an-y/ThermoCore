@@ -17,11 +17,11 @@ This document does not redefine or replace the Root Specification. `Framework_Pr
 
 ## 2. Purpose
 
-This document establishes the common normative governance applicable to all ThermoCore Framework Specifications.
+This document establishes the common normative governance for the development and maintenance of ThermoCore Framework Specifications.
 
-It defines how Framework Specifications preserve dependency, semantics, ownership, architecture, information, scope, and documentation consistency as the specification set is refined and maintained.
+It defines how Framework Specifications preserve dependency relationships, semantics, ownership, architecture, information, separation of concerns, and documentation consistency as the specification set is refined and maintained.
 
-This document governs Framework Specifications. It does not define thermodynamic architecture, information flow, Runtime State, Representation, Framework Interfaces, Extension Modules, implementations, or verification procedures.
+This document governs Framework Specifications only. It does not define thermodynamic architecture, Information Flow, Runtime State, Representation, Framework Interfaces, Extension Modules, implementations, or verification procedures.
 
 ## 3. Scope
 
@@ -174,13 +174,11 @@ A documentation revision shall not alter normative meaning indirectly through te
 
 This document is the normative governance specification for ThermoCore Framework Specifications.
 
-All Framework Specifications shall conform to this document while continuing to conform to their applicable parent specifications. This document governs specification development and maintenance; it does not replace `Framework_Principles.md` as the root normative specification or replace the authoritative specification for any governed architectural concept.
+All Framework Specifications shall conform to this document while continuing to conform to their applicable parent specifications. Future Framework Specifications shall reference the governance rules established here rather than redefine them.
 
-Future Framework Specifications shall reference this document rather than redefine the governance rules established here.
+Its governance authority is limited to specification dependencies, preservation rules, separation of concerns, and documentation maintenance. It does not replace `Framework_Principles.md` as the root normative specification or the authoritative specification for any governed architectural concept.
 
-This document serves as the ThermoCore Framework Specification governance charter. Its governance authority is limited to specification dependencies, preservation rules, separation of concerns, and documentation maintenance.
-
-Implementation details, research findings, algorithms, APIs, backend behavior, execution models, and verification procedures are intentionally outside its scope.
+Implementation details, research findings, algorithms, APIs, backend behavior, execution models, and verification procedures are intentionally outside the scope of this specification.
 
 ## Governance Summary
 
