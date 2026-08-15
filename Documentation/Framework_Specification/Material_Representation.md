@@ -18,15 +18,15 @@ This document conforms to the parent specifications and refines only the normati
 
 ## 2. Purpose
 
-This document defines what Material Representation means within ThermoCore. Material Representation is the architectural responsibility that interprets Thermodynamic State and applicable Material Definition to produce Representation for downstream use.
+This document defines the normative responsibility, semantics, ownership, classification, lifecycle, and interpretation principles of Material Representation within ThermoCore.
 
-Material Representation is not Runtime State or Configuration. Representation is the information produced and owned by Material Representation.
+Material Representation interprets Thermodynamic State and applicable Material Definition to produce Representation for downstream use. Representation is distinct from Runtime State and Configuration and is owned by Material Representation.
 
-This document defines the Material Representation responsibility and Representation semantics only. It shall not define rendering techniques, shaders, numerical variables, physical fields, material asset formats, storage structures, APIs, backend-specific representations, or implementation procedures.
+This specification does not prescribe rendering techniques, shaders, numerical variables, physical fields, material asset formats, storage structures, APIs, backend-specific representations, or implementation procedures.
 
 ## 3. Material Representation Overview
 
-Material Representation is the framework responsibility that interprets Thermodynamic State for downstream consumption. Interpretation may incorporate applicable Material Definition when material information is required to establish the meaning supplied to a Representation Consumer.
+Material Representation establishes downstream interpretation from Thermodynamic State and, when applicable, Material Definition.
 
 The conceptual interpretation relationship is:
 
@@ -42,7 +42,7 @@ Representation Consumer
 
 This figure represents interpretation only. It does not define rendering order, execution scheduling, synchronization, an implementation pipeline, or a backend mechanism. Communication across these relationships shall occur through applicable Framework Interfaces.
 
-Material Representation reads Thermodynamic State and applicable material information without owning or modifying Thermodynamic State. It supplies Representation for downstream consumption without making the Representation Consumer part of the framework core.
+Material Representation reads Thermodynamic State and applicable material information without owning or modifying Thermodynamic State. It supplies Representation for downstream consumption without making the Representation Consumer part of the Framework Core.
 
 Representation preserves an interpretive relationship to the Thermodynamic State and applicable Material Definition from which it is produced. It shall not be treated as a substitute for either source.
 
@@ -130,7 +130,7 @@ Interpretation belongs to Material Representation. It does not perform State Evo
 
 Consumption makes Representation available to a Representation Consumer through applicable Framework Interfaces.
 
-Consumption does not imply modification, ownership transfer, State Evolution, or membership in the framework core. A Representation Consumer remains outside the framework core.
+Consumption does not imply modification, ownership transfer, State Evolution, or membership in the Framework Core. A Representation Consumer remains outside the Framework Core.
 
 ### 6.4 Termination
 
@@ -155,7 +155,7 @@ The following constraints are normative:
 9. Configuration shall not be classified as Representation.
 10. Framework Interfaces shall communicate Representation without owning it.
 11. Communication through Framework Interfaces shall not transfer ownership.
-12. A Representation Consumer may consume Representation without becoming part of the framework core.
+12. A Representation Consumer may consume Representation without becoming part of the Framework Core.
 13. A Representation Consumer shall not modify or redefine the Framework Core.
 14. Consumption of Representation shall not grant ownership of Material Representation.
 15. Persistent Representation shall remain distinct from Runtime State and Configuration.
@@ -185,10 +185,8 @@ Later specifications may refine communication, extension behavior, Conformance, 
 
 ## 9. Document Status
 
-This document is a normative Framework Specification derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, and `Thermodynamic_State.md`.
+This document is the authoritative normative Framework Specification for Material Representation, derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, and `Thermodynamic_State.md`.
 
-It is the authoritative specification for the semantics of Material Representation. Later specifications may reference these semantics but shall not redefine them.
+Later Framework Specifications and conforming implementations shall preserve the responsibilities, ownership, classification, lifecycle, interpretation principles, and constraints established by the parent specifications and this document. Later specifications may refine Material Representation within their assigned scope but shall not redefine its authoritative semantics.
 
-Conforming implementations and subsequent Framework Specification documents shall preserve the responsibilities, ownership, classification, lifecycle, interpretation principles, and constraints defined here.
-
-This specification defines Representation semantics only. Rendering techniques, shaders, material asset formats, numerical variables, physical fields, storage structures, APIs, backend-specific representations, and implementation details are intentionally outside its scope.
+Rendering techniques, shaders, material asset formats, numerical variables, physical fields, storage structures, APIs, backend-specific representations, and implementation details are intentionally outside the scope of this specification.
