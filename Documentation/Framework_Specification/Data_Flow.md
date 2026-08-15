@@ -16,11 +16,11 @@ This document conforms to the parent specifications and refines only the normati
 
 ## 2. Purpose
 
-This document defines the normative movement of information through ThermoCore. It specifies runtime information flow, configuration information flow, information ownership, and constraints on those flows.
+This document defines the normative information-flow semantics of ThermoCore, including runtime information flow, configuration information flow, information ownership, and applicable flow constraints.
 
-This document specifies information flow only. It does not define implementation details, execution order, execution scheduling, algorithms, synchronization mechanisms, APIs, storage structures, data layouts, or backend-specific pipelines.
+This specification does not prescribe implementation details, execution order or scheduling, algorithms, synchronization mechanisms, APIs, storage structures, data layouts, or backend-specific pipelines.
 
-The relationships Read, Write, Consume, Supply, and Own describe information semantics only. They shall not be interpreted as API operations or implementation mechanisms.
+Read, Write, Consume, Supply, and Own define conceptual information relationships only. They shall not be interpreted as API operations or implementation mechanisms.
 
 ## 3. Information Flow Overview
 
@@ -75,12 +75,12 @@ The normative runtime relationships are:
 2. Thermodynamic Computation reads applicable input and configuration information.
 3. Thermodynamic Computation writes Thermodynamic State.
 4. Material Representation reads Thermodynamic State and applicable material information.
-5. Material Representation supplies representation to a Representation Consumer.
-6. A Representation Consumer consumes representation only and remains outside the framework core.
+5. Material Representation supplies Representation to a Representation Consumer.
+6. A Representation Consumer consumes Representation only and remains outside the Framework Core.
 
 Thermodynamic State shall evolve only through writes performed by Thermodynamic Computation. Reading Thermodynamic State shall not grant permission to write or own it.
 
-Material Representation shall not write Thermodynamic State. A Representation Consumer shall not write Thermodynamic State, perform Thermodynamic Computation, or acquire ownership of a framework-core responsibility by consuming representation.
+Material Representation shall not write Thermodynamic State. A Representation Consumer shall not write Thermodynamic State, perform Thermodynamic Computation, or acquire ownership of a Framework Core responsibility by consuming Representation.
 
 These relationships define information dependencies. They do not require that the relationships occur in a single sequence, at a particular frequency, or through a particular execution model.
 
@@ -93,11 +93,11 @@ Material Definition supplies reusable material information through applicable Fr
 - Thermodynamic Computation, where material information is required for thermodynamic evolution; and
 - Material Representation, where material information is required for interpretation.
 
-Material Definition is configuration. It is not Energy Input, Thermodynamic State, or representation.
+Material Definition is Configuration. It is not Energy Input, Thermodynamic State, or Representation.
 
 Material Definition shall never own evolving Thermodynamic State. Supplying material information does not transfer ownership of Material Definition, Thermodynamic State, Thermodynamic Computation, or Material Representation.
 
-Framework Interfaces supply configuration information across defined architectural boundaries. They shall not reinterpret configuration as runtime state, own evolving Thermodynamic State, or absorb the responsibilities of the components that receive configuration.
+Framework Interfaces supply configuration information across defined architectural boundaries. They shall not reinterpret Configuration as Runtime State, own evolving Thermodynamic State, or absorb the responsibilities of the components that receive configuration.
 
 This specification does not define how Material Definition is authored, stored, transformed, transported, or made available to a conforming implementation.
 
@@ -134,7 +134,7 @@ The owner of Thermodynamic State is the Thermodynamic State component defined by
 
 Framework Interfaces communicate information without owning the information or the responsibilities that produce, govern, or consume it.
 
-A Representation Consumer consumes representation without owning Material Representation or any framework-core responsibility.
+A Representation Consumer consumes Representation without owning Material Representation or any Framework Core responsibility.
 
 Supplying information does not imply ownership of the receiving component. Reading information does not imply ownership of the information read. Consuming information does not imply permission to modify its source.
 
@@ -150,7 +150,7 @@ Thermodynamic Computation:
 - may read applicable information supplied from Material Definition through Framework Interfaces;
 - may write Thermodynamic State;
 - shall not transfer ownership of Thermodynamic State; and
-- shall not own Material Definition or representation.
+- shall not own Material Definition or Representation.
 
 ### 8.2 Thermodynamic State
 
@@ -159,7 +159,7 @@ Thermodynamic State:
 - may be written only by Thermodynamic Computation;
 - may be read by Material Representation and other responsibilities permitted by subsequent conforming specifications;
 - shall not evolve itself; and
-- shall not be interpreted as configuration.
+- shall not be interpreted as Configuration.
 
 ### 8.3 Material Representation
 
@@ -167,7 +167,7 @@ Material Representation:
 
 - may read Thermodynamic State;
 - may read applicable information supplied from Material Definition through Framework Interfaces;
-- may supply representation to a Representation Consumer;
+- may supply Representation to a Representation Consumer;
 - shall not modify Thermodynamic State; and
 - shall not perform Thermodynamic Computation.
 
@@ -175,11 +175,11 @@ Material Representation:
 
 A Representation Consumer:
 
-- may consume representation;
-- shall remain outside the framework core;
+- may consume Representation;
+- shall remain outside the Framework Core;
 - shall not modify Thermodynamic State;
 - shall not modify or redefine the Framework Core; and
-- shall not acquire ownership of Material Representation by consuming representation.
+- shall not acquire ownership of Material Representation by consuming Representation.
 
 ### 8.5 Material Definition and Framework Interfaces
 
@@ -215,7 +215,7 @@ This document provides normative information-flow constraints for:
 
 `Thermodynamic_State.md` may refine the semantics and permitted access of Thermodynamic State.
 
-`Material_Representation.md` may refine how Material Representation reads thermodynamic and material information and supplies representation.
+`Material_Representation.md` may refine how Material Representation reads thermodynamic and material information and supplies Representation.
 
 `Framework_Interfaces.md` may refine the information boundaries through which runtime and configuration information are communicated.
 
@@ -225,10 +225,8 @@ Later specifications may refine information semantics within their assigned resp
 
 ## 10. Document Status
 
-This document is a normative Framework Specification derived from `Framework_Principles.md` and `Core_Architecture.md`.
+This document is the normative Framework Specification for Data Flow, derived from `Framework_Principles.md` and `Core_Architecture.md`.
 
-It defines the information flow to which later Framework Specification documents and conforming implementations shall adhere. Later specifications may refine information semantics only within the architectural ownership and boundaries established by the parent specifications and this document.
+Later Framework Specifications and conforming implementations shall preserve the runtime and configuration information flows, ownership relationships, information semantics, and flow constraints established by the parent specifications and this document. Later specifications may refine information flow within their assigned scope but shall not redefine the normative relationships established here.
 
-Implementation details remain outside the scope of this document. Conformance depends on preserving the specified information relationships and constraints, not on adopting a particular implementation, execution schedule, numerical method, API, storage layout, synchronization mechanism, or backend.
-
-This specification defines normative information movement only. Execution scheduling, synchronization, implementation ordering, and backend pipelines are intentionally outside its scope.
+Implementation details, execution order or scheduling, numerical methods, APIs, storage layouts, synchronization mechanisms, and backend-specific pipelines are intentionally outside the scope of this specification. Conformance depends on preserving the specified information relationships and constraints rather than on adopting a particular implementation mechanism.
