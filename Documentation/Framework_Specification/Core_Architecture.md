@@ -15,9 +15,9 @@ This document conforms to the parent specification and refines only the normativ
 
 ## 1. Purpose
 
-This document defines the normative architectural decomposition of ThermoCore. It assigns responsibilities, ownership, boundaries, and relationships to the framework's core architectural components.
+This document defines the normative decomposition, responsibilities, ownership, boundaries, and relationships of the ThermoCore Core Architecture.
 
-This document defines architecture only. It does not prescribe implementation details, numerical algorithms, APIs, storage layouts, execution backends, or backend-specific behavior.
+This specification does not prescribe implementation details, numerical algorithms, APIs, storage layouts, execution backends, or backend-specific behavior.
 
 ## 2. Architectural Overview
 
@@ -45,7 +45,7 @@ The four components are:
 - Material Representation; and
 - Framework Interfaces.
 
-Together, these components define the framework core. A Representation Consumer is outside the framework core.
+Together, these components define the Framework Core. A Representation Consumer is outside the Framework Core.
 
 ## 3. Core Components
 
@@ -162,7 +162,7 @@ Framework Interfaces
       └── Material Representation
 ```
 
-Material Definition is configuration. It is not Energy Input and does not own evolving Thermodynamic State.
+Material Definition is Configuration. It is not Energy Input and does not own evolving Thermodynamic State.
 
 Framework Interfaces mediate both runtime communication and configuration supply while preserving their distinct meanings. Configuration flow shall not be treated as runtime state evolution.
 
@@ -177,7 +177,7 @@ The following boundaries are normative:
 - Framework Interfaces shall not own evolving Thermodynamic State.
 - Framework Interfaces shall not absorb the computation or representation responsibilities that they connect.
 - Material Definition shall remain reusable configuration and shall not own per-location evolving Thermodynamic State.
-- A Representation Consumer shall remain outside the framework core.
+- A Representation Consumer shall remain outside the Framework Core.
 - Communication across a boundary shall not merge the responsibilities on either side of that boundary.
 
 These boundaries apply independently of implementation technique, numerical method, execution backend, or Representation Consumer.
@@ -191,7 +191,7 @@ A conforming architecture shall preserve all of the following invariants:
 3. Material Definition never owns evolving runtime Thermodynamic State.
 4. Material Representation never owns or modifies evolving Thermodynamic State.
 5. Framework Interfaces never own the responsibilities or evolving state that they connect.
-6. Representation Consumers never belong to the framework core.
+6. Representation Consumers never belong to the Framework Core.
 7. Each core architectural responsibility has exactly one owner.
 8. Core responsibilities remain architecturally independent even when they communicate through Framework Interfaces.
 9. Extension Modules shall not violate, duplicate, or reassign core architectural ownership.
