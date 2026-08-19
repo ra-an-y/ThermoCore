@@ -90,7 +90,7 @@ OpenFOAM explicitly distinguishes:
 
 Therefore an incompressible formulation may still permit density variation with another state variable, while an isochoric formulation constrains density to remain constant.
 
-**Evidence-supported conclusion:** `incompressible` and `isochoric` shall not be treated as synonyms in formulation research.
+**Evidence-supported conclusion:** `incompressible` and `isochoric` are distinct assumptions and should not be treated as synonyms in formulation research.
 
 Source:
 
