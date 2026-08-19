@@ -2,7 +2,7 @@
 
 Status: Preliminary Survey  
 Scope: Research only — non-normative  
-Target: ThermoCore conforming thermodynamic formulation
+Target: Thermodynamic formulation used by a conforming ThermoCore implementation
 
 ---
 
@@ -14,7 +14,7 @@ This survey does **not** modify the ThermoCore Framework Specification. In parti
 
 ## 2. Background
 
-The ThermoCore Framework Specification intentionally defines Thermodynamic State semantically rather than prescribing specific physical quantities or solver mathematics. `Thermodynamic_State.md` leaves the concrete Persistent/Derived State quantities to the conforming thermodynamic formulation, while `Data_Flow.md` defines `Energy Input` only as runtime information supplied to Thermodynamic Computation.
+The ThermoCore Framework Specification intentionally defines Thermodynamic State semantically rather than prescribing specific physical quantities or solver mathematics. `Thermodynamic_State.md` leaves the concrete Persistent/Derived State quantities to the thermodynamic formulation used by a conforming ThermoCore implementation, while `Data_Flow.md` defines `Energy Input` only as runtime information supplied to Thermodynamic Computation.
 
 A reference or conforming implementation therefore requires a lower-level thermodynamic formulation that makes the physical semantics explicit without redefining the framework architecture.
 
@@ -26,7 +26,7 @@ The survey compares established formulations relevant to ThermoCore's current th
 
 1. enthalpy-based formulations;
 2. internal-energy-based formulations;
-3. sensible-plus-latent enthalpy formulations;
+3. enthalpy decompositions into sensible and latent contributions;
 4. apparent/effective heat-capacity formulations as an alternative computational representation of phase-change energy;
 5. abstraction patterns that allow a thermodynamic implementation to select enthalpy or internal energy without changing the framework architecture.
 
@@ -53,7 +53,7 @@ https://ansyshelp.ansys.com/public/Views/Secured/corp/v251/en/flu_th/flu_th_sec_
 
 COMSOL's Apparent Heat Capacity Method expresses density and **specific enthalpy** for phase-change material and derives an apparent heat capacity containing both equivalent sensible contribution and distributed latent-heat contribution. The formulation also distinguishes material-frame density requirements for solid phase change and notes the need for mass and energy conservation when density varies.
 
-**Implication:** ThermoCore must distinguish total, specific, and volumetric energy quantities. A phase-change computational representation may distribute latent heat over a transition interval without changing the underlying need for an energy-consistent formulation.
+**Implication:** The distinction among total, specific, and volumetric energy quantities is a formulation-level requirement. A phase-change computational representation may distribute latent heat over a transition interval without changing the underlying need for an energy-consistent formulation.
 
 Source: COMSOL Multiphysics 6.4, *Apparent Heat Capacity Method*.  
 https://doc.comsol.com/6.4/doc/com.comsol.help.heat/heat_ug_theory.07.024.html
@@ -62,7 +62,7 @@ https://doc.comsol.com/6.4/doc/com.comsol.help.heat/heat_ug_theory.07.024.html
 
 OpenFOAM's `heThermo` abstraction stores an `he` energy field described as **Enthalpy/Internal energy [J/kg]** and provides temperature recovery from the selected energy variable together with pressure and an initial temperature estimate. The thermophysical implementation can therefore use an enthalpy- or internal-energy-based energy variable without requiring the architecture to treat one as universally mandatory.
 
-**Implication:** ThermoCore should not claim that enthalpy is the universally correct thermal energy state. A conforming formulation can select an established energy variable while preserving framework-level State semantics.
+**Implication:** ThermoCore should not claim that enthalpy is the universally correct thermal energy state. A thermodynamic formulation used by a conforming ThermoCore implementation can select an established energy variable while preserving framework-level State semantics.
 
 Source: OpenFOAM API, `heThermo.H`.  
 https://api.openfoam.com/2606/heThermo_8H_source.html
@@ -71,18 +71,18 @@ https://api.openfoam.com/2606/heThermo_8H_source.html
 
 Published numerical studies of solid/liquid phase change treat the temperature–enthalpy relationship as strongly nonlinear and evaluate corrected and uncorrected enthalpy methods for solving that coupling.
 
-**Implication:** `Energy Input -> Enthalpy -> Temperature/Phase` cannot remain an informal implementation assumption. A conforming formulation must explicitly define the energy variable, its reference convention, and the material relation used to recover temperature and phase information.
+**Implication:** `Energy Input -> Enthalpy -> Temperature/Phase` cannot remain an informal implementation assumption. A thermodynamic formulation used by a conforming ThermoCore implementation must explicitly define the energy variable, its reference convention, and the material relation used to recover temperature and phase information.
 
 Source: *Comparison of Corrected and Uncorrected Enthalpy Methods for Solving Conduction-Driven Solid/Liquid Phase Change Problems*, Energies 16(1), 449 (2023).  
 https://www.mdpi.com/1996-1073/16/1/449
 
 ## 5. Preliminary Comparison
 
-| Formulation | Primary energy coordinate | Phase-change treatment | Current relevance to ThermoCore | Preliminary status |
+| Formulation | Primary solved / represented quantity | Phase-change treatment | Current relevance to ThermoCore | Preliminary status |
 |---|---|---|---|---|
 | Enthalpy formulation | Enthalpy / specific enthalpy | Latent contribution embedded in enthalpy relation | Strong | Supported candidate |
 | Internal-energy formulation | Internal energy / specific internal energy | Requires consistent phase-energy relation | Moderate | Requires deeper survey |
-| Sensible + latent enthalpy | Sensible enthalpy plus latent content | Liquid/phase fraction contributes latent energy | Strong | Supported candidate |
+| Enthalpy decomposition — sensible + latent | Sensible enthalpy plus latent content | Liquid/phase fraction contributes latent energy | Strong | Supported candidate |
 | Apparent heat capacity | Temperature with effective/apparent heat capacity | Latent heat distributed through transition interval | Strong as computational representation | Supported alternative representation |
 | Generic `Energy State` | Unspecified | Unspecified | Too semantically broad as a physical formulation name | Not preferred without stronger definition |
 
@@ -95,13 +95,13 @@ Before adopting a ThermoCore thermodynamic formulation, the following must be re
 1. **Energy quantity** — Is the evolving quantity total enthalpy `[J]`, specific enthalpy `[J/kg]`, volumetric enthalpy `[J/m^3]`, internal energy, or another established quantity?
 2. **Reference convention** — What reference temperature/state and reference energy convention are used, and how are external material datasets normalized?
 3. **Energy Input semantics** — Is runtime input energy `[J]`, power `[W]`, surface flux `[W/m^2]`, volumetric source `[W/m^3]`, specific source `[W/kg]`, or a normalized net contribution?
-4. **Geometry/mass mapping** — Where do density, cell volume, mass, boundary area, and timestep enter the mapping from supplied input to the evolving energy coordinate?
+4. **Geometry/mass mapping** — Where do density, cell volume, mass, boundary area, and timestep enter the mapping from supplied input to the evolving energy quantity?
 5. **Sensible relation** — Is `cp` constant, temperature-dependent, phase-dependent, or represented through a precompiled `h(T)` relation?
 6. **Latent relation** — How are latent heat and phase fraction represented and coupled to the energy state?
 7. **Transition interval** — Which transition widths represent physical solidus/liquidus behavior and which are numerical regularization parameters?
 8. **Pressure/work scope** — Which assumptions make the selected energy formulation valid, and which pressure, compressibility, mechanical-work, or mass-transport effects are explicitly outside the formulation?
 9. **Derived quantities** — Which quantities, such as temperature or phase fraction, are uniquely derivable from Persistent State and material information under the selected formulation?
-10. **Conservation equation** — What governing balance determines evolution of the selected energy coordinate?
+10. **Conservation equation** — What governing balance determines evolution of the selected energy quantity?
 
 ## 7. Preliminary Findings
 
@@ -125,7 +125,7 @@ Status: **Consistent with current Framework architecture**
 
 ### F-04 — `Energy Input` requires formulation-level physical semantics
 
-Framework-level information flow is intentionally insufficient to define a solver update such as `h_new = h_old + EnergyInput`. A conforming formulation must perform dimensional and physical normalization before state evolution.
+Framework-level information flow is intentionally insufficient to define a solver update such as `h_new = h_old + EnergyInput`. A thermodynamic formulation used by a conforming ThermoCore implementation must perform dimensional and physical normalization before state evolution.
 
 Status: **Research requirement**
 
@@ -133,7 +133,7 @@ Status: **Research requirement**
 
 A smoothed/apparent heat-capacity phase transition can distribute latent heat over a finite temperature interval for numerical purposes. Such a numerical interval is not evidence that the real material possesses an equal physical mushy-zone width.
 
-Status: **Supported distinction**
+Status: **Preliminary distinction — further evidence required**
 
 ## 8. Relationship to Existing ThermoCore Specifications
 
@@ -160,11 +160,11 @@ The following evidence is still required before a formulation decision can be fr
 
 ## 10. Candidate Downstream Artifact
 
-If evidence supports a single reference formulation, a later non-framework or subordinate specification may be considered, tentatively named:
+If evidence supports a single reference formulation, a later non-framework reference-formulation specification may be considered, tentatively named:
 
 `Thermodynamic_Formulation.md`
 
-It should define formulation-level physical semantics only and must not redefine Framework State ownership, information flow, extension boundaries, or implementation independence.
+It should define formulation-level physical semantics only and must not redefine Framework State ownership, information flow, extension boundaries, or implementation independence. It would not become part of the Framework Specification hierarchy unless separately authorized through the applicable governance process.
 
 Creation of that document is **not** authorized by this Preliminary Survey alone.
 
