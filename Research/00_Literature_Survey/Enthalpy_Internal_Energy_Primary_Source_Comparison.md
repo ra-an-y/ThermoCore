@@ -81,16 +81,16 @@ Source:
 
 ## 4. Incompressible and Isochoric Assumptions
 
-### 4.1 Incompressible does not imply isochoric
+### 4.1 OpenFOAM distinguishes incompressible from isochoric
 
-OpenFOAM explicitly distinguishes:
+OpenFOAM explicitly classifies:
 
-- incompressible: density is not a function of pressure;
-- isochoric: density is constant.
+- incompressible: density is not a function of pressure (`rho != f(p)`);
+- isochoric: density is constant (`rho = const`).
 
-Therefore an incompressible formulation may still permit density variation with another state variable, while an isochoric formulation constrains density to remain constant.
+Under this OpenFOAM taxonomy, an incompressible equation of state may still permit density dependence on variables other than pressure, while an isochoric equation of state constrains density to remain constant.
 
-**Evidence-supported conclusion:** `incompressible` and `isochoric` are distinct assumptions and should not be treated as synonyms in formulation research.
+**Evidence-supported conclusion:** The two flags represent distinct assumptions in the source implementation and should not be collapsed into one category in this comparison.
 
 Source:
 
@@ -121,11 +121,11 @@ Delta h = Delta u + Delta p / rho
 
 This implication is derived directly from the primary-source conversion relation and the source definition of `isochoric`; it is not a separate Framework requirement.
 
-### 4.3 Incompressibility alone also does not remove the pressure-volume contribution
+### 4.3 OpenFOAM-style incompressibility alone does not remove the pressure-volume contribution
 
-Because incompressibility only states that density is not pressure-dependent, the term `p / rho` remains present in the enthalpy/internal-energy relation.
+Under the OpenFOAM classification used above, incompressibility states that density is not pressure-dependent; the term `p / rho` nevertheless remains present in the enthalpy/internal-energy relation.
 
-**Analytical implication:** A formulation should not justify replacing internal energy with enthalpy, or vice versa, merely by stating that the material is incompressible. Pressure scope and density behavior must still be declared.
+**Analytical implication:** Within this bounded comparison, a formulation should not justify replacing internal energy with enthalpy, or vice versa, merely by citing the OpenFOAM-style incompressible flag. Pressure scope and density behavior must still be declared.
 
 ## 5. Fixed and Undeformed Material Domains
 
@@ -176,7 +176,7 @@ The OpenFOAM thermophysical abstraction permits enthalpy or internal energy, whi
 | Assumption / use case | Internal-energy interpretation | Enthalpy interpretation | Evidence status |
 |---|---|---|---|
 | General continuum heat balance | Direct accumulated internal thermodynamic energy; mechanical work handled separately in COMSOL derivation | Related by pressure-volume contribution | Direct source support |
-| Incompressible (`rho != f(p)`) | Valid candidate | Valid candidate; `p/rho` term remains | Direct relation + analytical implication |
+| Incompressible (OpenFOAM: `rho != f(p)`) | Valid candidate | Valid candidate; `p/rho` term remains | Direct relation + analytical implication |
 | Isochoric (`rho = const`) | Valid candidate | Valid candidate; equivalence of changes additionally depends on pressure contribution | Direct relation + analytical implication |
 | Fixed, immobile, undeformed material with excluded mechanical work | Directly aligned with first-law accumulation form | Usable if pressure-volume/reference treatment is consistently bounded | Source-supported interpretation + analytical implication |
 | Fixed-grid solid/liquid phase change | Possible in principle but not established as the dominant formulation by the present source set | Strong direct precedent; latent heat naturally represented in enthalpy formulations | Strong direct source support for enthalpy |
@@ -191,7 +191,7 @@ The relation between the two quantities contains the pressure-volume term `p / r
 
 Status: **Supported by primary/authoritative sources**
 
-### F-02 — Incompressible and isochoric assumptions are distinct
+### F-02 — OpenFOAM's incompressible and isochoric classifications are distinct
 
 OpenFOAM explicitly distinguishes pressure-independent density from constant density.
 
@@ -261,7 +261,7 @@ The strongest current result is conditional:
 
 - internal energy is the direct accumulation quantity in a general first-law heat-balance description;
 - enthalpy has strong and mature precedent for fixed-grid phase-change computation;
-- neither incompressibility nor isochoric behavior alone makes the two formulations physically identical;
+- neither OpenFOAM-style incompressibility nor isochoric behavior alone makes the two formulations physically identical;
 - a reference-formulation choice requires explicit pressure, density, volume, work, mass-transport, and reference-state assumptions.
 
 Proceed next to the fixed-grid **specific vs volumetric energy** comparison and dimensional source mapping before creating or authorizing `Thermodynamic_Formulation.md`.
