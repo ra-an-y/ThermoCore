@@ -168,6 +168,8 @@ rho = rho_ref = constant
 
 and does not enter the local `h -> (T, phi)` inversion except when mapping between specific and volumetric quantities.
 
+The bounded formulation also retains the earlier pressure/work exclusion. Any constant pressure-volume contribution that is part of the chosen enthalpy definition is absorbed consistently into the common enthalpy reference datum; this closure introduces no evolving runtime pressure state and makes no claim about variable-pressure formulations.
+
 ## 6. Common Energy Datum
 
 The prior gap analysis selected a common reference-enthalpy convention.
