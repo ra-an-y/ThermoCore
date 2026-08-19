@@ -8,20 +8,20 @@ Research line: Bounded fixed-grid thermodynamic reference-formulation investigat
 
 ## 1. Purpose
 
-This document synthesizes the completed thermodynamic-formulation survey chain into an evidence layer.
+This document synthesizes the completed thermodynamic-formulation survey and closure chain into an evidence layer.
 
-It does not create Framework requirements, does not authorize a concrete `Thermodynamic_Formulation.md`, and does not reopen the frozen Framework Specification.
+It does not create Framework requirements and does not reopen the frozen Framework Specification. Its role is to establish whether the bounded reference-formulation research is sufficiently supported for a later non-Framework formulation specification to be authorized.
 
 The matrix separates:
 
 - directly supported source evidence;
 - analytical consequences derived from that evidence;
-- bounded formulation candidates;
-- unresolved research gaps.
+- bounded formulation candidates and decisions;
+- research gaps and downstream verification/validation obligations.
 
 ## 2. Source Research Artifacts
 
-The matrix is derived from the following completed survey/comparison artifacts:
+The matrix is derived from the following completed survey/comparison/closure artifacts:
 
 1. `Research/00_Literature_Survey/Thermodynamic_Formulation_Survey.md`
 2. `Research/00_Literature_Survey/Enthalpy_Internal_Energy_Primary_Source_Comparison.md`
@@ -29,6 +29,7 @@ The matrix is derived from the following completed survey/comparison artifacts:
 4. `Research/00_Literature_Survey/Fixed_Grid_Density_Mass_Volume_Phase_Change_Comparison.md`
 5. `Research/00_Literature_Survey/Reference_Density_Energy_Reference_State_Comparison.md`
 6. `Research/00_Literature_Survey/Persistent_Derived_State_Classification_Comparison.md`
+7. `Research/00_Literature_Survey/Enthalpy_Temperature_Phase_Closure_Study.md`
 
 The underlying source set includes official OpenFOAM, COMSOL, Ansys Fluent, and Ansys CFX documentation together with the primary phase-change literature recorded in the source artifacts.
 
@@ -38,7 +39,7 @@ The underlying source set includes official OpenFOAM, COMSOL, Ansys Fluent, and 
 |---|---|
 | **Verified** | Directly supported by a primary or authoritative technical source recorded in the survey chain |
 | **Supported inference** | Analytical consequence derived from Verified evidence with explicit scope assumptions |
-| **Bounded candidate** | A formulation choice that is defensible under the current bounded model but is not yet frozen |
+| **Bounded candidate** | A formulation choice defensible under the current bounded model; it remains non-universal even if selected for a later reference formulation |
 | **Research gap** | Evidence or decision remains insufficient for specification authorization |
 
 These statuses are research classifications only.
@@ -71,16 +72,22 @@ These statuses are research classifications only.
 | TF-E22 | Persistent/Derived Thermodynamic State classification is formulation-relative under the existing ThermoCore Framework. | Verified | ThermoCore `Thermodynamic_State.md`; OpenFOAM energy-primary and COMSOL temperature-primary precedents | Framework semantics remain unchanged | State-profile selection |
 | TF-E23 | OpenFOAM provides direct precedent for recovering Temperature from enthalpy/internal energy. | Verified | OpenFOAM `THE(he,p,T0,...)` | Recovery depends on complete thermophysical relation | Temperature derivation support |
 | TF-E24 | COMSOL apparent-heat-capacity phase fractions are defined through a configured phase-transition function of Temperature. | Verified | COMSOL Apparent Heat Capacity Method | Equilibrium-like / configured transition law | Phase-fraction derivation support |
-| TF-E25 | For the bounded energy-coordinate branch, one independent thermodynamic energy coordinate is the strongest Persistent-State candidate. | Bounded candidate | Framework minimal-persistence rule + TF-E05 + TF-E23 | Energy kind/basis still unresolved | Candidate state profile |
+| TF-E25 | For the bounded energy-coordinate branch, one independent thermodynamic energy coordinate is the strongest Persistent-State candidate. | Bounded candidate | Framework minimal-persistence rule + TF-E05 + TF-E23 | Energy kind/basis selected only for bounded reference branch | Candidate state profile |
 | TF-E26 | For the bounded energy-coordinate branch, Temperature may be Derived State when uniquely recoverable from Persistent State and Configuration. | Bounded candidate | TF-E23 + Framework Derived-State semantics | Requires unique constitutive inversion | Candidate state profile |
 | TF-E27 | For the bounded equilibrium-like energy-coordinate branch, Phase Fraction may be Derived State when uniquely recoverable from energy/Temperature and the configured phase law. | Bounded candidate | TF-E24 + Framework Derived-State semantics | Does not extend to history-dependent phase behavior | Candidate state profile |
 | TF-E28 | Caching, buffering, or iteratively solving a quantity does not by itself make it Framework Persistent State. | Supported inference | ThermoCore `Thermodynamic_State.md` | Semantic classification, not memory-layout rule | Implementation boundary |
 | TF-E29 | Hysteresis, kinetic phase evolution, metastability, or other history dependence may require additional Persistent State. | Supported inference | Framework minimal-persistence criterion | Outside current bounded equilibrium-like candidate | Extension/future formulation boundary |
 | TF-E30 | Temperature is a valid primary numerical variable in established apparent-heat-capacity formulations, so ThermoCore cannot universally require Temperature to be Derived. | Verified | COMSOL Heat Transfer interface + Apparent Heat Capacity Method | Alternative formulation precedent | Protects formulation neutrality |
+| TF-E31 | Established enthalpy methods support both isothermal latent-heat evolution and finite-temperature-range/mushy phase-change formulations. | Verified | Voller et al.; Voller & Prakash; Fluent; COMSOL | Does not make either closure universal | Phase-closure selection |
+| TF-E32 | For a pure-substance-like isothermal closure, latent-energy progress can be represented by a finite interval in enthalpy while Temperature remains at one configured transition temperature. | Bounded candidate | TF-E05 + TF-E31 + closure study | Minimal reference branch only; not alloys/physical mushy ranges | `h -> T` / `h -> phi` closure |
+| TF-E33 | If `c_s(T) > 0`, `c_l(T) > 0`, and `L > 0`, the selected piecewise sensible/latent enthalpy relation provides a single-valued `h -> T` mapping over its declared material range. | Supported inference | Monotonic enthalpy branches + closure study | Validity conditions explicit; numerical inversion remains Verification | Closes TF-G06 at research level |
+| TF-E34 | Within the selected latent enthalpy interval, `phi = (h - h_s*) / L` is bounded, continuous in `h`, single-valued, and history-independent. | Supported inference | Isothermal latent-enthalpy closure | Does not extend to hysteretic/kinetic phase behavior | Closes TF-G07 at research level |
+| TF-E35 | A numerical transition-temperature smoothing width is not required by the selected physical isothermal closure and, if introduced by an implementation, must remain an implementation approximation rather than material evidence. | Supported inference | COMSOL regularization distinction + closure selection | Physical finite-width transitions remain separate valid formulations | Verification boundary |
+| TF-E36 | The bounded enthalpy closure introduces no evolving runtime pressure state; any constant pressure-volume contribution consistent with its enthalpy definition can be absorbed into the common enthalpy datum. | Bounded candidate | TF-E01 + prior pressure/work exclusion + closure study | No claim about variable-pressure formulations | Pressure-scope consistency |
 
 ## 5. Consolidated Bounded Candidate
 
-The current evidence supports the following **research candidate**, not a frozen formulation:
+The completed evidence and gap-closure chain supports the following **bounded research candidate** for a later non-Framework reference formulation:
 
 ```text
 Geometry / mass:
@@ -91,62 +98,84 @@ Geometry / mass:
 
 Density:
   one constant rho_ref across solid/liquid phase change
-  explicit rho_ref provenance and reference condition
+  explicit rho_ref provenance and T_rho_ref
+
+Persistent Thermodynamic State candidate:
+  specific enthalpy h [J/kg]
 
 Energy reference:
   explicit T_E_ref
-  explicit energy reference value
+  h_ref = 0 J/kg at T_E_ref
   common reference-compatible normalization across phase relations
 
-State branch:
-  one independent energy coordinate epsilon as Persistent-State candidate
-  Temperature as Derived-State candidate
-  Phase Fraction as Derived-State candidate
+Pressure / work:
+  no evolving runtime pressure state
+  no pressure-volume or mechanical-work evolution
+  any constant p/rho datum contribution handled consistently by the enthalpy reference convention
+
+Phase closure:
+  isothermal transition at configured T_m
+  latent interval h_s* <= h <= h_l*
+  h_l* - h_s* = L > 0
+
+Derived Thermodynamic State candidates:
+  T = inverse sensible branch outside latent interval; T = T_m inside it
+  phi = 0 below h_s*
+  phi = (h - h_s*) / L inside latent interval
+  phi = 1 above h_l*
 ```
 
-Derived-State classification remains conditional on unique reconstruction from Persistent State and Configuration.
+Derived-State classification remains conditional on the declared validity conditions and history-independent closure.
 
-## 6. Decisions Supported vs Not Yet Supported
+## 6. Research Decisions and Boundaries
 
-### 6.1 Sufficiently supported boundaries
+### 6.1 Bounded decisions supported for specification transfer
 
-The evidence is strong enough to retain the following boundaries in subsequent research:
+The research chain now supports transferring the following **bounded** decisions into a reference-formulation specification:
 
-1. Framework-level Thermodynamic State should remain variable-neutral.
-2. Concrete physical units and source mappings belong to a formulation-level artifact, not to Framework-level `Energy Input` semantics.
-3. The minimal bounded reference formulation should not silently include variable-density shrinkage/expansion physics.
-4. A single equal-density/reference-density treatment is a defensible candidate for the simplified fixed-grid branch.
-5. Reference density and thermodynamic energy datum must be explicit and traceable.
-6. Persistent/Derived classification must be evaluated relative to the selected formulation rather than assigned universally by variable name.
+1. Select the enthalpy family for the minimal fixed-grid solid/liquid reference formulation.
+2. Use specific enthalpy `[J/kg]` as the persistent energy basis.
+3. Use one constant material `rho_ref` across the modeled solid/liquid transition, with explicit provenance and reference condition.
+4. Normalize the reference enthalpy to `0 J/kg` at a declared `T_E_ref` using one compatible datum across phase relations.
+5. Keep `T_rho_ref` and `T_E_ref` semantically distinct even when numerically equal.
+6. Use the isothermal enthalpy-jump closure for the minimal pure-substance-like reference branch.
+7. Keep Temperature and liquid Phase Fraction as Derived-State candidates under the selected single-valued closure.
+8. Keep physical finite-width/mushy transitions and history-dependent phase behavior outside this minimal reference profile.
+9. Treat any numerical smoothing of the isothermal transition as an implementation approximation subject to Verification.
 
-These are research-supported boundaries. They are not new Framework Specification requirements.
+These are not Framework-wide requirements and do not invalidate other formulations used by conforming ThermoCore implementations.
 
-### 6.2 Decisions not yet supported for freeze
+### 6.2 Items intentionally not standardized by the research line
 
-The evidence matrix does **not** yet justify freezing:
+The bounded reference-formulation research does **not** establish a universal rule for:
 
 ```text
-enthalpy vs internal energy
-specific vs volumetric persistent coordinate
-exact numerical/provenance rule for rho_ref
-zero-reference vs another documented energy offset
-one shared vs separate density/energy reference temperatures
-exact phase-transition regularization
-benchmark acceptance criteria
+all ThermoCore energy coordinates
+all material density models
+all phase-transition models
+all pressure/compressibility formulations
+all history-dependent transformations
+numerical inversion algorithms
+GPU/data layout
+benchmark pass thresholds
 ```
 
-## 7. Research Gaps Carried Forward
+Those remain formulation-, implementation-, or Validation-specific as applicable.
 
-| Gap ID | Open question | Why unresolved | Required next evidence / decision |
-|---|---|---|---|
-| TF-G01 | Enthalpy or internal energy for the bounded reference formulation? | Both are physically valid; enthalpy has stronger fixed-grid phase-change precedent while internal energy aligns directly with first-law accumulation | Explicit bounded-assumption comparison and selection criterion |
-| TF-G02 | Specific `[J/kg]` or volumetric `[J/m^3]` persistent coordinate? | Both can be mapped conservatively under constant `rho_ref` | Selection criterion based on material data, source mapping, conservation, and implementation independence |
-| TF-G03 | What exact `rho_ref` convention should the simplified profile use? | Solid-density and reference-temperature conventions both have precedent | Documented selection rule and representative material evidence |
-| TF-G04 | What energy datum convention should be standardized? | Zero-reference and arbitrary documented offsets are both valid if consistent | Decide interoperability/normalization policy |
-| TF-G05 | Should `T_rho_ref` and `T_E_ref` be numerically unified? | Semantically distinct but may be unified for simplicity | Evaluate simplification benefit vs provenance clarity |
-| TF-G06 | Is Temperature recovery unique and stable over the intended material range? | Depends on selected energy relation and transition model | Constitutive inversion analysis + benchmark |
-| TF-G07 | Is Phase Fraction recovery unique over the selected phase relation? | Depends on transition regularization/history assumptions | Explicit phase law + counterexample testing |
-| TF-G08 | Does the bounded profile conserve energy and recover Temperature/Phase consistently in representative tests? | No formulation benchmark has yet frozen the candidate | Reference benchmarks and validation criteria |
+## 7. Gap Disposition Status
+
+| Gap ID | Final disposition | Evidence / decision result |
+|---|---|---|
+| TF-G01 | Closed by bounded decision | Enthalpy family selected for the minimal reference formulation |
+| TF-G02 | Closed by bounded decision | Specific enthalpy `[J/kg]` selected as persistent energy basis |
+| TF-G03 | Closed by bounded decision | One constant material `rho_ref` with explicit provenance/reference condition |
+| TF-G04 | Closed by bounded decision | `h_ref = 0 J/kg` at declared `T_E_ref` with common phase-compatible datum |
+| TF-G05 | Closed by bounded decision | `T_rho_ref` and `T_E_ref` remain semantically distinct |
+| TF-G06 | Closed by focused closure study | Piecewise monotonic/isothermal `h -> T` relation is single-valued under declared validity conditions |
+| TF-G07 | Closed by focused closure study | `h -> phi` relation is explicit, bounded, single-valued, and history-independent |
+| TF-G08 | Downstream Verification / Validation | Energy/recovery invariants and benchmarks must be tested after specification and implementation |
+
+No pre-specification research gap remains open for the bounded reference-formulation branch.
 
 ## 8. Readiness Assessment
 
@@ -157,34 +186,40 @@ Change required: No
 Freeze reopen: No
 ```
 
-The completed survey/evidence line identifies no Framework-level defect requiring modification.
+The completed research identifies no Framework-level defect requiring modification.
 
 ### Reference-formulation specification
 
 ```text
-Authorization status: NOT YET READY
+Research readiness: READY FOR AUTHORIZATION
 ```
 
 Reason:
 
-- architecture and formulation boundaries are now well supported;
-- the candidate state/density/reference semantics are narrowed;
-- however the independent energy coordinate, coordinate basis, exact reference conventions, and benchmark evidence remain unresolved.
+- energy-coordinate family and basis have bounded decisions;
+- density/reference-state semantics have bounded decisions;
+- Persistent/Derived State candidates are defined relative to the selected formulation;
+- `h -> T` and `h -> phi` closures are explicit and single-valued under declared validity conditions;
+- remaining benchmark work is correctly downstream Verification / Validation rather than missing pre-specification evidence.
 
-A concrete `Thermodynamic_Formulation.md` should therefore not yet be authored as an authoritative formulation specification.
+This Evidence Matrix does not itself create the authoritative formulation specification. It establishes that the bounded research line no longer contains an unresolved pre-specification evidence gap.
 
-## 9. Next Research Step
+## 9. Next Governance Step
 
-Proceed to a focused Research Gap / Decision Analysis for `TF-G01` through `TF-G08`.
+Update and close the corresponding Research Gap Analysis using the focused closure study.
 
-The next artifact should determine which gaps require additional external evidence and which can be closed by an explicit bounded modeling decision supported by the present matrix.
+If the Research Gap review confirms that no pre-specification blocker remains, the project may authorize a **non-Framework reference-formulation specification** named `Thermodynamic_Formulation.md` (or repository-equivalent path) whose scope is subordinate to the frozen Framework semantics without becoming part of the Framework Specification hierarchy.
 
-Only after that gap analysis should the project consider authorizing a reference-formulation specification.
+The specification must preserve the bounded/non-universal status of the selected formulation and must carry forward TF-G08 as later Verification / Validation obligations.
 
 ## 10. Current Decision
 
-**The thermodynamic-formulation Preliminary Survey chain is complete enough to transition into the Evidence / Research-Gap stage for this bounded research question.**
+**The thermodynamic-formulation Research → Evidence chain is complete for the bounded fixed-grid reference-formulation question.**
 
-**Do not modify the Framework Specification.**
+**All pre-specification formulation gaps represented by TF-G01 through TF-G07 are closed for this bounded branch.**
 
-**Do not yet authorize `Thermodynamic_Formulation.md`.**
+**TF-G08 remains a downstream Verification / Validation obligation.**
+
+**Do not modify or reopen the Framework Specification.**
+
+**The reference-formulation research is ready for authorization review.**
