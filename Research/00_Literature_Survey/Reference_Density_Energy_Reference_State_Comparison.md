@@ -393,7 +393,7 @@ After this comparison, the principal unresolved questions are:
 
 **Do not yet freeze the numerical value or universal provenance of `rho_ref`.**
 
-**Do require any future formulation decision to make density-reference and energy-reference semantics explicit and reference-compatible.**
+**Research requirement: any future formulation decision should make density-reference and energy-reference semantics explicit and reference-compatible.**
 
 The strongest current candidate remains a fixed-volume, fixed-mass, equal-density reference formulation with one documented `rho_ref`, plus an explicitly normalized thermodynamic energy datum.
 
