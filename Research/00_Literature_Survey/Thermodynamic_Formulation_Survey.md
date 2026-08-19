@@ -144,7 +144,7 @@ In particular:
 - `Framework_Principles.md` should remain implementation- and numerical-method-agnostic.
 - `Thermodynamic_State.md` should continue to define State semantics without enumerating universal physical variables.
 - `Data_Flow.md` should continue to define `Energy Input` at the information-flow level rather than hard-coding units or one solver equation.
-- A later thermodynamic-formulation document may define physical quantity semantics for a specific conforming formulation, provided it does not redefine Framework architecture or ownership.
+- A later thermodynamic-formulation document may define physical quantity semantics for a specific formulation used by a conforming ThermoCore implementation, provided it does not redefine Framework architecture or ownership.
 
 ## 9. Evidence Gaps / Next Research
 
