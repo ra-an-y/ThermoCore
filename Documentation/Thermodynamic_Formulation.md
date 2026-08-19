@@ -275,9 +275,10 @@ required by that formulation.
 Framework-level Energy Input does not acquire universal physical units
 from this reference formulation.
 
-Before an Energy Input modifies persistent specific enthalpy, the
-implementation of this formulation shall map the supplied physical
-quantity into an applicable cell energy increment.
+Before Thermodynamic Computation uses an Energy Input to modify
+persistent specific enthalpy, the implementation of this formulation
+shall map the supplied physical quantity into an applicable cell
+energy increment.
 
 For total cell energy `Delta E [J]`:
 
@@ -314,8 +315,9 @@ produce the same declared physical input.
 Thermodynamic Computation remains the only Framework Core
 responsibility permitted to evolve or write Thermodynamic State.
 
-For this reference formulation, accepted energy input modifies the
-persistent specific enthalpy coordinate.
+For this reference formulation, Thermodynamic Computation applies
+accepted Energy Input by modifying the persistent specific enthalpy
+coordinate.
 
 Conceptually:
 
