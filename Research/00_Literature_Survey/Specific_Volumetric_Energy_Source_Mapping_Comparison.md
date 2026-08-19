@@ -18,7 +18,7 @@ This comparison uses sources that directly expose thermodynamic variable units, 
 
 1. OpenFOAM official thermophysical and solver source documentation:
    - `heThermo.H` — thermodynamic energy field `he` in `[J/kg]`;
-   - `chtMultiRegionFoam/fluid/EEqn.H` — conservative accumulation `ddt(rho, he)` and volumetric source terms.
+   - `chtMultiRegionFoam/fluid/EEqn.H` — conservative accumulation `ddt(rho, he)` and finite-volume source terms.
 2. COMSOL Multiphysics 6.4 Heat Transfer documentation:
    - *Solid* / *Theory for Heat Transfer in Solids* — density, specific heat capacity, effective volumetric heat capacity, and domain heat source units;
    - *Heat Source* — distributed domain heat-source semantics;
@@ -40,7 +40,7 @@ OpenFOAM `heThermo` exposes `he` as:
 Enthalpy/Internal energy [J/kg]
 ```
 
-The thermophysical state coordinate is therefore mass-specific.
+The thermophysical energy coordinate is therefore mass-specific.
 
 Source:
 
@@ -64,7 +64,7 @@ Source:
 - OpenFOAM official source, `chtMultiRegionFoam/fluid/EEqn.H`:  
   https://api.openfoam.com/2512/heatTransfer_2chtMultiRegionFoam_2fluid_2EEqn_8H_source.html
 
-### 3.3 COMSOL likewise separates specific material properties from volumetric balance coefficients
+### 3.3 COMSOL separates specific material properties from volumetric balance coefficients
 
 COMSOL's solid heat-transfer formulation uses:
 
@@ -73,7 +73,7 @@ COMSOL's solid heat-transfer formulation uses:
 - the product `rho Cp` as volumetric heat capacity in `[J/(m^3*K)]`;
 - domain heat source `Q` in `[W/m^3]`.
 
-**Evidence-supported conclusion:** Specific material properties and volumetric balance quantities can coexist in the same formulation without requiring that the persistent numerical state itself be stored in volumetric form.
+**Analytical implication:** Specific material properties and volumetric balance quantities can coexist in one formulation. The source equations do not imply that an implementation must store a volumetric energy state merely because its balance contains volumetric coefficients or sources.
 
 Sources:
 
@@ -123,9 +123,9 @@ also changes unless mass conservation, phase treatment, or another formulation c
 
 COMSOL defines domain heat source `Q` in `[W/m^3]`. ANSYS Fluent likewise defines cell-zone energy sources per unit volume and explicitly notes that users often need the cell-zone volume to determine an appropriate source value.
 
-OpenFOAM energy equations also combine `rho*he` accumulation with source terms such as `Qdot` and finite-volume source models on the right-hand side.
+OpenFOAM energy equations combine `rho*he` accumulation with source terms on the right-hand side.
 
-**Evidence-supported conclusion:** Volumetric source terms are a standard finite-volume / continuum representation even when the thermodynamic energy field is specific.
+**Evidence-supported conclusion:** Volumetric source terms are an established continuum and finite-volume representation even when the thermodynamic energy field itself is specific.
 
 Sources:
 
@@ -207,18 +207,18 @@ These are dimensional mappings for a selected cell and face. They do not define 
 
 ## 7. Total Heat Rate and Total Energy
 
-Framework-level `Energy Input` currently does not define whether an input is total energy, heat rate, surface flux, volumetric source, or another normalized quantity. A formulation layer must therefore make this conversion explicit.
+Framework-level `Energy Input` currently does not define whether an input is total energy, heat rate, surface flux, volumetric source, or another normalized quantity. A formulation layer must therefore make the physical and dimensional mapping explicit before state evolution.
 
 ### 7.1 Total heat rate `[W]`
 
-For a total heat rate `P` assigned uniformly to a selected cell:
+For a total heat rate `P` assigned uniformly to one selected cell:
 
 ```text
 Q_v = P / V                      [W/m^3]
 q_m = P / (rho * V)              [W/kg]
 ```
 
-For a selected multi-cell region, the same formulas require a declared distribution rule. Equal-per-cell, equal-per-volume, equal-per-mass, or spatially weighted distributions are not equivalent.
+For a selected multi-cell region, the conversion requires a declared distribution rule. Equal-per-cell, equal-per-volume, equal-per-mass, or spatially weighted distributions are not equivalent.
 
 ### 7.2 Total energy `[J]`
 
@@ -242,24 +242,24 @@ This temporal conversion is a formulation choice. An impulse-like deposit, a con
 | Question | Specific energy `[J/kg]` | Volumetric energy `[J/m^3]` |
 |---|---|---|
 | Direct compatibility with OpenFOAM `he` | Direct | Requires multiplication by density |
-| Compatibility with many tabulated thermophysical properties | Natural, because enthalpy/internal-energy data are commonly specific | Requires density normalization |
-| Direct compatibility with volumetric source `Q [W/m^3]` | Requires division by density for a specific rate | Direct source-rate increment |
+| Compatibility with the present source-set material quantities | Direct for OpenFOAM `he`; COMSOL also exposes specific `Cp` | Requires density conversion where the source quantity is specific |
+| Direct compatibility with volumetric source `Q [W/m^3]` | Requires density normalization for a specific source rate | Direct source-rate increment |
 | Fixed-cell total energy | Multiply by `rho V` | Multiply by `V` |
-| Density variation | Stored value is mass-specific; conservative cell energy still depends on `rho` | State changes when density changes even if specific thermodynamic state is unchanged |
+| Density variation | Stored value is mass-specific; conservative cell energy still depends on `rho` | Volumetric value changes with `rho` even when the specific thermodynamic value is unchanged |
 | Cell-volume variation | Specific coordinate itself does not depend on volume | Volumetric coordinate changes with volume for fixed total energy |
-| Conservative finite-volume accumulation | Typically appears as `rho * e_s` | Already volume-normalized, subject to formulation details |
+| Conservative finite-volume accumulation | Can appear as `rho * e_s`, as in OpenFOAM | Already volume-normalized, subject to formulation details |
 
-**Analytical implication:** The storage-coordinate choice and the source-unit choice are separate decisions. A solver can store specific energy while accepting volumetric sources, or store volumetric energy while using specific material properties, provided the density and geometry mappings are explicit and conservative.
+**Analytical implication:** The storage-coordinate choice and the source-unit choice are separate decisions. A solver can store specific energy while accepting volumetric sources, or use a volumetric energy representation while consuming specific material data, provided density and geometry mappings are explicit and conservative.
 
 ## 9. Density Change Is the Critical Coupling Variable
 
-OpenFOAM's `ddt(rho, he)` directly demonstrates that the conservative accumulation is not merely `ddt(he)` when density participates in the formulation.
+OpenFOAM's `ddt(rho, he)` directly demonstrates that conservative accumulation can depend on both density and a mass-specific energy coordinate.
 
-COMSOL documentation similarly treats `rho Cp` as the volumetric heat-capacity factor and notes that deformation or moving-frame effects can change density and therefore heat-transfer properties.
+COMSOL documentation similarly uses `rho Cp` as the volumetric heat-capacity factor and notes that moving/deforming-frame treatment can account for volume-change effects on density.
 
 ANSYS Fluent's phase-change energy equation couples enthalpy with density and includes source terms.
 
-**Evidence-supported conclusion:** Density is the bridge between mass-specific and volume-specific energy representations. Any formulation that permits density change must define how density evolution, cell volume, mass conservation, and phase change interact.
+**Analytical implication:** Density is the conversion bridge between mass-specific and volume-specific energy representations. Any bounded formulation that permits density change must state how density evolution, cell volume, mass conservation, and phase change are related.
 
 Sources:
 
@@ -298,7 +298,7 @@ Status: **Supported by authoritative technical sources**
 
 ### F-04 — Source unit does not determine storage unit
 
-A volumetric source can update a specific state through density normalization, and a specific material relation can coexist with volumetric balance equations.
+A volumetric source can update a specific state through density normalization, and specific material quantities can coexist with volumetric balance equations.
 
 Status: **Analytical conclusion supported by primary-source equation structure**
 
@@ -314,9 +314,9 @@ When density varies, `e_v = rho e_s` varies even if `e_s` does not, and cell mas
 
 Status: **Derived analytical consequence; density-change formulation remains an evidence gap**
 
-### F-07 — Framework-level `Energy Input` should remain unit-agnostic at this stage
+### F-07 — Current evidence does not require formulation-specific units at Framework level
 
-The present evidence supports multiple physically valid source representations whose conversion belongs to a concrete thermodynamic formulation.
+The source set supports multiple physically meaningful source representations whose concrete conversion belongs to a thermodynamic formulation used by an implementation. No evidence in this comparison requires changing the current Framework-level `Energy Input` semantics.
 
 Status: **Research conclusion consistent with current Framework architecture**
 
@@ -356,9 +356,9 @@ The following remain unresolved after this comparison:
 
 The strongest current result is:
 
-- specific thermodynamic energy `[J/kg]` is directly supported as a state coordinate by OpenFOAM;
+- specific thermodynamic energy `[J/kg]` is directly supported as a thermophysical energy coordinate by OpenFOAM;
 - conservative finite-volume accumulation naturally introduces density and therefore a volumetric energy quantity;
-- domain sources are commonly volumetric `[W/m^3]`, while boundary sources/fluxes are area-based `[W/m^2]`;
+- domain sources are commonly volumetric `[W/m^3]`, while boundary source/flux quantities are area-based `[W/m^2]`;
 - total `[J]` and rate `[W]` inputs require explicit geometry, mass, distribution, and timestep mapping;
 - density evolution is the central unresolved issue linking specific and volumetric representations.
 
