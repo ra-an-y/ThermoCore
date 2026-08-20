@@ -20,6 +20,8 @@ namespace ThermoCore.Tests.Verification
                 ("latent_interval_recovery", LatentIntervalRecovery),
                 ("liquid_branch_recovery", LiquidBranchRecovery),
                 ("latent_width_equals_L", LatentWidthEqualsLatentHeat),
+                ("recovery_is_monotonic_and_phi_bounded", RecoveryIsMonotonicAndPhaseFractionBounded),
+                ("reference_datum_shift_preserves_physical_recovery", ReferenceDatumShiftPreservesPhysicalRecovery),
                 ("cell_mass_uses_rho_ref", CellMassUsesReferenceDensity),
                 ("energy_input_dimensional_mapping", EnergyInputDimensionalMapping),
                 ("signed_energy_removal", SignedEnergyRemoval),
@@ -145,6 +147,104 @@ namespace ThermoCore.Tests.Verification
             AssertNear(
                 material.LatentHeat,
                 material.LiquidTransitionEnthalpy - material.SolidTransitionEnthalpy);
+        }
+
+        private static void RecoveryIsMonotonicAndPhaseFractionBounded()
+        {
+            var material = CompileMaterial();
+            var previousTemperature = double.NegativeInfinity;
+            var previousPhaseFraction = double.NegativeInfinity;
+
+            const int samples = 1_000;
+            const double startEnthalpy = 0.0;
+            const double endEnthalpy = 250_000.0;
+
+            for (var i = 0; i <= samples; i++)
+            {
+                var h = startEnthalpy
+                    + (endEnthalpy - startEnthalpy) * i / samples;
+                var derived = ReferenceThermodynamicFormulation.Recover(
+                    new ThermodynamicState(h),
+                    material);
+
+                if (derived.Temperature + Tolerance < previousTemperature)
+                {
+                    throw new InvalidOperationException(
+                        "Recovered Temperature must be monotonic non-decreasing in h.");
+                }
+
+                if (derived.LiquidPhaseFraction + Tolerance < previousPhaseFraction)
+                {
+                    throw new InvalidOperationException(
+                        "Recovered liquid Phase Fraction must be monotonic non-decreasing in h.");
+                }
+
+                if (derived.LiquidPhaseFraction < -Tolerance
+                    || derived.LiquidPhaseFraction > 1.0 + Tolerance)
+                {
+                    throw new InvalidOperationException(
+                        "Recovered liquid Phase Fraction must remain in [0, 1].");
+                }
+
+                previousTemperature = derived.Temperature;
+                previousPhaseFraction = derived.LiquidPhaseFraction;
+            }
+        }
+
+        private static void ReferenceDatumShiftPreservesPhysicalRecovery()
+        {
+            var first = ReferenceMaterialCompiler.Compile(CreateMaterial(250.0));
+            var shifted = ReferenceMaterialCompiler.Compile(CreateMaterial(260.0));
+
+            const double solidTemperature = 275.0;
+            var firstSolidEnthalpy = first.SolidHeatCapacity
+                * (solidTemperature - first.EnergyReferenceTemperature);
+            var shiftedSolidEnthalpy = shifted.SolidHeatCapacity
+                * (solidTemperature - shifted.EnergyReferenceTemperature);
+
+            AssertNear(
+                solidTemperature,
+                ReferenceThermodynamicFormulation.RecoverTemperature(
+                    new ThermodynamicState(firstSolidEnthalpy),
+                    first));
+            AssertNear(
+                solidTemperature,
+                ReferenceThermodynamicFormulation.RecoverTemperature(
+                    new ThermodynamicState(shiftedSolidEnthalpy),
+                    shifted));
+
+            const double secondSolidTemperature = 290.0;
+            var firstSecondEnthalpy = first.SolidHeatCapacity
+                * (secondSolidTemperature - first.EnergyReferenceTemperature);
+            var shiftedSecondEnthalpy = shifted.SolidHeatCapacity
+                * (secondSolidTemperature - shifted.EnergyReferenceTemperature);
+
+            AssertNear(
+                firstSecondEnthalpy - firstSolidEnthalpy,
+                shiftedSecondEnthalpy - shiftedSolidEnthalpy);
+
+            const double liquidTemperature = 310.0;
+            var firstLiquidEnthalpy = first.LiquidTransitionEnthalpy
+                + first.LiquidHeatCapacity
+                * (liquidTemperature - first.MeltingTemperature);
+            var shiftedLiquidEnthalpy = shifted.LiquidTransitionEnthalpy
+                + shifted.LiquidHeatCapacity
+                * (liquidTemperature - shifted.MeltingTemperature);
+
+            AssertNear(
+                liquidTemperature,
+                ReferenceThermodynamicFormulation.RecoverTemperature(
+                    new ThermodynamicState(firstLiquidEnthalpy),
+                    first));
+            AssertNear(
+                liquidTemperature,
+                ReferenceThermodynamicFormulation.RecoverTemperature(
+                    new ThermodynamicState(shiftedLiquidEnthalpy),
+                    shifted));
+            AssertNear(first.LatentHeat, shifted.LatentHeat);
+            AssertNear(
+                first.LiquidTransitionEnthalpy - first.SolidTransitionEnthalpy,
+                shifted.LiquidTransitionEnthalpy - shifted.SolidTransitionEnthalpy);
         }
 
         private static void CellMassUsesReferenceDensity()
