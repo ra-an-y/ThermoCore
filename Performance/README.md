@@ -43,21 +43,36 @@ Its executed result is preserved as:
 
 - `Reference_CPU_Performance_Evaluation_v0.1.md`
 
-The first batch/SIMD candidate track is defined by:
+The first batch/SIMD exploratory track is preserved as:
 
 - `Reference_CPU_SIMD_Evaluation_Plan.md`
-
-Its executed result is preserved as:
-
 - `Reference_CPU_SIMD_Evaluation_v0.1.md`
+- `Reference_CPU_SIMD_Evaluation_v0.1_Erratum.md`
 
-Latest recorded result status:
+A fairness correction to the scalar-reference timing method is defined and executed by:
+
+- `Reference_CPU_SIMD_Evaluation_Plan_v0.2.md`
+- `Reference_CPU_SIMD_Evaluation_v0.2.md`
+
+For implementation decisions, the v0.2 corrected comparison supersedes the v0.1 scalar-reference versus batch speedup ratios. The v0.1 record remains historical evidence and is not silently rewritten.
+
+Latest corrective result status:
 
 ```text
-COMPLETED — measurements reported
+COMPLETED — corrected measurements reported
 ```
 
-The SIMD candidate remains performance evidence only and has not been promoted into `Framework/` implementation source by this track.
+Current evidence disposition:
+
+```text
+Batch recovery abstraction:
+PROMISING — implementation design and Verification justified
+
+System.Numerics.Vector<double> SIMD:
+NOT JUSTIFIED FOR PROMOTION YET — corrected incremental benefit is near parity
+```
+
+These are engineering evidence dispositions, not Framework conformance categories or physical PASS/FAIL results.
 
 No performance PASS/FAIL threshold has been adopted. Absolute GitHub-hosted runner timings remain environment-specific observations rather than universal ThermoCore guarantees.
 
