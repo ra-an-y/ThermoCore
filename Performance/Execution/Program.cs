@@ -99,14 +99,14 @@ namespace ThermoCore.Performance.ReferenceCpu
             for (var sample = 0; sample < TimedSamples; sample++)
             {
                 var allocatedBefore = GC.GetAllocatedBytesForCurrentThread();
-                var stopwatch = Stopwatch.StartNew();
+                var startTimestamp = Stopwatch.GetTimestamp();
 
                 checksum = scenario(states, passes, material);
 
-                stopwatch.Stop();
+                var elapsed = Stopwatch.GetElapsedTime(startTimestamp);
                 var allocatedAfter = GC.GetAllocatedBytesForCurrentThread();
 
-                elapsedMilliseconds[sample] = stopwatch.Elapsed.TotalMilliseconds;
+                elapsedMilliseconds[sample] = elapsed.TotalMilliseconds;
                 allocatedBytes[sample] = allocatedAfter - allocatedBefore;
             }
 
