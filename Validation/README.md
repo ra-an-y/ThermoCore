@@ -33,11 +33,24 @@ Historical evidence shall remain traceable and shall not be silently rewritten t
 
 # Current Status
 
-Active — bounded reference-formulation Validation preparation.
+Active — bounded reference-formulation Validation.
 
-The first Validation track is `Reference_Formulation_Caloric_Validation_Plan.md`. It targets the caloric behavior of the current constant-heat-capacity reference implementation against authoritative H2O thermodynamic reference formulations.
+The first Validation track is defined by:
 
-No physical Validation PASS is claimed by this directory guide. A Validation conclusion requires preserved benchmark data and an executed comparison against the identified implementation version.
+- `Reference_Formulation_Caloric_Validation_Plan.md`
+
+Its first executed result is preserved as:
+
+- `Reference_Formulation_Caloric_Validation_v0.1.md`
+- `Data/reference_caloric_benchmark_v0.1.csv`
+
+Latest recorded execution status:
+
+```text
+COMPLETED — errors reported
+```
+
+This descriptive status records successful completion of the declared comparison procedure and preservation of measured errors. No physical PASS/FAIL threshold has been adopted for this track, and no Framework Conformance conclusion is implied.
 
 ---
 
