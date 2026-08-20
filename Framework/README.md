@@ -20,11 +20,17 @@ Framework implementation is guided by the applicable Framework Specifications in
 
 It may consume material-related artifacts from `Materials/`, and its implementation correctness may be examined by `Tests/`. Framework Validation remains a separate responsibility from implementation and testing.
 
+The bounded thermodynamic reference implementation is additionally guided by `Documentation/Thermodynamic_Formulation.md`, which is an authoritative non-Framework reference-formulation specification.
+
 ---
 
 # Current Status
 
-Planned
+Active — bounded reference implementation in progress.
+
+The initial implementation profile is backend-independent C# with no Unity-specific runtime dependency. It currently realizes the persistent specific-enthalpy state, compiled thermodynamic parameters, `h -> T` / `h -> phi` recovery, Energy Input dimensional mapping, and Thermodynamic Computation state evolution for a constant-positive-heat-capacity specialization of the reference formulation.
+
+Material Definition compilation, variable heat-capacity inversion, Verification, Validation, GPU execution, and Demo integration remain separate subsequent work.
 
 ---
 
