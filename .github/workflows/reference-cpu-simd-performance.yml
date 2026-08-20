@@ -1,0 +1,30 @@
+name: Reference CPU SIMD Performance Evaluation
+
+on:
+  pull_request:
+    paths:
+      - "Performance/**"
+      - "Framework/**"
+      - "Materials/**"
+      - ".github/workflows/reference-cpu-simd-performance.yml"
+  workflow_dispatch:
+
+jobs:
+  evaluate-reference-cpu-simd:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run CPU SIMD performance evaluation
+        run: >-
+          dotnet run
+          --project Performance/ThermoCore.ReferenceSimdPerformance.csproj
+          --configuration Release
