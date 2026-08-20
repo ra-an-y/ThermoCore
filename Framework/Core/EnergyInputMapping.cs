@@ -45,8 +45,13 @@ namespace ThermoCore.Framework.Core
         public static double FromVolumetricHeatSource(
             double volumetricHeatSource,
             double deltaTime,
-            in CompiledThermodynamicParameters material)
+            CompiledThermodynamicParameters material)
         {
+            if (material == null)
+            {
+                throw new ArgumentNullException(nameof(material));
+            }
+
             RequireFinite(volumetricHeatSource, nameof(volumetricHeatSource));
             RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
             return RequireFiniteResult(
@@ -55,8 +60,13 @@ namespace ThermoCore.Framework.Core
 
         public static double CellMass(
             double cellVolume,
-            in CompiledThermodynamicParameters material)
+            CompiledThermodynamicParameters material)
         {
+            if (material == null)
+            {
+                throw new ArgumentNullException(nameof(material));
+            }
+
             RequirePositiveFinite(cellVolume, nameof(cellVolume));
             return RequireFiniteResult(material.ReferenceDensity * cellVolume);
         }
