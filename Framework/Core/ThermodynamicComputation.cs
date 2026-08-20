@@ -67,7 +67,7 @@ namespace ThermoCore.Framework.Core
             in ThermodynamicState state,
             double volumetricHeatSource,
             double deltaTime,
-            in CompiledThermodynamicParameters material)
+            CompiledThermodynamicParameters material)
         {
             var deltaH = EnergyInputMapping.FromVolumetricHeatSource(
                 volumetricHeatSource,
