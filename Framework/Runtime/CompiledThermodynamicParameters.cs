@@ -11,8 +11,8 @@ namespace ThermoCore.Framework.Runtime
     /// computation-ready form.
     ///
     /// The initial reference implementation supports constant positive sensible
-    /// heat capacities. This is a bounded implementation profile of the more
-    /// general c_s(T) and c_l(T) relations permitted by the formulation.
+    /// heat capacities and places the zero-enthalpy datum on the solid sensible
+    /// branch with T_E_ref < T_m.
     /// </summary>
     public sealed class CompiledThermodynamicParameters
     {
@@ -23,8 +23,7 @@ namespace ThermoCore.Framework.Runtime
             double meltingTemperature,
             double latentHeat,
             double solidHeatCapacity,
-            double liquidHeatCapacity,
-            double solidTransitionEnthalpy)
+            double liquidHeatCapacity)
         {
             RequirePositiveFinite(referenceDensity, nameof(referenceDensity));
             RequireFinite(
@@ -37,10 +36,22 @@ namespace ThermoCore.Framework.Runtime
             RequirePositiveFinite(latentHeat, nameof(latentHeat));
             RequirePositiveFinite(solidHeatCapacity, nameof(solidHeatCapacity));
             RequirePositiveFinite(liquidHeatCapacity, nameof(liquidHeatCapacity));
-            RequireFinite(solidTransitionEnthalpy, nameof(solidTransitionEnthalpy));
 
-            var liquidTransitionEnthalpy = solidTransitionEnthalpy + latentHeat;
-            RequireFinite(liquidTransitionEnthalpy, nameof(liquidTransitionEnthalpy));
+            if (energyReferenceTemperature >= meltingTemperature)
+            {
+                throw new NotSupportedException(
+                    "The current bounded implementation requires T_E_ref < T_m "
+                    + "so the zero enthalpy datum lies on the solid sensible branch.");
+            }
+
+            var solidTransitionEnthalpy = RequireFiniteResult(
+                solidHeatCapacity
+                * (meltingTemperature - energyReferenceTemperature),
+                "Solid-transition enthalpy normalization produced a non-finite value.");
+
+            var liquidTransitionEnthalpy = RequireFiniteResult(
+                solidTransitionEnthalpy + latentHeat,
+                "Liquid-transition enthalpy normalization produced a non-finite value.");
 
             ReferenceDensity = referenceDensity;
             DensityReferenceTemperature = densityReferenceTemperature;
@@ -75,14 +86,23 @@ namespace ThermoCore.Framework.Runtime
         public double LiquidHeatCapacity { get; }
 
         /// <summary>
-        /// Normalized enthalpy threshold h_s* in J/kg at T_m.
-        /// This is compiled Configuration derived from the common energy datum;
-        /// it is not an independently persistent thermodynamic variable.
+        /// Normalized enthalpy threshold h_s* in J/kg at T_m under the datum
+        /// h = 0 J/kg at T_E_ref.
         /// </summary>
         public double SolidTransitionEnthalpy { get; }
 
         /// <summary>Fully liquid threshold h_l* = h_s* + L in J/kg.</summary>
         public double LiquidTransitionEnthalpy { get; }
+
+        private static double RequireFiniteResult(double value, string message)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                throw new OverflowException(message);
+            }
+
+            return value;
+        }
 
         private static void RequireFinite(double value, string name)
         {
