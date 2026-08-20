@@ -1,0 +1,88 @@
+using System;
+using ThermoCore.Framework.Runtime;
+
+namespace ThermoCore.Framework.Core
+{
+    /// <summary>
+    /// Formulation-level dimensional mappings from signed physical energy input
+    /// quantities into specific-enthalpy increments.
+    ///
+    /// Positive mapped energy adds enthalpy and negative mapped energy removes
+    /// enthalpy. Distribution across multiple cells remains an upstream caller
+    /// responsibility and must be explicit.
+    /// </summary>
+    public static class EnergyInputMapping
+    {
+        public static double FromCellEnergy(double deltaEnergy, double cellMass)
+        {
+            RequireFinite(deltaEnergy, nameof(deltaEnergy));
+            RequirePositiveFinite(cellMass, nameof(cellMass));
+            return deltaEnergy / cellMass;
+        }
+
+        public static double FromPower(double power, double deltaTime, double cellMass)
+        {
+            RequireFinite(power, nameof(power));
+            RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
+            RequirePositiveFinite(cellMass, nameof(cellMass));
+            return power * deltaTime / cellMass;
+        }
+
+        public static double FromBoundaryHeatFlux(
+            double heatFlux,
+            double affectedArea,
+            double deltaTime,
+            double cellMass)
+        {
+            RequireFinite(heatFlux, nameof(heatFlux));
+            RequireNonNegativeFinite(affectedArea, nameof(affectedArea));
+            RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
+            RequirePositiveFinite(cellMass, nameof(cellMass));
+            return heatFlux * affectedArea * deltaTime / cellMass;
+        }
+
+        public static double FromVolumetricHeatSource(
+            double volumetricHeatSource,
+            double deltaTime,
+            in CompiledThermodynamicParameters material)
+        {
+            RequireFinite(volumetricHeatSource, nameof(volumetricHeatSource));
+            RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
+            return volumetricHeatSource * deltaTime / material.ReferenceDensity;
+        }
+
+        public static double CellMass(
+            double cellVolume,
+            in CompiledThermodynamicParameters material)
+        {
+            RequirePositiveFinite(cellVolume, nameof(cellVolume));
+            return material.ReferenceDensity * cellVolume;
+        }
+
+        private static void RequireFinite(double value, string name)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                throw new ArgumentOutOfRangeException(name, "Value must be finite.");
+            }
+        }
+
+        private static void RequirePositiveFinite(double value, string name)
+        {
+            RequireFinite(value, name);
+            if (value <= 0.0)
+            {
+                throw new ArgumentOutOfRangeException(name, "Value must be greater than zero.");
+            }
+        }
+
+        private static void RequireNonNegativeFinite(double value, string name)
+        {
+            RequireFinite(value, name);
+            if (value < 0.0)
+            {
+                throw new ArgumentOutOfRangeException(name, "Value must be non-negative.");
+            }
+        }
+    }
+}
