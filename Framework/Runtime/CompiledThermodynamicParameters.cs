@@ -14,7 +14,7 @@ namespace ThermoCore.Framework.Runtime
     /// heat capacities. This is a bounded implementation profile of the more
     /// general c_s(T) and c_l(T) relations permitted by the formulation.
     /// </summary>
-    public readonly struct CompiledThermodynamicParameters
+    public sealed class CompiledThermodynamicParameters
     {
         public CompiledThermodynamicParameters(
             double referenceDensity,
