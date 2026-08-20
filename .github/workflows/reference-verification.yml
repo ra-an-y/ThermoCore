@@ -1,0 +1,26 @@
+name: Reference Verification
+
+on:
+  pull_request:
+    paths:
+      - 'Framework/**'
+      - 'Materials/**'
+      - 'Tests/**'
+      - '.github/workflows/reference-verification.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-reference-formulation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run bounded reference verification
+        run: dotnet run --project Tests/ThermoCore.ReferenceVerification.csproj --configuration Release
