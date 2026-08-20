@@ -13,37 +13,41 @@ namespace ThermoCore.Framework.Core
             in ThermodynamicState state,
             CompiledThermodynamicParameters material)
         {
-            if (material == null)
+            RequireMaterial(material);
+            return RecoverValidatedState(state.SpecificEnthalpy, material);
+        }
+
+        /// <summary>
+        /// Recovers one transient Derived Thermodynamic State for each supplied
+        /// persistent Thermodynamic State.
+        ///
+        /// The input states remain the owned runtime-state values. This batch
+        /// operation does not mutate them and does not make the destination
+        /// Derived State persistent. Material validation and destination-shape
+        /// validation are performed once at the batch boundary; each recovered
+        /// value retains the same numerical semantics and derived-value checks as
+        /// <see cref="Recover"/>.
+        /// </summary>
+        public static void RecoverBatch(
+            ReadOnlySpan<ThermodynamicState> states,
+            Span<DerivedThermodynamicState> destination,
+            CompiledThermodynamicParameters material)
+        {
+            RequireMaterial(material);
+
+            if (destination.Length != states.Length)
             {
-                throw new ArgumentNullException(nameof(material));
+                throw new ArgumentException(
+                    "Destination length must match the number of supplied Thermodynamic State values.",
+                    nameof(destination));
             }
 
-            var h = state.SpecificEnthalpy;
-            var hSolid = material.SolidTransitionEnthalpy;
-            var hLiquid = material.LiquidTransitionEnthalpy;
-
-            double temperature;
-            double liquidFraction;
-
-            if (h < hSolid)
+            for (var i = 0; i < states.Length; i++)
             {
-                temperature = material.MeltingTemperature
-                    + (h - hSolid) / material.SolidHeatCapacity;
-                liquidFraction = 0.0;
+                destination[i] = RecoverValidatedState(
+                    states[i].SpecificEnthalpy,
+                    material);
             }
-            else if (h <= hLiquid)
-            {
-                temperature = material.MeltingTemperature;
-                liquidFraction = (h - hSolid) / material.LatentHeat;
-            }
-            else
-            {
-                temperature = material.MeltingTemperature
-                    + (h - hLiquid) / material.LiquidHeatCapacity;
-                liquidFraction = 1.0;
-            }
-
-            return new DerivedThermodynamicState(temperature, liquidFraction);
         }
 
         public static double RecoverTemperature(
@@ -58,6 +62,46 @@ namespace ThermoCore.Framework.Core
             CompiledThermodynamicParameters material)
         {
             return Recover(state, material).LiquidPhaseFraction;
+        }
+
+        private static DerivedThermodynamicState RecoverValidatedState(
+            double specificEnthalpy,
+            CompiledThermodynamicParameters material)
+        {
+            var hSolid = material.SolidTransitionEnthalpy;
+            var hLiquid = material.LiquidTransitionEnthalpy;
+
+            double temperature;
+            double liquidFraction;
+
+            if (specificEnthalpy < hSolid)
+            {
+                temperature = material.MeltingTemperature
+                    + (specificEnthalpy - hSolid) / material.SolidHeatCapacity;
+                liquidFraction = 0.0;
+            }
+            else if (specificEnthalpy <= hLiquid)
+            {
+                temperature = material.MeltingTemperature;
+                liquidFraction = (specificEnthalpy - hSolid) / material.LatentHeat;
+            }
+            else
+            {
+                temperature = material.MeltingTemperature
+                    + (specificEnthalpy - hLiquid) / material.LiquidHeatCapacity;
+                liquidFraction = 1.0;
+            }
+
+            return new DerivedThermodynamicState(temperature, liquidFraction);
+        }
+
+        private static void RequireMaterial(
+            CompiledThermodynamicParameters material)
+        {
+            if (material == null)
+            {
+                throw new ArgumentNullException(nameof(material));
+            }
         }
     }
 }
