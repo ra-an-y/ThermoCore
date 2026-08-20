@@ -25,9 +25,22 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             1_048_576
         };
 
+        private readonly struct RawDerivedState
+        {
+            public RawDerivedState(double temperature, double liquidPhaseFraction)
+            {
+                Temperature = temperature;
+                LiquidPhaseFraction = liquidPhaseFraction;
+            }
+
+            public double Temperature { get; }
+            public double LiquidPhaseFraction { get; }
+        }
+
         private delegate void RecoveryScenario(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -48,36 +61,14 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
 
                 foreach (var cellCount in CellCounts)
                 {
-                    Measure(
-                        "scalar_public_recovery",
-                        cellCount,
-                        material,
-                        RunScalarPublicRecovery);
-                    Measure(
-                        "formal_batch_recovery",
-                        cellCount,
-                        material,
-                        RunFormalBatchRecovery);
-                    Measure(
-                        "local_derived_recovery",
-                        cellCount,
-                        material,
-                        RunLocalDerivedRecovery);
-                    Measure(
-                        "local_primitive_recovery",
-                        cellCount,
-                        material,
-                        RunLocalPrimitiveRecovery);
-                    Measure(
-                        "derived_output_only",
-                        cellCount,
-                        material,
-                        RunDerivedOutputOnly);
-                    Measure(
-                        "primitive_output_only",
-                        cellCount,
-                        material,
-                        RunPrimitiveOutputOnly);
+                    Measure("scalar_public_recovery", cellCount, material, RunScalarPublicRecovery);
+                    Measure("formal_batch_recovery", cellCount, material, RunFormalBatchRecovery);
+                    Measure("local_derived_recovery", cellCount, material, RunLocalDerivedRecovery);
+                    Measure("local_raw_struct_recovery", cellCount, material, RunLocalRawStructRecovery);
+                    Measure("local_primitive_recovery", cellCount, material, RunLocalPrimitiveRecovery);
+                    Measure("derived_output_only", cellCount, material, RunDerivedOutputOnly);
+                    Measure("raw_struct_output_only", cellCount, material, RunRawStructOutputOnly);
+                    Measure("primitive_output_only", cellCount, material, RunPrimitiveOutputOnly);
                 }
 
                 Console.WriteLine(
@@ -117,52 +108,34 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             var scalar = new DerivedThermodynamicState[count];
             var formalBatch = new DerivedThermodynamicState[count];
             var localDerived = new DerivedThermodynamicState[count];
+            var localRaw = new RawDerivedState[count];
             var localTemperatures = new double[count];
             var localFractions = new double[count];
             var unusedTemperatures = new double[count];
             var unusedFractions = new double[count];
 
             RunScalarPublicRecovery(
-                states,
-                scalar,
-                unusedTemperatures,
-                unusedFractions,
-                unusedTemperatures,
-                unusedFractions,
-                1,
-                material);
+                states, scalar, localRaw, unusedTemperatures, unusedFractions,
+                unusedTemperatures, unusedFractions, 1, material);
             RunFormalBatchRecovery(
-                states,
-                formalBatch,
-                unusedTemperatures,
-                unusedFractions,
-                unusedTemperatures,
-                unusedFractions,
-                1,
-                material);
+                states, formalBatch, localRaw, unusedTemperatures, unusedFractions,
+                unusedTemperatures, unusedFractions, 1, material);
             RunLocalDerivedRecovery(
-                states,
-                localDerived,
-                unusedTemperatures,
-                unusedFractions,
-                unusedTemperatures,
-                unusedFractions,
-                1,
-                material);
+                states, localDerived, localRaw, unusedTemperatures, unusedFractions,
+                unusedTemperatures, unusedFractions, 1, material);
+            RunLocalRawStructRecovery(
+                states, localDerived, localRaw, unusedTemperatures, unusedFractions,
+                unusedTemperatures, unusedFractions, 1, material);
             RunLocalPrimitiveRecovery(
-                states,
-                localDerived,
-                localTemperatures,
-                localFractions,
-                unusedTemperatures,
-                unusedFractions,
-                1,
-                material);
+                states, localDerived, localRaw, localTemperatures, localFractions,
+                unusedTemperatures, unusedFractions, 1, material);
 
             var formalTemperatureError = 0.0;
             var formalFractionError = 0.0;
             var localDerivedTemperatureError = 0.0;
             var localDerivedFractionError = 0.0;
+            var localRawTemperatureError = 0.0;
+            var localRawFractionError = 0.0;
             var localPrimitiveTemperatureError = 0.0;
             var localPrimitiveFractionError = 0.0;
 
@@ -186,6 +159,13 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                     localDerivedFractionError,
                     Math.Abs(reference.LiquidPhaseFraction - localDerived[i].LiquidPhaseFraction));
 
+                localRawTemperatureError = Math.Max(
+                    localRawTemperatureError,
+                    Math.Abs(reference.Temperature - localRaw[i].Temperature));
+                localRawFractionError = Math.Max(
+                    localRawFractionError,
+                    Math.Abs(reference.LiquidPhaseFraction - localRaw[i].LiquidPhaseFraction));
+
                 localPrimitiveTemperatureError = Math.Max(
                     localPrimitiveTemperatureError,
                     Math.Abs(reference.Temperature - localTemperatures[i]));
@@ -195,23 +175,21 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             }
 
             Console.WriteLine($"equivalence_tolerance: {EquivalenceTolerance:R}");
-            Console.WriteLine(
-                $"formal_batch_max_temperature_error: {formalTemperatureError:R}");
-            Console.WriteLine(
-                $"formal_batch_max_liquid_fraction_error: {formalFractionError:R}");
-            Console.WriteLine(
-                $"local_derived_max_temperature_error: {localDerivedTemperatureError:R}");
-            Console.WriteLine(
-                $"local_derived_max_liquid_fraction_error: {localDerivedFractionError:R}");
-            Console.WriteLine(
-                $"local_primitive_max_temperature_error: {localPrimitiveTemperatureError:R}");
-            Console.WriteLine(
-                $"local_primitive_max_liquid_fraction_error: {localPrimitiveFractionError:R}");
+            Console.WriteLine($"formal_batch_max_temperature_error: {formalTemperatureError:R}");
+            Console.WriteLine($"formal_batch_max_liquid_fraction_error: {formalFractionError:R}");
+            Console.WriteLine($"local_derived_max_temperature_error: {localDerivedTemperatureError:R}");
+            Console.WriteLine($"local_derived_max_liquid_fraction_error: {localDerivedFractionError:R}");
+            Console.WriteLine($"local_raw_struct_max_temperature_error: {localRawTemperatureError:R}");
+            Console.WriteLine($"local_raw_struct_max_liquid_fraction_error: {localRawFractionError:R}");
+            Console.WriteLine($"local_primitive_max_temperature_error: {localPrimitiveTemperatureError:R}");
+            Console.WriteLine($"local_primitive_max_liquid_fraction_error: {localPrimitiveFractionError:R}");
 
             if (formalTemperatureError > EquivalenceTolerance
                 || formalFractionError > EquivalenceTolerance
                 || localDerivedTemperatureError > EquivalenceTolerance
                 || localDerivedFractionError > EquivalenceTolerance
+                || localRawTemperatureError > EquivalenceTolerance
+                || localRawFractionError > EquivalenceTolerance
                 || localPrimitiveTemperatureError > EquivalenceTolerance
                 || localPrimitiveFractionError > EquivalenceTolerance)
             {
@@ -231,15 +209,13 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             var passes = Math.Max(1, TargetCellOperations / cellCount);
             var states = CreateStates(cellCount, material);
             var derived = new DerivedThermodynamicState[cellCount];
+            var rawDerived = new RawDerivedState[cellCount];
             var temperatures = new double[cellCount];
             var liquidFractions = new double[cellCount];
             var sourceTemperatures = new double[cellCount];
             var sourceLiquidFractions = new double[cellCount];
 
-            ReferenceThermodynamicFormulation.RecoverBatch(
-                states,
-                derived,
-                material);
+            ReferenceThermodynamicFormulation.RecoverBatch(states, derived, material);
             for (var i = 0; i < cellCount; i++)
             {
                 sourceTemperatures[i] = derived[i].Temperature;
@@ -253,14 +229,8 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             for (var i = 0; i < WarmupSamples; i++)
             {
                 scenario(
-                    states,
-                    derived,
-                    temperatures,
-                    liquidFractions,
-                    sourceTemperatures,
-                    sourceLiquidFractions,
-                    passes,
-                    material);
+                    states, derived, rawDerived, temperatures, liquidFractions,
+                    sourceTemperatures, sourceLiquidFractions, passes, material);
             }
 
             var elapsedMilliseconds = new double[TimedSamples];
@@ -272,22 +242,14 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                 var startTimestamp = Stopwatch.GetTimestamp();
 
                 scenario(
-                    states,
-                    derived,
-                    temperatures,
-                    liquidFractions,
-                    sourceTemperatures,
-                    sourceLiquidFractions,
-                    passes,
-                    material);
+                    states, derived, rawDerived, temperatures, liquidFractions,
+                    sourceTemperatures, sourceLiquidFractions, passes, material);
 
                 var endTimestamp = Stopwatch.GetTimestamp();
                 var allocatedAfter = GC.GetAllocatedBytesForCurrentThread();
 
                 elapsedMilliseconds[sample] =
-                    (endTimestamp - startTimestamp)
-                    * 1000.0
-                    / Stopwatch.Frequency;
+                    (endTimestamp - startTimestamp) * 1000.0 / Stopwatch.Frequency;
                 allocatedBytes[sample] = allocatedAfter - allocatedBefore;
             }
 
@@ -295,6 +257,8 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             {
                 "local_primitive_recovery" or "primitive_output_only"
                     => ComputePrimitiveChecksum(temperatures, liquidFractions),
+                "local_raw_struct_recovery" or "raw_struct_output_only"
+                    => ComputeRawChecksum(rawDerived),
                 _ => ComputeDerivedChecksum(derived)
             };
 
@@ -349,7 +313,6 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                     5 => hLiquid + 50_000.0,
                     _ => hLiquid + 200_000.0
                 };
-
                 states[i] = new ThermodynamicState(enthalpy);
             }
 
@@ -359,6 +322,7 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
         private static void RunScalarPublicRecovery(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -370,9 +334,7 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             {
                 for (var i = 0; i < states.Length; i++)
                 {
-                    derived[i] = ReferenceThermodynamicFormulation.Recover(
-                        states[i],
-                        material);
+                    derived[i] = ReferenceThermodynamicFormulation.Recover(states[i], material);
                 }
             }
         }
@@ -380,6 +342,7 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
         private static void RunFormalBatchRecovery(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -389,16 +352,14 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
         {
             for (var pass = 0; pass < passes; pass++)
             {
-                ReferenceThermodynamicFormulation.RecoverBatch(
-                    states,
-                    derived,
-                    material);
+                ReferenceThermodynamicFormulation.RecoverBatch(states, derived, material);
             }
         }
 
         private static void RunLocalDerivedRecovery(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -406,12 +367,14 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             int passes,
             CompiledThermodynamicParameters material)
         {
-            var hSolid = material.SolidTransitionEnthalpy;
-            var hLiquid = material.LiquidTransitionEnthalpy;
-            var meltingTemperature = material.MeltingTemperature;
-            var solidHeatCapacity = material.SolidHeatCapacity;
-            var liquidHeatCapacity = material.LiquidHeatCapacity;
-            var latentHeat = material.LatentHeat;
+            CacheMaterial(
+                material,
+                out var hSolid,
+                out var hLiquid,
+                out var meltingTemperature,
+                out var solidHeatCapacity,
+                out var liquidHeatCapacity,
+                out var latentHeat);
 
             for (var pass = 0; pass < passes; pass++)
             {
@@ -428,16 +391,15 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                         out var temperature,
                         out var liquidFraction);
 
-                    derived[i] = new DerivedThermodynamicState(
-                        temperature,
-                        liquidFraction);
+                    derived[i] = new DerivedThermodynamicState(temperature, liquidFraction);
                 }
             }
         }
 
-        private static void RunLocalPrimitiveRecovery(
+        private static void RunLocalRawStructRecovery(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -445,12 +407,54 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             int passes,
             CompiledThermodynamicParameters material)
         {
-            var hSolid = material.SolidTransitionEnthalpy;
-            var hLiquid = material.LiquidTransitionEnthalpy;
-            var meltingTemperature = material.MeltingTemperature;
-            var solidHeatCapacity = material.SolidHeatCapacity;
-            var liquidHeatCapacity = material.LiquidHeatCapacity;
-            var latentHeat = material.LatentHeat;
+            CacheMaterial(
+                material,
+                out var hSolid,
+                out var hLiquid,
+                out var meltingTemperature,
+                out var solidHeatCapacity,
+                out var liquidHeatCapacity,
+                out var latentHeat);
+
+            for (var pass = 0; pass < passes; pass++)
+            {
+                for (var i = 0; i < states.Length; i++)
+                {
+                    RecoverOne(
+                        states[i].SpecificEnthalpy,
+                        hSolid,
+                        hLiquid,
+                        meltingTemperature,
+                        solidHeatCapacity,
+                        liquidHeatCapacity,
+                        latentHeat,
+                        out var temperature,
+                        out var liquidFraction);
+
+                    rawDerived[i] = new RawDerivedState(temperature, liquidFraction);
+                }
+            }
+        }
+
+        private static void RunLocalPrimitiveRecovery(
+            ThermodynamicState[] states,
+            DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
+            double[] temperatures,
+            double[] liquidFractions,
+            double[] sourceTemperatures,
+            double[] sourceLiquidFractions,
+            int passes,
+            CompiledThermodynamicParameters material)
+        {
+            CacheMaterial(
+                material,
+                out var hSolid,
+                out var hLiquid,
+                out var meltingTemperature,
+                out var solidHeatCapacity,
+                out var liquidHeatCapacity,
+                out var latentHeat);
 
             for (var pass = 0; pass < passes; pass++)
             {
@@ -473,6 +477,7 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
         private static void RunDerivedOutputOnly(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -491,9 +496,32 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             }
         }
 
+        private static void RunRawStructOutputOnly(
+            ThermodynamicState[] states,
+            DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
+            double[] temperatures,
+            double[] liquidFractions,
+            double[] sourceTemperatures,
+            double[] sourceLiquidFractions,
+            int passes,
+            CompiledThermodynamicParameters material)
+        {
+            for (var pass = 0; pass < passes; pass++)
+            {
+                for (var i = 0; i < rawDerived.Length; i++)
+                {
+                    rawDerived[i] = new RawDerivedState(
+                        sourceTemperatures[i],
+                        sourceLiquidFractions[i]);
+                }
+            }
+        }
+
         private static void RunPrimitiveOutputOnly(
             ThermodynamicState[] states,
             DerivedThermodynamicState[] derived,
+            RawDerivedState[] rawDerived,
             double[] temperatures,
             double[] liquidFractions,
             double[] sourceTemperatures,
@@ -509,6 +537,23 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                     liquidFractions[i] = sourceLiquidFractions[i];
                 }
             }
+        }
+
+        private static void CacheMaterial(
+            CompiledThermodynamicParameters material,
+            out double hSolid,
+            out double hLiquid,
+            out double meltingTemperature,
+            out double solidHeatCapacity,
+            out double liquidHeatCapacity,
+            out double latentHeat)
+        {
+            hSolid = material.SolidTransitionEnthalpy;
+            hLiquid = material.LiquidTransitionEnthalpy;
+            meltingTemperature = material.MeltingTemperature;
+            solidHeatCapacity = material.SolidHeatCapacity;
+            liquidHeatCapacity = material.LiquidHeatCapacity;
+            latentHeat = material.LatentHeat;
         }
 
         private static void RecoverOne(
@@ -541,8 +586,7 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
             }
         }
 
-        private static double ComputeDerivedChecksum(
-            DerivedThermodynamicState[] values)
+        private static double ComputeDerivedChecksum(DerivedThermodynamicState[] values)
         {
             var checksum = 0.0;
             var stride = Math.Max(1, values.Length / 16);
@@ -551,7 +595,18 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                 checksum += values[i].Temperature;
                 checksum += values[i].LiquidPhaseFraction;
             }
+            return checksum;
+        }
 
+        private static double ComputeRawChecksum(RawDerivedState[] values)
+        {
+            var checksum = 0.0;
+            var stride = Math.Max(1, values.Length / 16);
+            for (var i = 0; i < values.Length; i += stride)
+            {
+                checksum += values[i].Temperature;
+                checksum += values[i].LiquidPhaseFraction;
+            }
             return checksum;
         }
 
@@ -566,7 +621,6 @@ namespace ThermoCore.Performance.ReferenceCpuBatchAttribution
                 checksum += temperatures[i];
                 checksum += liquidFractions[i];
             }
-
             return checksum;
         }
 
