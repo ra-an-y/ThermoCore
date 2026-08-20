@@ -1,0 +1,29 @@
+name: Reference Caloric Validation
+
+on:
+  pull_request:
+    paths:
+      - 'Framework/**'
+      - 'Materials/**'
+      - 'Validation/**'
+      - '.github/workflows/reference-caloric-validation.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-reference-caloric:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run bounded caloric validation comparison
+        run: >-
+          dotnet run
+          --project Validation/ThermoCore.ReferenceCaloricValidation.csproj
+          --configuration Release
