@@ -13,6 +13,7 @@ namespace ThermoCore.Framework.Runtime
     /// </summary>
     public readonly struct DerivedThermodynamicState
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DerivedThermodynamicState(double temperature, double liquidPhaseFraction)
         {
             RequireFiniteTemperature(temperature);
