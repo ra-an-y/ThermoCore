@@ -35,22 +35,41 @@ Historical evidence shall remain traceable and shall not be silently rewritten t
 
 Active — bounded reference-formulation Validation.
 
-The first Validation track is defined by:
+Two independent caloric Validation tracks are now preserved.
+
+## H2O caloric benchmark
+
+Plan and result:
 
 - `Reference_Formulation_Caloric_Validation_Plan.md`
-
-Its first executed result is preserved as:
-
 - `Reference_Formulation_Caloric_Validation_v0.1.md`
 - `Data/reference_caloric_benchmark_v0.1.csv`
 
-Latest recorded execution status:
+External basis: IAPWS reference formulations.
+
+Recorded status:
 
 ```text
 COMPLETED — errors reported
 ```
 
-This descriptive status records successful completion of the declared comparison procedure and preservation of measured errors. No physical PASS/FAIL threshold has been adopted for this track, and no Framework Conformance conclusion is implied.
+## Gallium caloric benchmark
+
+Plan and result:
+
+- `Reference_Formulation_Gallium_Caloric_Validation_Plan.md`
+- `Reference_Formulation_Gallium_Caloric_Validation_v0.1.md`
+- `Data/gallium_caloric_benchmark_v0.1.csv`
+
+External basis: NIST Chemistry WebBook SRD 69 / NIST-JANAF condensed-phase thermochemistry.
+
+Recorded status:
+
+```text
+COMPLETED — errors reported
+```
+
+These descriptive statuses record successful completion of the declared comparison procedures and preservation of measured errors. No physical PASS/FAIL threshold has been adopted for either track, and no Framework Conformance conclusion is implied.
 
 ---
 

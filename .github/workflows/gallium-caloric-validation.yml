@@ -1,0 +1,28 @@
+name: Gallium Caloric Validation
+
+on:
+  pull_request:
+    paths:
+      - 'Framework/**'
+      - 'Materials/**'
+      - 'Validation/**'
+      - '.github/workflows/gallium-caloric-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-gallium-caloric:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run gallium caloric validation comparison
+        run: dotnet run --project Validation/ThermoCore.GalliumCaloricValidation.csproj --configuration Release
