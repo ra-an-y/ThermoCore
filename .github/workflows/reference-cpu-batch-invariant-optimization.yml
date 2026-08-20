@@ -1,0 +1,26 @@
+name: Reference CPU Batch Invariant Optimization
+
+on:
+  pull_request:
+    paths:
+      - 'Framework/**'
+      - 'Materials/**'
+      - 'Performance/**'
+      - '.github/workflows/reference-cpu-batch-invariant-optimization.yml'
+  workflow_dispatch:
+
+jobs:
+  evaluate-reference-cpu-batch-invariant-optimization:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run batch invariant optimization evaluation
+        run: dotnet run --project Performance/ThermoCore.ReferenceBatchInvariantOptimization.csproj --configuration Release
