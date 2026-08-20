@@ -41,7 +41,7 @@ The candidate combines two implementation techniques that are common prerequisit
 1. a structure-of-arrays style batch representation for specific enthalpy and derived outputs; and
 2. `System.Numerics.Vector<double>` SIMD operations when hardware acceleration is available.
 
-Because layout and SIMD can each affect performance, this evaluation separates them into distinct scenarios.
+Because the batch representation also changes per-cell API and validation overhead, this evaluation separates the current scalar reference path, a scalar batch candidate, and a SIMD batch candidate rather than attributing all observed differences to SIMD alone.
 
 ---
 
@@ -59,11 +59,15 @@ For each specific-enthalpy value:
 
 This preserves the current public reference implementation path and acts as the semantic and performance baseline for the comparison.
 
+The current path therefore includes the existing per-value finite-state validation performed by `ThermodynamicState` construction.
+
 ### 4.2 Scalar batch path
 
 The same piecewise equations are evaluated over contiguous `double[]` arrays without `Vector<double>`.
 
-This isolates the effect of a batch / structure-of-arrays layout from SIMD execution.
+The batch candidate assumes that its input state buffer has already satisfied the finite-state invariant. It therefore measures the combined effect of a contiguous batch representation and removal of repeated per-cell API/constructor validation overhead. It shall not be interpreted as a pure memory-layout measurement.
+
+This scalar batch path is the direct comparison point used to isolate the additional effect of SIMD from the broader batch-path change.
 
 ### 4.3 SIMD batch path
 
@@ -76,6 +80,8 @@ h < h_s*                 -> solid
 h_s* <= h <= h_l*        -> latent interval
 h > h_l*                 -> liquid
 ```
+
+Like the scalar batch path, it assumes a prevalidated finite specific-enthalpy buffer. Any future production batch API would need to preserve the Thermodynamic State finite-value invariant at an appropriate boundary rather than silently dropping it.
 
 ---
 
@@ -168,10 +174,12 @@ A result obtained with hardware acceleration disabled shall remain valid as an e
 For each working-set size, the result shall report:
 
 ```text
-batch-layout speedup = scalar_reference_time / scalar_batch_time
-SIMD speedup         = scalar_reference_time / simd_batch_time
-SIMD-over-batch      = scalar_batch_time / simd_batch_time
+batch-path speedup = scalar_reference_time / scalar_batch_time
+SIMD speedup       = scalar_reference_time / simd_batch_time
+SIMD-over-batch    = scalar_batch_time / simd_batch_time
 ```
+
+The first ratio includes both batch representation and per-cell API/validation-overhead differences. The third ratio is the cleaner estimate of incremental SIMD benefit because both compared paths share the same batch representation and prevalidated-buffer assumption.
 
 Speedup values are descriptive ratios for the recorded environment only.
 
