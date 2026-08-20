@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using ThermoCore.Framework.Runtime;
 
 namespace ThermoCore.Framework.Core
@@ -75,6 +76,7 @@ namespace ThermoCore.Framework.Core
             return Recover(state, material).LiquidPhaseFraction;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static DerivedThermodynamicState RecoverValidatedState(
             double specificEnthalpy,
             CompiledThermodynamicParameters material)
@@ -88,6 +90,7 @@ namespace ThermoCore.Framework.Core
             return new DerivedThermodynamicState(temperature, liquidFraction);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static RecoveryRegion RecoverRaw(
             double specificEnthalpy,
             CompiledThermodynamicParameters material,
@@ -118,33 +121,20 @@ namespace ThermoCore.Framework.Core
             return RecoveryRegion.LiquidSensible;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EstablishBatchDerivedInvariants(
             RecoveryRegion region,
             double temperature,
             double liquidFraction)
         {
-            switch (region)
+            if (region == RecoveryRegion.Latent)
             {
-                case RecoveryRegion.SolidSensible:
-                case RecoveryRegion.LiquidSensible:
-                    // These branches assign phase fractions exactly to 0 or 1.
-                    // Only finite recovered Temperature remains to be established.
-                    DerivedThermodynamicState.RequireFiniteTemperature(temperature);
-                    return;
-
-                case RecoveryRegion.Latent:
-                    // The latent branch assigns Temperature directly from the
-                    // already-finite material melting Temperature. Floating-point
-                    // endpoint arithmetic can still perturb the phase fraction,
-                    // so its finite [0,1] invariant remains explicitly checked.
-                    DerivedThermodynamicState.RequireBoundedLiquidFraction(
-                        liquidFraction);
-                    return;
-
-                default:
-                    throw new InvalidOperationException(
-                        "Unknown thermodynamic recovery region.");
+                DerivedThermodynamicState.RequireBoundedLiquidFraction(
+                    liquidFraction);
+                return;
             }
+
+            DerivedThermodynamicState.RequireFiniteTemperature(temperature);
         }
 
         private static void RequireMaterial(
