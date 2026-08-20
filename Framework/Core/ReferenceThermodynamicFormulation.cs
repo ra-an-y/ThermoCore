@@ -1,3 +1,4 @@
+using System;
 using ThermoCore.Framework.Runtime;
 
 namespace ThermoCore.Framework.Core
@@ -10,8 +11,13 @@ namespace ThermoCore.Framework.Core
     {
         public static DerivedThermodynamicState Recover(
             in ThermodynamicState state,
-            in CompiledThermodynamicParameters material)
+            CompiledThermodynamicParameters material)
         {
+            if (material == null)
+            {
+                throw new ArgumentNullException(nameof(material));
+            }
+
             var h = state.SpecificEnthalpy;
             var hSolid = material.SolidTransitionEnthalpy;
             var hLiquid = material.LiquidTransitionEnthalpy;
@@ -42,14 +48,14 @@ namespace ThermoCore.Framework.Core
 
         public static double RecoverTemperature(
             in ThermodynamicState state,
-            in CompiledThermodynamicParameters material)
+            CompiledThermodynamicParameters material)
         {
             return Recover(state, material).Temperature;
         }
 
         public static double RecoverLiquidPhaseFraction(
             in ThermodynamicState state,
-            in CompiledThermodynamicParameters material)
+            CompiledThermodynamicParameters material)
         {
             return Recover(state, material).LiquidPhaseFraction;
         }
