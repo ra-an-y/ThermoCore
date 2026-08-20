@@ -29,7 +29,12 @@ namespace ThermoCore.Tests.Verification
                 ("state_update_is_immutable", StateUpdateIsImmutable),
                 ("compiler_rejects_ambiguous_reference_datum", CompilerRejectsAmbiguousReferenceDatum),
                 ("material_definition_rejects_invalid_density", MaterialDefinitionRejectsInvalidDensity),
-                ("non_finite_state_is_rejected", NonFiniteStateIsRejected)
+                ("non_finite_state_is_rejected", NonFiniteStateIsRejected),
+                ("batch_recovery_matches_scalar", BatchRecoveryMatchesScalar),
+                ("batch_recovery_preserves_input_state", BatchRecoveryPreservesInputState),
+                ("batch_recovery_accepts_empty_batch", BatchRecoveryAcceptsEmptyBatch),
+                ("batch_recovery_rejects_length_mismatch", BatchRecoveryRejectsLengthMismatch),
+                ("batch_recovery_rejects_null_material", BatchRecoveryRejectsNullMaterial)
             };
 
             var failed = 0;
@@ -337,6 +342,100 @@ namespace ThermoCore.Tests.Verification
         {
             AssertThrows<ArgumentOutOfRangeException>(() =>
                 new ThermodynamicState(double.NaN));
+        }
+
+        private static void BatchRecoveryMatchesScalar()
+        {
+            var material = CompileMaterial();
+            var states = new[]
+            {
+                new ThermodynamicState(0.0),
+                new ThermodynamicState(50_000.0),
+                new ThermodynamicState(material.SolidTransitionEnthalpy),
+                new ThermodynamicState(150_000.0),
+                new ThermodynamicState(material.LiquidTransitionEnthalpy),
+                new ThermodynamicState(225_000.0),
+                new ThermodynamicState(500_000.0)
+            };
+            var batch = new DerivedThermodynamicState[states.Length];
+
+            ReferenceThermodynamicFormulation.RecoverBatch(
+                states,
+                batch,
+                material);
+
+            for (var i = 0; i < states.Length; i++)
+            {
+                var scalar = ReferenceThermodynamicFormulation.Recover(
+                    states[i],
+                    material);
+
+                AssertNear(scalar.Temperature, batch[i].Temperature);
+                AssertNear(
+                    scalar.LiquidPhaseFraction,
+                    batch[i].LiquidPhaseFraction);
+            }
+        }
+
+        private static void BatchRecoveryPreservesInputState()
+        {
+            var material = CompileMaterial();
+            var states = new[]
+            {
+                new ThermodynamicState(50_000.0),
+                new ThermodynamicState(150_000.0),
+                new ThermodynamicState(225_000.0)
+            };
+            var before = new double[states.Length];
+            for (var i = 0; i < states.Length; i++)
+            {
+                before[i] = states[i].SpecificEnthalpy;
+            }
+
+            var batch = new DerivedThermodynamicState[states.Length];
+            ReferenceThermodynamicFormulation.RecoverBatch(states, batch, material);
+
+            for (var i = 0; i < states.Length; i++)
+            {
+                AssertNear(before[i], states[i].SpecificEnthalpy);
+            }
+        }
+
+        private static void BatchRecoveryAcceptsEmptyBatch()
+        {
+            var material = CompileMaterial();
+            var states = Array.Empty<ThermodynamicState>();
+            var batch = Array.Empty<DerivedThermodynamicState>();
+
+            ReferenceThermodynamicFormulation.RecoverBatch(states, batch, material);
+        }
+
+        private static void BatchRecoveryRejectsLengthMismatch()
+        {
+            var material = CompileMaterial();
+
+            AssertThrows<ArgumentException>(() =>
+            {
+                var states = new[] { new ThermodynamicState(0.0) };
+                var batch = Array.Empty<DerivedThermodynamicState>();
+                ReferenceThermodynamicFormulation.RecoverBatch(
+                    states,
+                    batch,
+                    material);
+            });
+        }
+
+        private static void BatchRecoveryRejectsNullMaterial()
+        {
+            AssertThrows<ArgumentNullException>(() =>
+            {
+                var states = new[] { new ThermodynamicState(0.0) };
+                var batch = new DerivedThermodynamicState[states.Length];
+                ReferenceThermodynamicFormulation.RecoverBatch(
+                    states,
+                    batch,
+                    null!);
+            });
         }
 
         private static void AssertNear(double expected, double actual)
