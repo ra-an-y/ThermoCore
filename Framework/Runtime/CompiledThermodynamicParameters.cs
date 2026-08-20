@@ -18,6 +18,8 @@ namespace ThermoCore.Framework.Runtime
     {
         public CompiledThermodynamicParameters(
             double referenceDensity,
+            double densityReferenceTemperature,
+            double energyReferenceTemperature,
             double meltingTemperature,
             double latentHeat,
             double solidHeatCapacity,
@@ -25,6 +27,12 @@ namespace ThermoCore.Framework.Runtime
             double solidTransitionEnthalpy)
         {
             RequirePositiveFinite(referenceDensity, nameof(referenceDensity));
+            RequireFinite(
+                densityReferenceTemperature,
+                nameof(densityReferenceTemperature));
+            RequireFinite(
+                energyReferenceTemperature,
+                nameof(energyReferenceTemperature));
             RequireFinite(meltingTemperature, nameof(meltingTemperature));
             RequirePositiveFinite(latentHeat, nameof(latentHeat));
             RequirePositiveFinite(solidHeatCapacity, nameof(solidHeatCapacity));
@@ -35,6 +43,8 @@ namespace ThermoCore.Framework.Runtime
             RequireFinite(liquidTransitionEnthalpy, nameof(liquidTransitionEnthalpy));
 
             ReferenceDensity = referenceDensity;
+            DensityReferenceTemperature = densityReferenceTemperature;
+            EnergyReferenceTemperature = energyReferenceTemperature;
             MeltingTemperature = meltingTemperature;
             LatentHeat = latentHeat;
             SolidHeatCapacity = solidHeatCapacity;
@@ -45,6 +55,12 @@ namespace ThermoCore.Framework.Runtime
 
         /// <summary>Constant reference density rho_ref in kg/m^3.</summary>
         public double ReferenceDensity { get; }
+
+        /// <summary>Density-reference temperature T_rho_ref in K.</summary>
+        public double DensityReferenceTemperature { get; }
+
+        /// <summary>Energy-reference temperature T_E_ref in K.</summary>
+        public double EnergyReferenceTemperature { get; }
 
         /// <summary>Isothermal phase-change temperature T_m in K.</summary>
         public double MeltingTemperature { get; }
