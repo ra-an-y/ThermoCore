@@ -28,9 +28,9 @@ The bounded thermodynamic reference implementation is additionally guided by `Do
 
 Active — bounded reference implementation in progress.
 
-The initial implementation profile is backend-independent C# with no Unity-specific runtime dependency. It currently realizes the persistent specific-enthalpy state, compiled thermodynamic parameters, `h -> T` / `h -> phi` recovery, Energy Input dimensional mapping, and Thermodynamic Computation state evolution for a constant-positive-heat-capacity specialization of the reference formulation.
+The initial implementation profile is backend-independent C# with no Unity-specific runtime dependency. It currently realizes the persistent specific-enthalpy state, compiled thermodynamic parameters, `h -> T` / `h -> phi` recovery, Energy Input dimensional mapping, Thermodynamic Computation state evolution, and Material Definition compilation for a constant-positive-heat-capacity specialization of the reference formulation.
 
-Material Definition compilation, variable heat-capacity inversion, Verification, Validation, GPU execution, and Demo integration remain separate subsequent work.
+The current Material Definition compiler normalizes the zero-enthalpy datum from `T_E_ref` onto the solid sensible branch and therefore supports `T_E_ref < T_m` in this first bounded implementation profile. Broader reference-datum placement, variable heat-capacity inversion, Verification, Validation, GPU execution, and Demo integration remain separate subsequent work.
 
 ---
 
