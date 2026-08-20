@@ -6,7 +6,7 @@ Status: Performance Attribution Plan — Non-Normative
 
 ## 1. Purpose
 
-This plan decomposes the measured cost difference between the current scalar recovery API and the newly integrated semantics-preserving batch recovery API.
+This plan decomposes the measured cost difference between the current scalar recovery API and the integrated semantics-preserving batch recovery API.
 
 The objective is not merely to report another speedup ratio. It is to identify which implementation layers plausibly account for the observed difference while preserving the distinction between measured evidence and causal interpretation.
 
@@ -24,17 +24,15 @@ b3f9fdda82cdaf78ec6612b4af442c5f5d4775c1
 
 This is `main` after PR #55, which integrated `ReferenceThermodynamicFormulation.RecoverBatch(...)` and expanded repository Verification to 21/21 PASS.
 
-The actual integrated scalar and batch APIs remain authoritative implementation paths for this comparison.
-
 ---
 
 ## 3. Attribution Principle
 
 The benchmark uses the same prevalidated `ThermodynamicState[]`, the same compiled Material Configuration, the same deterministic mixed-phase values, the same process, and the same hosted runner for every scenario within one execution.
 
-It then removes or changes one implementation layer at a time.
+It then changes one implementation layer at a time.
 
-The measured differences are **differential observations**, not mathematically additive costs. JIT inlining, code generation, cache behavior, branch prediction, memory traffic, and instruction scheduling can interact, so one timing difference shall not be presented as an exact universal cost assigned to a single source line.
+The measured differences are differential observations, not mathematically additive costs. JIT inlining, code generation, cache behavior, branch prediction, memory traffic, and instruction scheduling can interact, so one timing difference shall not be presented as an exact universal cost assigned to a single source line.
 
 ---
 
@@ -62,35 +60,45 @@ ReadOnlySpan<ThermodynamicState>
     -> Span<DerivedThermodynamicState>
 ```
 
-This is the newly integrated formal batch API and is the primary implementation measurement.
+This is the integrated formal batch API.
 
-The A-to-B comparison measures the practical benefit of the formal batch abstraction as implemented. It includes boundary-validation amortization and any JIT/code-generation consequences of moving the loop inside the API.
+The A-to-B comparison measures the practical benefit of the formal batch abstraction as implemented, including boundary-validation amortization and any JIT/code-generation consequences of moving the loop inside the API.
 
 ### C. `local_derived_recovery`
 
-A Performance-only local loop evaluates the same bounded piecewise equations from the same `ThermodynamicState[]`, caches Material parameters in local variables before the timed loop, and still constructs one `DerivedThermodynamicState` per cell.
+A Performance-only local loop evaluates the same piecewise equations from the same `ThermodynamicState[]`, caches Material parameters in local variables before the timed loop, and still constructs one real `DerivedThermodynamicState` per cell.
 
-The B-to-C comparison probes residual cost associated with the formal batch implementation structure versus a locally flattened/cached relation while keeping the semantic Derived State output type.
+The B-to-C comparison probes residual cost associated with the formal batch implementation structure versus a locally flattened/cached relation while keeping the semantic Derived State type and its validation.
 
-### D. `local_primitive_output_recovery`
+### D. `local_raw_struct_recovery`
 
-The same local equations are evaluated from the same state buffer, but outputs are written directly to separate `double[]` Temperature and liquid-fraction arrays.
+The same local equations write a benchmark-local two-double readonly struct with no constructor validation.
 
-The C-to-D comparison probes the effect of `DerivedThermodynamicState` construction/validation and struct-output representation versus primitive output buffers.
+This struct has the same two-value shape as `DerivedThermodynamicState` but has no thermodynamic authority and exists only under `Performance/`.
 
-This is an implementation experiment only. It does not change the semantic classification of Temperature or phase fraction.
+The C-to-D comparison is designed to probe the cost associated with `DerivedThermodynamicState` constructor validation while keeping an array-of-structs output shape.
 
-### E. `local_compute_only_recovery`
+### E. `local_primitive_recovery`
 
-The same equations are evaluated, but results are consumed through an accumulated checksum instead of being stored into output arrays.
+The same local equations write separate primitive `double[]` Temperature and liquid-fraction arrays.
 
-The D-to-E comparison probes output-buffer traffic and storage effects.
+The D-to-E comparison probes array-of-structs versus split primitive-output representation after constructor validation has already been removed.
 
-### F. `state_traversal_only`
+### F. `derived_output_only`
 
-The benchmark reads `SpecificEnthalpy` from the same state buffer and accumulates a checksum without evaluating the recovery equations.
+Precomputed valid Temperature and liquid-fraction values are copied into real `DerivedThermodynamicState` values. No thermodynamic recovery equation is evaluated inside this timed scenario.
 
-The E-to-F comparison provides a lower-level traversal reference for the arithmetic/branching work of the local recovery relation.
+### G. `raw_struct_output_only`
+
+The same precomputed values are copied into the benchmark-local raw two-double struct.
+
+The F-to-G comparison independently probes real Derived State validation versus an otherwise similar unvalidated struct output path.
+
+### H. `primitive_output_only`
+
+The same precomputed values are copied into separate primitive arrays.
+
+The G-to-H comparison independently probes struct-output versus split primitive-output representation without thermodynamic equation cost.
 
 ---
 
@@ -100,16 +108,18 @@ Before timing evidence is accepted:
 
 - formal batch output shall match scalar public recovery;
 - local Derived State output shall match scalar public recovery;
-- local primitive output shall match scalar public recovery;
-- local compute-only checksum shall match the checksum of scalar public recovery within the defined tolerance;
-- exact `h_s*` and `h_l*` values shall appear in the deterministic dataset;
-- no non-finite Temperature or phase-fraction value shall be accepted.
+- local raw-struct output shall match scalar public recovery numerically;
+- local primitive output shall match scalar public recovery numerically;
+- exact `h_s*` and `h_l*` values shall appear in the deterministic dataset; and
+- no non-finite reference output shall be accepted.
 
 Tolerance:
 
 ```text
 1e-10
 ```
+
+The raw struct and primitive arrays are measurement devices only. Numerical equivalence does not make them Framework State or Representation.
 
 A semantic-gate failure makes the attribution run `INVALID`.
 
@@ -132,8 +142,6 @@ Each timed sample targets approximately:
 8,388,608 cell operations
 ```
 
-This reduces sensitivity to very short individual traversals.
-
 ---
 
 ## 7. Timing Procedure
@@ -146,7 +154,9 @@ timed samples: 7
 reported timing: median / minimum / maximum
 ```
 
-The timed region uses `Stopwatch.GetTimestamp()` and shall report median managed allocation.
+The timed region uses `Stopwatch.GetTimestamp()` and reports median managed allocation.
+
+Checksums are calculated after the timed region so output consumption remains observable without adding checksum traversal to the measured interval.
 
 Reported metrics:
 
@@ -164,20 +174,21 @@ Reported metrics:
 For each size, the report shall calculate at least:
 
 ```text
-formal batch benefit      = scalar public / formal batch
-formal-vs-local-derived   = formal batch / local derived
-Derived-vs-primitive      = local derived / local primitive
-primitive-vs-compute-only = local primitive / local compute-only
-compute-vs-traversal      = local compute-only / traversal only
+formal batch benefit        = scalar public / formal batch
+formal-vs-local-derived     = formal batch / local derived
+Derived-validation effect   = local derived / local raw struct
+output-layout effect        = local raw struct / local primitive
+output-only validation      = derived output only / raw struct output only
+output-only layout          = raw struct output only / primitive output only
 ```
 
-The names describe measured scenario ratios only. They shall not be converted into exact additive percentages of total runtime without stronger evidence.
+These names describe measured scenario ratios only. They shall not be converted into exact additive percentages of total runtime without stronger evidence.
 
 ---
 
 ## 9. Environment Metadata
 
-The runner shall preserve:
+The runner preserves:
 
 - .NET runtime version;
 - OS description;
@@ -194,7 +205,7 @@ Absolute hosted-run timing remains environment-specific.
 
 ## 10. Interpretation Boundary
 
-The strongest supported conclusion from this experiment should be stated in terms such as:
+The strongest supported conclusion should be stated in terms such as:
 
 ```text
 "The measured difference is primarily associated with ... under this implementation and environment."
@@ -202,14 +213,14 @@ The strongest supported conclusion from this experiment should be stated in term
 
 It shall not claim that a source-level operation has a universal fixed cost.
 
-In particular, the benchmark shall distinguish:
+The benchmark is specifically designed to distinguish:
 
-- formal API/boundary amortization;
-- Derived State construction/validation and output representation;
-- output-buffer memory traffic; and
-- underlying piecewise arithmetic/traversal.
+- formal API / batch-boundary amortization;
+- Derived State constructor validation;
+- struct versus split primitive output layout; and
+- the thermodynamic equation path shared by the compared recovery scenarios.
 
-SIMD is intentionally excluded from this attribution track because PR #54 found its incremental benefit near parity and environment-sensitive.
+SIMD is intentionally excluded because PR #54 found its incremental benefit near parity and environment-sensitive.
 
 ---
 
