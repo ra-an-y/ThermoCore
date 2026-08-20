@@ -31,12 +31,16 @@ namespace ThermoCore.Framework.Runtime
             RequirePositiveFinite(liquidHeatCapacity, nameof(liquidHeatCapacity));
             RequireFinite(solidTransitionEnthalpy, nameof(solidTransitionEnthalpy));
 
+            var liquidTransitionEnthalpy = solidTransitionEnthalpy + latentHeat;
+            RequireFinite(liquidTransitionEnthalpy, nameof(liquidTransitionEnthalpy));
+
             ReferenceDensity = referenceDensity;
             MeltingTemperature = meltingTemperature;
             LatentHeat = latentHeat;
             SolidHeatCapacity = solidHeatCapacity;
             LiquidHeatCapacity = liquidHeatCapacity;
             SolidTransitionEnthalpy = solidTransitionEnthalpy;
+            LiquidTransitionEnthalpy = liquidTransitionEnthalpy;
         }
 
         /// <summary>Constant reference density rho_ref in kg/m^3.</summary>
@@ -62,7 +66,7 @@ namespace ThermoCore.Framework.Runtime
         public double SolidTransitionEnthalpy { get; }
 
         /// <summary>Fully liquid threshold h_l* = h_s* + L in J/kg.</summary>
-        public double LiquidTransitionEnthalpy => SolidTransitionEnthalpy + LatentHeat;
+        public double LiquidTransitionEnthalpy { get; }
 
         private static void RequireFinite(double value, string name)
         {
