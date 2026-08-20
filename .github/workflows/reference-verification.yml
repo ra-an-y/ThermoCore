@@ -24,3 +24,6 @@ jobs:
 
       - name: Run bounded reference verification
         run: dotnet run --project Tests/ThermoCore.ReferenceVerification.csproj --configuration Release
+
+      - name: Run batch invariant optimization verification
+        run: dotnet run --project Tests/ThermoCore.BatchInvariantVerification.csproj --configuration Release
