@@ -39,6 +39,18 @@ The first track is defined by:
 
 - `Reference_CPU_Performance_Evaluation_Plan.md`
 
+Its first executed result is preserved as:
+
+- `Reference_CPU_Performance_Evaluation_v0.1.md`
+
+Latest recorded result status:
+
+```text
+COMPLETED — measurements reported
+```
+
+No performance PASS/FAIL threshold has been adopted. Absolute GitHub-hosted runner timings remain environment-specific observations rather than universal ThermoCore guarantees.
+
 No GPU, Unity, engine, mobile, or production-hardware performance claim is implied by this initial CPU track.
 
 ---
