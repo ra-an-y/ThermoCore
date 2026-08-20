@@ -15,7 +15,15 @@ namespace ThermoCore.Framework.Core
             CompiledThermodynamicParameters material)
         {
             RequireMaterial(material);
-            return RecoverValidatedState(state.SpecificEnthalpy, material);
+            var kernel = new RecoveryKernel(material);
+            kernel.Recover(
+                state.SpecificEnthalpy,
+                out var temperature,
+                out var liquidFraction);
+
+            return new DerivedThermodynamicState(
+                temperature,
+                liquidFraction);
         }
 
         /// <summary>
@@ -25,9 +33,10 @@ namespace ThermoCore.Framework.Core
         /// The input states remain the owned runtime-state values. This batch
         /// operation does not mutate them and does not make the destination
         /// Derived State persistent. Material and destination-shape validation
-        /// are performed at the batch boundary. Per-value invariant enforcement
-        /// is specialized by recovery region before the internal trusted
-        /// Derived-State construction path is used.
+        /// are performed at the batch boundary. A local recovery kernel caches
+        /// immutable material parameters once for the batch. Per-value invariant
+        /// enforcement is specialized by recovery region before the internal
+        /// invariant-established Derived-State construction path is used.
         /// </summary>
         public static void RecoverBatch(
             ReadOnlySpan<ThermodynamicState> states,
@@ -43,11 +52,12 @@ namespace ThermoCore.Framework.Core
                     nameof(destination));
             }
 
+            var kernel = new RecoveryKernel(material);
+
             for (var i = 0; i < states.Length; i++)
             {
-                var region = RecoverRaw(
+                var region = kernel.Recover(
                     states[i].SpecificEnthalpy,
-                    material,
                     out var temperature,
                     out var liquidFraction);
 
@@ -77,51 +87,6 @@ namespace ThermoCore.Framework.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static DerivedThermodynamicState RecoverValidatedState(
-            double specificEnthalpy,
-            CompiledThermodynamicParameters material)
-        {
-            RecoverRaw(
-                specificEnthalpy,
-                material,
-                out var temperature,
-                out var liquidFraction);
-
-            return new DerivedThermodynamicState(temperature, liquidFraction);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static RecoveryRegion RecoverRaw(
-            double specificEnthalpy,
-            CompiledThermodynamicParameters material,
-            out double temperature,
-            out double liquidFraction)
-        {
-            var hSolid = material.SolidTransitionEnthalpy;
-            var hLiquid = material.LiquidTransitionEnthalpy;
-
-            if (specificEnthalpy < hSolid)
-            {
-                temperature = material.MeltingTemperature
-                    + (specificEnthalpy - hSolid) / material.SolidHeatCapacity;
-                liquidFraction = 0.0;
-                return RecoveryRegion.SolidSensible;
-            }
-
-            if (specificEnthalpy <= hLiquid)
-            {
-                temperature = material.MeltingTemperature;
-                liquidFraction = (specificEnthalpy - hSolid) / material.LatentHeat;
-                return RecoveryRegion.Latent;
-            }
-
-            temperature = material.MeltingTemperature
-                + (specificEnthalpy - hLiquid) / material.LiquidHeatCapacity;
-            liquidFraction = 1.0;
-            return RecoveryRegion.LiquidSensible;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EstablishBatchDerivedInvariants(
             RecoveryRegion region,
             double temperature,
@@ -143,6 +108,57 @@ namespace ThermoCore.Framework.Core
             if (material == null)
             {
                 throw new ArgumentNullException(nameof(material));
+            }
+        }
+
+        private readonly struct RecoveryKernel
+        {
+            private readonly double _solidTransitionEnthalpy;
+            private readonly double _liquidTransitionEnthalpy;
+            private readonly double _meltingTemperature;
+            private readonly double _latentHeat;
+            private readonly double _solidHeatCapacity;
+            private readonly double _liquidHeatCapacity;
+
+            public RecoveryKernel(CompiledThermodynamicParameters material)
+            {
+                _solidTransitionEnthalpy = material.SolidTransitionEnthalpy;
+                _liquidTransitionEnthalpy = material.LiquidTransitionEnthalpy;
+                _meltingTemperature = material.MeltingTemperature;
+                _latentHeat = material.LatentHeat;
+                _solidHeatCapacity = material.SolidHeatCapacity;
+                _liquidHeatCapacity = material.LiquidHeatCapacity;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public RecoveryRegion Recover(
+                double specificEnthalpy,
+                out double temperature,
+                out double liquidFraction)
+            {
+                if (specificEnthalpy < _solidTransitionEnthalpy)
+                {
+                    temperature = _meltingTemperature
+                        + (specificEnthalpy - _solidTransitionEnthalpy)
+                        / _solidHeatCapacity;
+                    liquidFraction = 0.0;
+                    return RecoveryRegion.SolidSensible;
+                }
+
+                if (specificEnthalpy <= _liquidTransitionEnthalpy)
+                {
+                    temperature = _meltingTemperature;
+                    liquidFraction =
+                        (specificEnthalpy - _solidTransitionEnthalpy)
+                        / _latentHeat;
+                    return RecoveryRegion.Latent;
+                }
+
+                temperature = _meltingTemperature
+                    + (specificEnthalpy - _liquidTransitionEnthalpy)
+                    / _liquidHeatCapacity;
+                liquidFraction = 1.0;
+                return RecoveryRegion.LiquidSensible;
             }
         }
 
