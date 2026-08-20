@@ -35,13 +35,21 @@ Historical measurements shall remain tied to their recorded environment and comm
 
 Active — bounded CPU reference-implementation Performance Evaluation.
 
-The first track is defined by:
+The scalar CPU baseline is defined by:
 
 - `Reference_CPU_Performance_Evaluation_Plan.md`
 
-Its first executed result is preserved as:
+Its executed result is preserved as:
 
 - `Reference_CPU_Performance_Evaluation_v0.1.md`
+
+The first batch/SIMD candidate track is defined by:
+
+- `Reference_CPU_SIMD_Evaluation_Plan.md`
+
+Its executed result is preserved as:
+
+- `Reference_CPU_SIMD_Evaluation_v0.1.md`
 
 Latest recorded result status:
 
@@ -49,9 +57,11 @@ Latest recorded result status:
 COMPLETED — measurements reported
 ```
 
+The SIMD candidate remains performance evidence only and has not been promoted into `Framework/` implementation source by this track.
+
 No performance PASS/FAIL threshold has been adopted. Absolute GitHub-hosted runner timings remain environment-specific observations rather than universal ThermoCore guarantees.
 
-No GPU, Unity, engine, mobile, or production-hardware performance claim is implied by this initial CPU track.
+No GPU, Unity, engine, mobile, or production-hardware performance claim is implied by these initial CPU tracks.
 
 ---
 
@@ -64,6 +74,8 @@ Research -> Evidence -> Specification -> Implementation -> Verification -> Valid
 ```
 
 Performance measurements do not redefine Framework semantics or ownership.
+
+A performance candidate that appears promising still requires explicit implementation review and correctness Verification before it becomes part of an implementation profile.
 
 ---
 
