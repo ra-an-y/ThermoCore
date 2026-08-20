@@ -23,10 +23,10 @@ namespace ThermoCore.Framework.Core
         ///
         /// The input states remain the owned runtime-state values. This batch
         /// operation does not mutate them and does not make the destination
-        /// Derived State persistent. Material validation and destination-shape
-        /// validation are performed once at the batch boundary; each recovered
-        /// value retains the same numerical semantics and derived-value checks as
-        /// <see cref="Recover"/>.
+        /// Derived State persistent. Material and destination-shape validation
+        /// are performed at the batch boundary. Per-value invariant enforcement
+        /// is specialized by recovery region before the internal trusted
+        /// Derived-State construction path is used.
         /// </summary>
         public static void RecoverBatch(
             ReadOnlySpan<ThermodynamicState> states,
@@ -44,9 +44,20 @@ namespace ThermoCore.Framework.Core
 
             for (var i = 0; i < states.Length; i++)
             {
-                destination[i] = RecoverValidatedState(
+                var region = RecoverRaw(
                     states[i].SpecificEnthalpy,
-                    material);
+                    material,
+                    out var temperature,
+                    out var liquidFraction);
+
+                EstablishBatchDerivedInvariants(
+                    region,
+                    temperature,
+                    liquidFraction);
+
+                destination[i] = DerivedThermodynamicState.FromEstablishedInvariants(
+                    temperature,
+                    liquidFraction);
             }
         }
 
@@ -68,31 +79,72 @@ namespace ThermoCore.Framework.Core
             double specificEnthalpy,
             CompiledThermodynamicParameters material)
         {
+            RecoverRaw(
+                specificEnthalpy,
+                material,
+                out var temperature,
+                out var liquidFraction);
+
+            return new DerivedThermodynamicState(temperature, liquidFraction);
+        }
+
+        private static RecoveryRegion RecoverRaw(
+            double specificEnthalpy,
+            CompiledThermodynamicParameters material,
+            out double temperature,
+            out double liquidFraction)
+        {
             var hSolid = material.SolidTransitionEnthalpy;
             var hLiquid = material.LiquidTransitionEnthalpy;
-
-            double temperature;
-            double liquidFraction;
 
             if (specificEnthalpy < hSolid)
             {
                 temperature = material.MeltingTemperature
                     + (specificEnthalpy - hSolid) / material.SolidHeatCapacity;
                 liquidFraction = 0.0;
+                return RecoveryRegion.SolidSensible;
             }
-            else if (specificEnthalpy <= hLiquid)
+
+            if (specificEnthalpy <= hLiquid)
             {
                 temperature = material.MeltingTemperature;
                 liquidFraction = (specificEnthalpy - hSolid) / material.LatentHeat;
-            }
-            else
-            {
-                temperature = material.MeltingTemperature
-                    + (specificEnthalpy - hLiquid) / material.LiquidHeatCapacity;
-                liquidFraction = 1.0;
+                return RecoveryRegion.Latent;
             }
 
-            return new DerivedThermodynamicState(temperature, liquidFraction);
+            temperature = material.MeltingTemperature
+                + (specificEnthalpy - hLiquid) / material.LiquidHeatCapacity;
+            liquidFraction = 1.0;
+            return RecoveryRegion.LiquidSensible;
+        }
+
+        private static void EstablishBatchDerivedInvariants(
+            RecoveryRegion region,
+            double temperature,
+            double liquidFraction)
+        {
+            switch (region)
+            {
+                case RecoveryRegion.SolidSensible:
+                case RecoveryRegion.LiquidSensible:
+                    // These branches assign phase fractions exactly to 0 or 1.
+                    // Only finite recovered Temperature remains to be established.
+                    DerivedThermodynamicState.RequireFiniteTemperature(temperature);
+                    return;
+
+                case RecoveryRegion.Latent:
+                    // The latent branch assigns Temperature directly from the
+                    // already-finite material melting Temperature. Floating-point
+                    // endpoint arithmetic can still perturb the phase fraction,
+                    // so its finite [0,1] invariant remains explicitly checked.
+                    DerivedThermodynamicState.RequireBoundedLiquidFraction(
+                        liquidFraction);
+                    return;
+
+                default:
+                    throw new InvalidOperationException(
+                        "Unknown thermodynamic recovery region.");
+            }
         }
 
         private static void RequireMaterial(
@@ -102,6 +154,13 @@ namespace ThermoCore.Framework.Core
             {
                 throw new ArgumentNullException(nameof(material));
             }
+        }
+
+        private enum RecoveryRegion
+        {
+            SolidSensible,
+            Latent,
+            LiquidSensible
         }
     }
 }
