@@ -17,7 +17,7 @@ namespace ThermoCore.Framework.Core
         {
             RequireFinite(deltaEnergy, nameof(deltaEnergy));
             RequirePositiveFinite(cellMass, nameof(cellMass));
-            return deltaEnergy / cellMass;
+            return RequireFiniteResult(deltaEnergy / cellMass);
         }
 
         public static double FromPower(double power, double deltaTime, double cellMass)
@@ -25,7 +25,7 @@ namespace ThermoCore.Framework.Core
             RequireFinite(power, nameof(power));
             RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
             RequirePositiveFinite(cellMass, nameof(cellMass));
-            return power * deltaTime / cellMass;
+            return RequireFiniteResult(power * deltaTime / cellMass);
         }
 
         public static double FromBoundaryHeatFlux(
@@ -38,7 +38,8 @@ namespace ThermoCore.Framework.Core
             RequireNonNegativeFinite(affectedArea, nameof(affectedArea));
             RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
             RequirePositiveFinite(cellMass, nameof(cellMass));
-            return heatFlux * affectedArea * deltaTime / cellMass;
+            return RequireFiniteResult(
+                heatFlux * affectedArea * deltaTime / cellMass);
         }
 
         public static double FromVolumetricHeatSource(
@@ -48,7 +49,8 @@ namespace ThermoCore.Framework.Core
         {
             RequireFinite(volumetricHeatSource, nameof(volumetricHeatSource));
             RequireNonNegativeFinite(deltaTime, nameof(deltaTime));
-            return volumetricHeatSource * deltaTime / material.ReferenceDensity;
+            return RequireFiniteResult(
+                volumetricHeatSource * deltaTime / material.ReferenceDensity);
         }
 
         public static double CellMass(
@@ -56,7 +58,18 @@ namespace ThermoCore.Framework.Core
             in CompiledThermodynamicParameters material)
         {
             RequirePositiveFinite(cellVolume, nameof(cellVolume));
-            return material.ReferenceDensity * cellVolume;
+            return RequireFiniteResult(material.ReferenceDensity * cellVolume);
+        }
+
+        private static double RequireFiniteResult(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                throw new OverflowException(
+                    "Energy mapping produced a non-finite result.");
+            }
+
+            return value;
         }
 
         private static void RequireFinite(double value, string name)
