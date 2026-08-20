@@ -24,7 +24,13 @@ Tests and Framework Validation have different responsibilities. Tests verify imp
 
 # Current Status
 
-Planned
+Active — bounded reference-formulation Verification in progress.
+
+`ThermoCore.ReferenceVerification.csproj` builds the current backend-independent C# reference implementation together with deterministic verification cases in `Verification/Program.cs`.
+
+The current verification slice checks material/reference-state compilation, `h -> T` and `h -> phi` recovery, phase-boundary invariants, dimensional Energy Input mapping, latent-energy consistency, immutable state evolution, and selected invalid-input guards.
+
+Execution is automated by `.github/workflows/reference-verification.yml`. A passing run verifies only the tested implementation behavior and does not by itself establish Framework Conformance or physical Validation.
 
 ---
 
