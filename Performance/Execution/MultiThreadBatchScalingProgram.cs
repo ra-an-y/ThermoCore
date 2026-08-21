@@ -168,6 +168,59 @@ namespace ThermoCore.Performance.MultiThreadBatchScaling
             }
         }
 
+        private sealed class ScalingScenario : IDisposable
+        {
+            private readonly ThermodynamicState[] _states;
+            private readonly CompiledThermodynamicParameters _material;
+            private readonly int _passes;
+            private readonly PersistentWorkerPool? _pool;
+
+            public ScalingScenario(
+                string name,
+                int workers,
+                bool direct,
+                ThermodynamicState[] states,
+                CompiledThermodynamicParameters material,
+                int passes)
+            {
+                Name = name;
+                Workers = workers;
+                IsDirect = direct;
+                _states = states;
+                _material = material;
+                _passes = passes;
+                Destination = new DerivedThermodynamicState[states.Length];
+
+                if (!direct)
+                {
+                    _pool = new PersistentWorkerPool(
+                        states,
+                        Destination,
+                        material,
+                        passes,
+                        workers);
+                }
+            }
+
+            public string Name { get; }
+            public int Workers { get; }
+            public bool IsDirect { get; }
+            public DerivedThermodynamicState[] Destination { get; }
+
+            public void RunOnce()
+            {
+                if (_pool != null)
+                {
+                    _pool.RunOnce();
+                    return;
+                }
+
+                RunDirect(_states, Destination, _material, _passes);
+            }
+
+            public void Dispose() => _pool?.Dispose();
+        }
+
         private static int Main()
         {
             try
@@ -177,7 +230,7 @@ namespace ThermoCore.Performance.MultiThreadBatchScaling
                 RunSemanticGate(material);
 
                 Console.WriteLine(
-                    "RESULT_HEADER|scenario|cells|workers|logical_processors|oversubscribed|passes|median_ms|min_ms|max_ms|ns_per_cell|million_cells_per_second|speedup_vs_direct|parallel_efficiency|checksum");
+                    "RESULT_HEADER|scenario|cells|workers|logical_processors|oversubscribed|passes|median_ms|min_ms|max_ms|ns_per_cell|million_cells_per_second|speedup_vs_direct|speedup_vs_worker1|worker_scaling_efficiency|checksum");
 
                 foreach (var cellCount in CellCounts)
                 {
@@ -280,109 +333,95 @@ namespace ThermoCore.Performance.MultiThreadBatchScaling
         {
             var passes = Math.Max(1, TargetCellOperations / cellCount);
             var states = CreateStates(cellCount, material);
-            var destination = new DerivedThermodynamicState[cellCount];
-
-            var direct = MeasureDirect(states, destination, material, passes);
-            PrintResult(
-                scenario: "direct_single_thread",
-                cellCount,
-                workers: 1,
-                passes,
-                direct,
-                direct.MedianMs);
-
-            foreach (var workers in WorkerCounts)
+            var scenarios = new[]
             {
-                Array.Clear(destination, 0, destination.Length);
-                var parallel = MeasureWorkerPool(
-                    states,
-                    destination,
-                    material,
-                    passes,
-                    workers);
+                new ScalingScenario("direct_single_thread", 1, true, states, material, passes),
+                new ScalingScenario("worker_pool_1", 1, false, states, material, passes),
+                new ScalingScenario("worker_pool_2", 2, false, states, material, passes),
+                new ScalingScenario("worker_pool_4", 4, false, states, material, passes),
+                new ScalingScenario("worker_pool_8", 8, false, states, material, passes)
+            };
 
-                PrintResult(
-                    scenario: $"worker_pool_{workers}",
-                    cellCount,
-                    workers,
-                    passes,
-                    parallel,
-                    direct.MedianMs);
+            try
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+
+                for (var warmup = 0; warmup < WarmupSamples; warmup++)
+                {
+                    RunRotatedRound(scenarios, warmup, samples: null, sampleIndex: -1);
+                }
+
+                var samples = new double[scenarios.Length][];
+                for (var i = 0; i < samples.Length; i++)
+                {
+                    samples[i] = new double[TimedSamples];
+                }
+
+                for (var sample = 0; sample < TimedSamples; sample++)
+                {
+                    RunRotatedRound(scenarios, sample, samples, sample);
+                }
+
+                var results = new TimingResult[scenarios.Length];
+                for (var i = 0; i < scenarios.Length; i++)
+                {
+                    var ordered = samples[i];
+                    Array.Sort(ordered);
+                    results[i] = new TimingResult(
+                        ordered[TimedSamples / 2],
+                        ordered[0],
+                        ordered[TimedSamples - 1],
+                        ComputeChecksum(scenarios[i].Destination));
+                }
+
+                var directMedian = results[0].MedianMs;
+                var worker1Median = results[1].MedianMs;
+                for (var i = 0; i < scenarios.Length; i++)
+                {
+                    PrintResult(
+                        scenarios[i],
+                        cellCount,
+                        passes,
+                        results[i],
+                        directMedian,
+                        worker1Median);
+                }
+            }
+            finally
+            {
+                for (var i = scenarios.Length - 1; i >= 0; i--)
+                {
+                    scenarios[i].Dispose();
+                }
             }
         }
 
-        private static TimingResult MeasureDirect(
-            ThermodynamicState[] states,
-            DerivedThermodynamicState[] destination,
-            CompiledThermodynamicParameters material,
-            int passes)
+        private static void RunRotatedRound(
+            ScalingScenario[] scenarios,
+            int rotation,
+            double[][]? samples,
+            int sampleIndex)
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-
-            for (var i = 0; i < WarmupSamples; i++)
+            var startIndex = rotation % scenarios.Length;
+            for (var step = 0; step < scenarios.Length; step++)
             {
-                RunDirect(states, destination, material, passes);
-            }
+                var scenarioIndex = (startIndex + step) % scenarios.Length;
+                var scenario = scenarios[scenarioIndex];
 
-            var samples = new double[TimedSamples];
-            for (var sample = 0; sample < TimedSamples; sample++)
-            {
+                if (samples == null)
+                {
+                    scenario.RunOnce();
+                    continue;
+                }
+
                 var start = Stopwatch.GetTimestamp();
-                RunDirect(states, destination, material, passes);
+                scenario.RunOnce();
                 var end = Stopwatch.GetTimestamp();
-                samples[sample] = (end - start) * 1000.0 / Stopwatch.Frequency;
+                samples[scenarioIndex][sampleIndex] =
+                    (end - start) * 1000.0 / Stopwatch.Frequency;
             }
-
-            var checksum = ComputeChecksum(destination);
-            Array.Sort(samples);
-            return new TimingResult(
-                samples[TimedSamples / 2],
-                samples[0],
-                samples[TimedSamples - 1],
-                checksum);
-        }
-
-        private static TimingResult MeasureWorkerPool(
-            ThermodynamicState[] states,
-            DerivedThermodynamicState[] destination,
-            CompiledThermodynamicParameters material,
-            int passes,
-            int workers)
-        {
-            using var pool = new PersistentWorkerPool(
-                states,
-                destination,
-                material,
-                passes,
-                workers);
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-
-            for (var i = 0; i < WarmupSamples; i++)
-            {
-                pool.RunOnce();
-            }
-
-            var samples = new double[TimedSamples];
-            for (var sample = 0; sample < TimedSamples; sample++)
-            {
-                var start = Stopwatch.GetTimestamp();
-                pool.RunOnce();
-                var end = Stopwatch.GetTimestamp();
-                samples[sample] = (end - start) * 1000.0 / Stopwatch.Frequency;
-            }
-
-            var checksum = ComputeChecksum(destination);
-            Array.Sort(samples);
-            return new TimingResult(
-                samples[TimedSamples / 2],
-                samples[0],
-                samples[TimedSamples - 1],
-                checksum);
         }
 
         private static void RunDirect(
@@ -401,26 +440,31 @@ namespace ThermoCore.Performance.MultiThreadBatchScaling
         }
 
         private static void PrintResult(
-            string scenario,
+            ScalingScenario scenario,
             int cellCount,
-            int workers,
             int passes,
             TimingResult result,
-            double directMedianMs)
+            double directMedianMs,
+            double worker1MedianMs)
         {
             var operations = (long)cellCount * passes;
             var nsPerCell = result.MedianMs * 1_000_000.0 / operations;
             var throughput = operations / (result.MedianMs / 1000.0) / 1_000_000.0;
-            var speedup = directMedianMs / result.MedianMs;
-            var efficiency = speedup / workers;
-            var oversubscribed = workers > Environment.ProcessorCount;
+            var speedupVsDirect = directMedianMs / result.MedianMs;
+            var speedupVsWorker1 = scenario.IsDirect
+                ? 1.0
+                : worker1MedianMs / result.MedianMs;
+            var workerEfficiency = scenario.IsDirect
+                ? 1.0
+                : speedupVsWorker1 / scenario.Workers;
+            var oversubscribed = scenario.Workers > Environment.ProcessorCount;
 
             Console.WriteLine(string.Join('|', new[]
             {
                 "RESULT",
-                scenario,
+                scenario.Name,
                 cellCount.ToString(CultureInfo.InvariantCulture),
-                workers.ToString(CultureInfo.InvariantCulture),
+                scenario.Workers.ToString(CultureInfo.InvariantCulture),
                 Environment.ProcessorCount.ToString(CultureInfo.InvariantCulture),
                 oversubscribed ? "true" : "false",
                 passes.ToString(CultureInfo.InvariantCulture),
@@ -429,8 +473,9 @@ namespace ThermoCore.Performance.MultiThreadBatchScaling
                 result.MaxMs.ToString("R", CultureInfo.InvariantCulture),
                 nsPerCell.ToString("R", CultureInfo.InvariantCulture),
                 throughput.ToString("R", CultureInfo.InvariantCulture),
-                speedup.ToString("R", CultureInfo.InvariantCulture),
-                efficiency.ToString("R", CultureInfo.InvariantCulture),
+                speedupVsDirect.ToString("R", CultureInfo.InvariantCulture),
+                speedupVsWorker1.ToString("R", CultureInfo.InvariantCulture),
+                workerEfficiency.ToString("R", CultureInfo.InvariantCulture),
                 result.Checksum.ToString("R", CultureInfo.InvariantCulture)
             }));
         }
@@ -530,6 +575,7 @@ namespace ThermoCore.Performance.MultiThreadBatchScaling
             Console.WriteLine($"timed_samples: {TimedSamples}");
             Console.WriteLine($"target_cell_operations_per_sample: {TargetCellOperations}");
             Console.WriteLine("requested_worker_counts: 1,2,4,8");
+            Console.WriteLine("timing_order: interleaved_rotating_start");
         }
 
         private static string ReadCpuModel()
