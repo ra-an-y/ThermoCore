@@ -38,21 +38,21 @@ Material Representation
 - [Framework Vocabulary](Documentation/Framework_Vocabulary.md)
 - [Repository Governance](Documentation/Repository_Guidelines/Repository_Governance.md)
 - [Research Guide](Research/README.md)
+- [Validation Evidence](Validation/README.md)
+- [Performance Evaluation](Performance/README.md)
 
 ---
 
 ## Validation Evidence
 
-The table reports Validation Evidence currently published in this repository. It does not represent assumed local progress or unpublished work.
+ThermoCore currently publishes two independent bounded caloric Validation tracks for the reference formulation.
 
-| Validation | Purpose | Repository-published Evidence |
+| Validation track | External basis | Repository-published result |
 |---|---|---|
-| V01 | Architecture Decoupling | Not published |
-| V02 | Continuous Phase Transition | Not published |
-| V03 | Thermodynamic State | Not published |
-| V04 | Energy Consistency | Not published |
+| [H2O caloric benchmark](Validation/Reference_Formulation_Caloric_Validation_v0.1.md) | IAPWS reference formulations | `COMPLETED — errors reported` |
+| [Gallium caloric benchmark](Validation/Reference_Formulation_Gallium_Caloric_Validation_v0.1.md) | NIST Chemistry WebBook SRD 69 / NIST-JANAF | `COMPLETED — errors reported` |
 
-A status in this table indicates repository publication only. Framework Conformance and Validation conclusions remain governed by their applicable authoritative artifacts.
+These records preserve measured error against the declared external references. Neither track adopts a physical PASS/FAIL threshold, establishes complete Framework Validation, or implies Framework Conformance.
 
 ---
 
@@ -60,7 +60,9 @@ A status in this table indicates repository publication only. Framework Conforma
 
 The Framework Specification and repository governance baselines have been established.
 
-Current work concerns implementation preparation, Framework Validation preparation, evidence development, and supporting documentation.
+A bounded thermodynamic reference formulation has been implemented and verified. Two independent caloric Validation tracks are published, and bounded CPU Performance Evaluation records are preserved under `Performance/`.
+
+Current work concerns evidence consolidation, release readiness, and additional bounded Validation or implementation work where independently justified.
 
 Future releases may publish additional Validation Evidence and optional Reference Applications. Reference Applications are not mandatory release contents.
 
