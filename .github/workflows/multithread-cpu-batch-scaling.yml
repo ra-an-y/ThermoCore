@@ -1,0 +1,30 @@
+name: Multi-thread CPU Batch Scaling
+
+on:
+  pull_request:
+    paths:
+      - "Performance/**"
+      - "Framework/**"
+      - "Materials/**"
+      - ".github/workflows/multithread-cpu-batch-scaling.yml"
+  workflow_dispatch:
+
+jobs:
+  evaluate-multithread-batch-scaling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run multi-thread CPU batch scaling evaluation
+        run: >-
+          dotnet run
+          --project Performance/ThermoCore.MultiThreadBatchScaling.csproj
+          --configuration Release
