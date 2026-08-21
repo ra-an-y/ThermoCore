@@ -24,11 +24,13 @@ The meaning and ownership of Material Representation remain defined by the appli
 
 # Current Status
 
-Active — bounded reference material definition in progress.
+Active — bounded reference material definition.
 
-`Definitions/ReferenceMaterialDefinition.cs` currently provides the reusable Configuration required by the constant-heat-capacity reference implementation profile, including `rho_ref`, `T_rho_ref`, `T_E_ref`, `T_m`, `L`, `c_s`, `c_l`, material identity, and provenance.
+`Definitions/ReferenceMaterialDefinition.cs` provides the reusable Configuration required by the constant-heat-capacity reference implementation profile, including `rho_ref`, `T_rho_ref`, `T_E_ref`, `T_m`, `L`, `c_s`, `c_l`, material identity, and provenance.
 
 It does not contain evolving per-cell Thermodynamic State. Conversion from this reusable Material Definition into computation-ready Configuration is performed by Framework implementation logic.
+
+The current bounded material-definition profile is exercised by repository Verification and by the published caloric Validation tracks without changing its Configuration ownership role.
 
 ---
 
