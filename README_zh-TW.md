@@ -38,21 +38,21 @@ ThermoCore 是一套用於即時熱力學模擬、與引擎無關的框架。
 - [框架詞彙表](Documentation/Framework_Vocabulary.md)
 - [倉庫治理](Documentation/Repository_Guidelines/Repository_Governance.md)
 - [研究導覽](Research/README.md)
+- [驗證證據](Validation/README.md)
+- [效能評估](Performance/README.md)
 
 ---
 
 ## 驗證證據
 
-下表僅呈現目前已發布於本倉庫的驗證證據，不代表推定的本機進度或未發布工作。
+ThermoCore 目前已發布兩條彼此獨立、範圍受限的參考公式 caloric Validation 路線。
 
-| 驗證 | 目的 | 倉庫已發布證據 |
+| 驗證路線 | 外部依據 | 倉庫已發布結果 |
 |---|---|---|
-| V01 | 架構解耦驗證 | 尚未發布 |
-| V02 | 連續相變驗證 | 尚未發布 |
-| V03 | 熱力學狀態驗證 | 尚未發布 |
-| V04 | 能量一致性驗證 | 尚未發布 |
+| [H2O caloric benchmark](Validation/Reference_Formulation_Caloric_Validation_v0.1.md) | IAPWS 參考公式 | `COMPLETED — errors reported` |
+| [Gallium caloric benchmark](Validation/Reference_Formulation_Gallium_Caloric_Validation_v0.1.md) | NIST Chemistry WebBook SRD 69 / NIST-JANAF | `COMPLETED — errors reported` |
 
-表中狀態僅表示倉庫發布情形。框架合規性與驗證結論仍由各自適用的權威文件治理。
+這些紀錄保存相對於已宣告外部參考基準的量測誤差。兩條路線皆未採用物理 PASS/FAIL 門檻，也不代表完整 Framework Validation 或 Framework Conformance。
 
 ---
 
@@ -60,7 +60,9 @@ ThermoCore 是一套用於即時熱力學模擬、與引擎無關的框架。
 
 框架規格與倉庫治理基線已建立。
 
-目前工作包含實作準備、框架驗證準備、證據建置與支援文件。
+一套範圍受限的熱力學參考公式已完成實作與 Verification；目前亦已發布兩條獨立 caloric Validation 路線，並於 `Performance/` 保存範圍受限的 CPU Performance Evaluation 紀錄。
+
+目前工作重點為證據整合、版本發布準備，以及在具有獨立依據時進行額外的範圍受限 Validation 或實作工作。
 
 未來版本可能發布更多驗證證據與可選的參考應用；參考應用不是版本發布的必要內容。
 
