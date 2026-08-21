@@ -28,7 +28,9 @@ For valid recovered values, how much of the remaining output-construction cost i
 
 ## Compared output paths
 
-All timed paths consume the same precomputed valid Temperature and liquid-fraction arrays and write two-double value types. Thermodynamic recovery arithmetic is excluded from the timed interval.
+All timed paths consume the same precomputed valid Temperature and liquid-fraction arrays. Thermodynamic recovery arithmetic is excluded from the timed interval.
+
+The first five paths all write the **same benchmark-local `LayeredOutput` two-double struct**. Only the validation applied by its aggressively-inlined static factory differs. This controls benchmark-local output type and layout while validation predicates are added progressively.
 
 1. `raw_output`
    - assignment only;
@@ -52,7 +54,8 @@ All timed paths consume the same precomputed valid Temperature and liquid-fracti
    - benchmark-local cold throw helpers and JIT hints mirroring the current public constructor shape.
 
 6. `public_derived_output`
-   - actual repository `DerivedThermodynamicState` constructor.
+   - actual repository `DerivedThermodynamicState` constructor;
+   - necessarily uses the real Derived State type rather than the benchmark-local control type.
 
 The benchmark-local partial validators are deliberately incomplete outside the valid-value timing domain. They are measurement devices only and are **not implementation candidates**. No result from this study authorizes weakening the public Derived State invariant.
 
@@ -89,9 +92,11 @@ The primary comparison is same-run relative cost. Absolute GitHub-hosted-runner 
 
 The study may support statements such as:
 
-- a particular validation layer contributes a measurable part of the residual constructor-path cost in the tested environment;
+- a particular added validation layer produces a measurable code-path increment in the tested environment;
 - the full local validation mirror is or is not close to the actual public constructor;
-- the residual gap is or is not explained by the explicit validation predicates alone.
+- the residual gap is or is not explained by the explicit layered validation path alone.
+
+Even with the common benchmark-local output type, pairwise differences remain JIT/code-generation observations rather than exact instruction-level costs of individual predicates.
 
 The study shall not claim:
 
