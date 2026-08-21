@@ -25,10 +25,14 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             1_048_576
         };
 
-        private readonly struct RawOutput
+        /// <summary>
+        /// Benchmark-local two-double output used by every partial-validation layer.
+        /// Static factories vary validation only; storage type and layout stay fixed.
+        /// This type has no Framework authority and is not an implementation candidate.
+        /// </summary>
+        private readonly struct LayeredOutput
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public RawOutput(double temperature, double liquidFraction)
+            private LayeredOutput(double temperature, double liquidFraction)
             {
                 Temperature = temperature;
                 LiquidFraction = liquidFraction;
@@ -36,34 +40,24 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
             public double Temperature { get; }
             public double LiquidFraction { get; }
-        }
 
-        private readonly struct TemperatureFiniteOutput
-        {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public TemperatureFiniteOutput(double temperature, double liquidFraction)
+            public static LayeredOutput Raw(double temperature, double liquidFraction) =>
+                new LayeredOutput(temperature, liquidFraction);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static LayeredOutput TemperatureFinite(double temperature, double liquidFraction)
             {
                 if (!double.IsFinite(temperature))
                 {
                     ThrowTemperature();
                 }
 
-                Temperature = temperature;
-                LiquidFraction = liquidFraction;
+                return new LayeredOutput(temperature, liquidFraction);
             }
 
-            public double Temperature { get; }
-            public double LiquidFraction { get; }
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void ThrowTemperature() =>
-                throw new ArgumentOutOfRangeException("temperature");
-        }
-
-        private readonly struct BothFiniteOutput
-        {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public BothFiniteOutput(double temperature, double liquidFraction)
+            public static LayeredOutput BothFinite(double temperature, double liquidFraction)
             {
                 if (!double.IsFinite(temperature))
                 {
@@ -75,26 +69,11 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
                     ThrowLiquidFraction();
                 }
 
-                Temperature = temperature;
-                LiquidFraction = liquidFraction;
+                return new LayeredOutput(temperature, liquidFraction);
             }
 
-            public double Temperature { get; }
-            public double LiquidFraction { get; }
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void ThrowTemperature() =>
-                throw new ArgumentOutOfRangeException("temperature");
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void ThrowLiquidFraction() =>
-                throw new ArgumentOutOfRangeException("liquidFraction");
-        }
-
-        private readonly struct FiniteLowerBoundOutput
-        {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public FiniteLowerBoundOutput(double temperature, double liquidFraction)
+            public static LayeredOutput FiniteLowerBound(double temperature, double liquidFraction)
             {
                 if (!double.IsFinite(temperature))
                 {
@@ -106,26 +85,11 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
                     ThrowLiquidFraction();
                 }
 
-                Temperature = temperature;
-                LiquidFraction = liquidFraction;
+                return new LayeredOutput(temperature, liquidFraction);
             }
 
-            public double Temperature { get; }
-            public double LiquidFraction { get; }
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void ThrowTemperature() =>
-                throw new ArgumentOutOfRangeException("temperature");
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void ThrowLiquidFraction() =>
-                throw new ArgumentOutOfRangeException("liquidFraction");
-        }
-
-        private readonly struct LocalFullValidationOutput
-        {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public LocalFullValidationOutput(double temperature, double liquidFraction)
+            public static LayeredOutput FullValidation(double temperature, double liquidFraction)
             {
                 if (!double.IsFinite(temperature))
                 {
@@ -139,12 +103,8 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
                     ThrowLiquidFraction();
                 }
 
-                Temperature = temperature;
-                LiquidFraction = liquidFraction;
+                return new LayeredOutput(temperature, liquidFraction);
             }
-
-            public double Temperature { get; }
-            public double LiquidFraction { get; }
 
             [MethodImpl(MethodImplOptions.NoInlining)]
             private static void ThrowTemperature() =>
@@ -172,11 +132,11 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
                 foreach (var count in ValueCounts)
                 {
-                    MeasureRaw(count);
-                    MeasureTemperatureFinite(count);
-                    MeasureBothFinite(count);
-                    MeasureFiniteLowerBound(count);
-                    MeasureLocalFull(count);
+                    MeasureLayered("raw_output", count, LayeredMode.Raw);
+                    MeasureLayered("temperature_finite_output", count, LayeredMode.TemperatureFinite);
+                    MeasureLayered("both_finite_output", count, LayeredMode.BothFinite);
+                    MeasureLayered("finite_lower_bound_output", count, LayeredMode.FiniteLowerBound);
+                    MeasureLayered("local_full_validation_output", count, LayeredMode.FullValidation);
                     MeasurePublic(count);
                 }
 
@@ -192,6 +152,15 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             }
         }
 
+        private enum LayeredMode
+        {
+            Raw,
+            TemperatureFinite,
+            BothFinite,
+            FiniteLowerBound,
+            FullValidation
+        }
+
         private static void RunInvariantSanityGate()
         {
             ExpectArgumentOutOfRange(() => new DerivedThermodynamicState(double.NaN, 0.5));
@@ -201,12 +170,12 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             ExpectArgumentOutOfRange(() => new DerivedThermodynamicState(300.0, -0.01));
             ExpectArgumentOutOfRange(() => new DerivedThermodynamicState(300.0, 1.01));
 
-            ExpectArgumentOutOfRange(() => new LocalFullValidationOutput(double.NaN, 0.5));
-            ExpectArgumentOutOfRange(() => new LocalFullValidationOutput(double.PositiveInfinity, 0.5));
-            ExpectArgumentOutOfRange(() => new LocalFullValidationOutput(300.0, double.NaN));
-            ExpectArgumentOutOfRange(() => new LocalFullValidationOutput(300.0, double.PositiveInfinity));
-            ExpectArgumentOutOfRange(() => new LocalFullValidationOutput(300.0, -0.01));
-            ExpectArgumentOutOfRange(() => new LocalFullValidationOutput(300.0, 1.01));
+            ExpectArgumentOutOfRange(() => LayeredOutput.FullValidation(double.NaN, 0.5));
+            ExpectArgumentOutOfRange(() => LayeredOutput.FullValidation(double.PositiveInfinity, 0.5));
+            ExpectArgumentOutOfRange(() => LayeredOutput.FullValidation(300.0, double.NaN));
+            ExpectArgumentOutOfRange(() => LayeredOutput.FullValidation(300.0, double.PositiveInfinity));
+            ExpectArgumentOutOfRange(() => LayeredOutput.FullValidation(300.0, -0.01));
+            ExpectArgumentOutOfRange(() => LayeredOutput.FullValidation(300.0, 1.01));
 
             Console.WriteLine("public_and_local_full_invariant_sanity_gate: PASS");
         }
@@ -216,42 +185,24 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             const int count = 1_048_576;
             CreateSourceValues(count, out var temperatures, out var liquidFractions);
 
-            var publicValues = new DerivedThermodynamicState[count];
-            var raw = new RawOutput[count];
-            var temperatureFinite = new TemperatureFiniteOutput[count];
-            var bothFinite = new BothFiniteOutput[count];
-            var finiteLower = new FiniteLowerBoundOutput[count];
-            var localFull = new LocalFullValidationOutput[count];
-
-            for (var i = 0; i < count; i++)
-            {
-                var temperature = temperatures[i];
-                var fraction = liquidFractions[i];
-                publicValues[i] = new DerivedThermodynamicState(temperature, fraction);
-                raw[i] = new RawOutput(temperature, fraction);
-                temperatureFinite[i] = new TemperatureFiniteOutput(temperature, fraction);
-                bothFinite[i] = new BothFiniteOutput(temperature, fraction);
-                finiteLower[i] = new FiniteLowerBoundOutput(temperature, fraction);
-                localFull[i] = new LocalFullValidationOutput(temperature, fraction);
-            }
-
             var maxTemperatureError = 0.0;
             var maxFractionError = 0.0;
 
             for (var i = 0; i < count; i++)
             {
-                var referenceTemperature = publicValues[i].Temperature;
-                var referenceFraction = publicValues[i].LiquidPhaseFraction;
+                var temperature = temperatures[i];
+                var fraction = liquidFractions[i];
+                var reference = new DerivedThermodynamicState(temperature, fraction);
 
-                Accumulate(referenceTemperature, referenceFraction, raw[i].Temperature, raw[i].LiquidFraction,
+                Accumulate(reference, LayeredOutput.Raw(temperature, fraction),
                     ref maxTemperatureError, ref maxFractionError);
-                Accumulate(referenceTemperature, referenceFraction, temperatureFinite[i].Temperature, temperatureFinite[i].LiquidFraction,
+                Accumulate(reference, LayeredOutput.TemperatureFinite(temperature, fraction),
                     ref maxTemperatureError, ref maxFractionError);
-                Accumulate(referenceTemperature, referenceFraction, bothFinite[i].Temperature, bothFinite[i].LiquidFraction,
+                Accumulate(reference, LayeredOutput.BothFinite(temperature, fraction),
                     ref maxTemperatureError, ref maxFractionError);
-                Accumulate(referenceTemperature, referenceFraction, finiteLower[i].Temperature, finiteLower[i].LiquidFraction,
+                Accumulate(reference, LayeredOutput.FiniteLowerBound(temperature, fraction),
                     ref maxTemperatureError, ref maxFractionError);
-                Accumulate(referenceTemperature, referenceFraction, localFull[i].Temperature, localFull[i].LiquidFraction,
+                Accumulate(reference, LayeredOutput.FullValidation(temperature, fraction),
                     ref maxTemperatureError, ref maxFractionError);
             }
 
@@ -268,104 +219,83 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
         }
 
         private static void Accumulate(
-            double referenceTemperature,
-            double referenceFraction,
-            double temperature,
-            double fraction,
+            DerivedThermodynamicState reference,
+            LayeredOutput candidate,
             ref double maxTemperatureError,
             ref double maxFractionError)
         {
-            maxTemperatureError = Math.Max(maxTemperatureError, Math.Abs(referenceTemperature - temperature));
-            maxFractionError = Math.Max(maxFractionError, Math.Abs(referenceFraction - fraction));
+            maxTemperatureError = Math.Max(
+                maxTemperatureError,
+                Math.Abs(reference.Temperature - candidate.Temperature));
+            maxFractionError = Math.Max(
+                maxFractionError,
+                Math.Abs(reference.LiquidPhaseFraction - candidate.LiquidFraction));
         }
 
-        private static void MeasureRaw(int count)
+        private static void MeasureLayered(string scenario, int count, LayeredMode mode)
         {
             CreateSourceValues(count, out var temperatures, out var fractions);
-            var output = new RawOutput[count];
-            MeasureCore("raw_output", count,
-                passes =>
+            var output = new LayeredOutput[count];
+
+            Action<int> run = mode switch
+            {
+                LayeredMode.Raw => passes =>
                 {
                     for (var pass = 0; pass < passes; pass++)
                     {
                         for (var i = 0; i < count; i++)
                         {
-                            output[i] = new RawOutput(temperatures[i], fractions[i]);
+                            output[i] = LayeredOutput.Raw(temperatures[i], fractions[i]);
                         }
                     }
                 },
-                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
-        }
-
-        private static void MeasureTemperatureFinite(int count)
-        {
-            CreateSourceValues(count, out var temperatures, out var fractions);
-            var output = new TemperatureFiniteOutput[count];
-            MeasureCore("temperature_finite_output", count,
-                passes =>
+                LayeredMode.TemperatureFinite => passes =>
                 {
                     for (var pass = 0; pass < passes; pass++)
                     {
                         for (var i = 0; i < count; i++)
                         {
-                            output[i] = new TemperatureFiniteOutput(temperatures[i], fractions[i]);
+                            output[i] = LayeredOutput.TemperatureFinite(temperatures[i], fractions[i]);
                         }
                     }
                 },
-                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
-        }
-
-        private static void MeasureBothFinite(int count)
-        {
-            CreateSourceValues(count, out var temperatures, out var fractions);
-            var output = new BothFiniteOutput[count];
-            MeasureCore("both_finite_output", count,
-                passes =>
+                LayeredMode.BothFinite => passes =>
                 {
                     for (var pass = 0; pass < passes; pass++)
                     {
                         for (var i = 0; i < count; i++)
                         {
-                            output[i] = new BothFiniteOutput(temperatures[i], fractions[i]);
+                            output[i] = LayeredOutput.BothFinite(temperatures[i], fractions[i]);
                         }
                     }
                 },
-                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
-        }
-
-        private static void MeasureFiniteLowerBound(int count)
-        {
-            CreateSourceValues(count, out var temperatures, out var fractions);
-            var output = new FiniteLowerBoundOutput[count];
-            MeasureCore("finite_lower_bound_output", count,
-                passes =>
+                LayeredMode.FiniteLowerBound => passes =>
                 {
                     for (var pass = 0; pass < passes; pass++)
                     {
                         for (var i = 0; i < count; i++)
                         {
-                            output[i] = new FiniteLowerBoundOutput(temperatures[i], fractions[i]);
+                            output[i] = LayeredOutput.FiniteLowerBound(temperatures[i], fractions[i]);
                         }
                     }
                 },
-                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
-        }
-
-        private static void MeasureLocalFull(int count)
-        {
-            CreateSourceValues(count, out var temperatures, out var fractions);
-            var output = new LocalFullValidationOutput[count];
-            MeasureCore("local_full_validation_output", count,
-                passes =>
+                LayeredMode.FullValidation => passes =>
                 {
                     for (var pass = 0; pass < passes; pass++)
                     {
                         for (var i = 0; i < count; i++)
                         {
-                            output[i] = new LocalFullValidationOutput(temperatures[i], fractions[i]);
+                            output[i] = LayeredOutput.FullValidation(temperatures[i], fractions[i]);
                         }
                     }
                 },
+                _ => throw new ArgumentOutOfRangeException(nameof(mode))
+            };
+
+            MeasureCore(
+                scenario,
+                count,
+                run,
                 () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
         }
 
@@ -373,7 +303,10 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
         {
             CreateSourceValues(count, out var temperatures, out var fractions);
             var output = new DerivedThermodynamicState[count];
-            MeasureCore("public_derived_output", count,
+
+            MeasureCore(
+                "public_derived_output",
+                count,
                 passes =>
                 {
                     for (var pass = 0; pass < passes; pass++)
