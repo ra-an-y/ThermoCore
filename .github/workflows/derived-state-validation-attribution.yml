@@ -1,0 +1,30 @@
+name: Derived State Validation Attribution
+
+on:
+  pull_request:
+    paths:
+      - "Performance/**"
+      - "Framework/**"
+      - "Materials/**"
+      - ".github/workflows/derived-state-validation-attribution.yml"
+  workflow_dispatch:
+
+jobs:
+  evaluate-derived-state-validation-attribution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run Derived State validation attribution
+        run: >-
+          dotnet run
+          --project Performance/ThermoCore.DerivedValidationAttribution.csproj
+          --configuration Release

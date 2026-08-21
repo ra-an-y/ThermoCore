@@ -61,22 +61,38 @@ After the formal semantics-preserving batch API was integrated, the first perfor
 - `Reference_CPU_Batch_Attribution_Plan_v0.1.md`
 - `Reference_CPU_Batch_Attribution_v0.1.md`
 
-The attribution study separates formal batch-boundary effects from `DerivedThermodynamicState` validated construction and from struct-versus-primitive output representation.
+That study separates formal batch-boundary effects from `DerivedThermodynamicState` validated construction and from struct-versus-primitive output representation.
+
+After the JIT-friendly validating constructor optimization was integrated, a second-level attribution track decomposed the residual valid-value construction path:
+
+- `Derived_State_Validation_Attribution_Plan_v0.1.md`
+- `Derived_State_Validation_Attribution_v0.1.md`
+
+Its final controlled harness uses one common benchmark-local two-double output type while progressively adding validation layers, then compares that full local validation path with the real public `DerivedThermodynamicState` constructor.
 
 Latest attribution result status:
 
 ```text
-COMPLETED — attribution measurements reported
+COMPLETED — fine-grained attribution measurements reported
 ```
 
 Current bounded evidence disposition:
 
 ```text
 Formal batch-boundary amortization:
-REAL BUT MODEST in the primary attribution run
+REAL BUT MODEST in the first attribution study
 
 DerivedThermodynamicState validated construction:
 DOMINANT MEASURED COST LAYER in the tested recovery/output path
+
+First finite-value gate (Temperature):
+LARGEST STABLE ADDED MEASURED VALIDATION LAYER in the final controlled follow-up runs
+
+Additional finite / range predicates:
+SMALLER AND MORE JIT / ENVIRONMENT SENSITIVE
+
+Local full-validation mirror vs public Derived constructor:
+CLOSE AT THE LARGE WORKING SET IN BOTH FINAL CONTROLLED RUNS
 
 Struct versus split primitive output layout:
 NEAR PARITY for the larger working sets; not the dominant explanation
@@ -84,6 +100,8 @@ NEAR PARITY for the larger working sets; not the dominant explanation
 System.Numerics.Vector<double> SIMD:
 NOT JUSTIFIED FOR PROMOTION YET — corrected incremental benefit is near parity / environment-sensitive
 ```
+
+The follow-up attribution does not assign exact instruction-level costs to individual predicates and does not authorize removal of any Derived State invariant. The JIT-friendly fully validating public constructor remains the preferred implementation direction over a trusted/unchecked construction path.
 
 These are engineering evidence dispositions, not Framework conformance categories or physical PASS/FAIL results.
 
@@ -106,6 +124,8 @@ Performance measurements do not redefine Framework semantics or ownership.
 A performance candidate that appears promising still requires explicit implementation review and correctness Verification before it becomes part of an implementation profile.
 
 Performance attribution may narrow a later optimization question, but it does not itself authorize removing semantic invariants for speed.
+
+The current single-thread constructor-attribution evidence is sufficiently mature that the next high-value CPU Performance Evaluation can move to multi-thread batch-recovery scaling rather than continue narrowing individual validation predicates.
 
 ---
 
