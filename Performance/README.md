@@ -33,7 +33,7 @@ Historical measurements shall remain tied to their recorded environment and comm
 
 # Current Status
 
-Active — bounded CPU reference-implementation Performance Evaluation and attribution.
+Active — bounded CPU reference-implementation Performance Evaluation, attribution, and scaling.
 
 The scalar CPU baseline is defined by:
 
@@ -70,10 +70,17 @@ After the JIT-friendly validating constructor optimization was integrated, a sec
 
 Its final controlled harness uses one common benchmark-local two-double output type while progressively adding validation layers, then compares that full local validation path with the real public `DerivedThermodynamicState` constructor.
 
-Latest attribution result status:
+The first multi-thread batch-recovery scaling track is defined and executed by:
+
+- `MultiThread_CPU_Batch_Recovery_Scaling_Plan_v0.1.md`
+- `MultiThread_CPU_Batch_Recovery_Scaling_v0.1.md`
+
+It compares the direct formal batch path with persistent 1/2/4/8-worker partitioning, records the environment-reported logical processor count, and treats requested workers above that count as oversubscription rather than additional-core evidence.
+
+Latest scaling result status:
 
 ```text
-COMPLETED — fine-grained attribution measurements reported
+COMPLETED — environment-sensitive scaling measurements reported
 ```
 
 Current bounded evidence disposition:
@@ -99,15 +106,24 @@ NEAR PARITY for the larger working sets; not the dominant explanation
 
 System.Numerics.Vector<double> SIMD:
 NOT JUSTIFIED FOR PROMOTION YET — corrected incremental benefit is near parity / environment-sensitive
+
+Multi-thread disjoint partitioning semantics:
+EXACTLY EQUIVALENT in reviewed 1/2/4/8-worker gates
+
+Two-worker throughput benefit:
+ENVIRONMENT / WORKING-SET DEPENDENT — near parity on reviewed AMD runner; up to ~1.43x at the largest tested working set on reviewed Intel runner
+
+Universal worker-count policy:
+NOT JUSTIFIED
 ```
 
-The follow-up attribution does not assign exact instruction-level costs to individual predicates and does not authorize removal of any Derived State invariant. The JIT-friendly fully validating public constructor remains the preferred implementation direction over a trusted/unchecked construction path.
+The attribution evidence does not assign exact instruction-level costs to individual predicates and does not authorize removal of any Derived State invariant. The multi-thread evidence likewise does not introduce a Framework scheduler requirement or a universal default worker count.
 
 These are engineering evidence dispositions, not Framework conformance categories or physical PASS/FAIL results.
 
 No performance PASS/FAIL threshold has been adopted. Absolute GitHub-hosted runner timings remain environment-specific observations rather than universal ThermoCore guarantees.
 
-No GPU, Unity, engine, mobile, or production-hardware performance claim is implied by these CPU tracks.
+No GPU, Unity, engine, mobile, NUMA, or production-hardware performance claim is implied by these CPU tracks.
 
 ---
 
@@ -125,7 +141,7 @@ A performance candidate that appears promising still requires explicit implement
 
 Performance attribution may narrow a later optimization question, but it does not itself authorize removing semantic invariants for speed.
 
-The current single-thread constructor-attribution evidence is sufficiently mature that the next high-value CPU Performance Evaluation can move to multi-thread batch-recovery scaling rather than continue narrowing individual validation predicates.
+The current multi-thread evidence indicates that parallel execution policy belongs to runtime/backend evaluation rather than Framework semantics: disjoint batch partitioning is semantically safe in the tested harness, but measured throughput benefit depends on the execution environment and working-set size.
 
 ---
 
