@@ -8,7 +8,7 @@ Performance evidence is separate from Verification, Validation, and Framework Co
 
 # Scope
 
-This directory stores performance plans, executable benchmark harnesses, preserved result reports, and environment-specific measurements.
+This directory stores performance plans, executable benchmark harnesses, preserved result reports, environment-specific measurements, and bounded performance-attribution studies.
 
 Framework Specifications, physical Validation evidence, and routine correctness Verification do not belong here.
 
@@ -33,7 +33,7 @@ Historical measurements shall remain tied to their recorded environment and comm
 
 # Current Status
 
-Active — bounded CPU reference-implementation Performance Evaluation.
+Active — bounded CPU reference-implementation Performance Evaluation and attribution.
 
 The scalar CPU baseline is defined by:
 
@@ -56,27 +56,40 @@ A fairness correction to the scalar-reference timing method is defined and execu
 
 For implementation decisions, the v0.2 corrected comparison supersedes the v0.1 scalar-reference versus batch speedup ratios. The v0.1 record remains historical evidence and is not silently rewritten.
 
-Latest corrective result status:
+After the formal semantics-preserving batch API was integrated, the first performance-attribution track was defined and executed by:
+
+- `Reference_CPU_Batch_Attribution_Plan_v0.1.md`
+- `Reference_CPU_Batch_Attribution_v0.1.md`
+
+The attribution study separates formal batch-boundary effects from `DerivedThermodynamicState` validated construction and from struct-versus-primitive output representation.
+
+Latest attribution result status:
 
 ```text
-COMPLETED — corrected measurements reported
+COMPLETED — attribution measurements reported
 ```
 
-Current evidence disposition:
+Current bounded evidence disposition:
 
 ```text
-Batch recovery abstraction:
-PROMISING — implementation design and Verification justified
+Formal batch-boundary amortization:
+REAL BUT MODEST in the primary attribution run
+
+DerivedThermodynamicState validated construction:
+DOMINANT MEASURED COST LAYER in the tested recovery/output path
+
+Struct versus split primitive output layout:
+NEAR PARITY for the larger working sets; not the dominant explanation
 
 System.Numerics.Vector<double> SIMD:
-NOT JUSTIFIED FOR PROMOTION YET — corrected incremental benefit is near parity
+NOT JUSTIFIED FOR PROMOTION YET — corrected incremental benefit is near parity / environment-sensitive
 ```
 
 These are engineering evidence dispositions, not Framework conformance categories or physical PASS/FAIL results.
 
 No performance PASS/FAIL threshold has been adopted. Absolute GitHub-hosted runner timings remain environment-specific observations rather than universal ThermoCore guarantees.
 
-No GPU, Unity, engine, mobile, or production-hardware performance claim is implied by these initial CPU tracks.
+No GPU, Unity, engine, mobile, or production-hardware performance claim is implied by these CPU tracks.
 
 ---
 
@@ -91,6 +104,8 @@ Research -> Evidence -> Specification -> Implementation -> Verification -> Valid
 Performance measurements do not redefine Framework semantics or ownership.
 
 A performance candidate that appears promising still requires explicit implementation review and correctness Verification before it becomes part of an implementation profile.
+
+Performance attribution may narrow a later optimization question, but it does not itself authorize removing semantic invariants for speed.
 
 ---
 
