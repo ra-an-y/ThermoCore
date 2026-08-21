@@ -57,7 +57,7 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
             [MethodImpl(MethodImplOptions.NoInlining)]
             private static void ThrowTemperature() =>
-                throw new ArgumentOutOfRangeException(nameof(temperature));
+                throw new ArgumentOutOfRangeException("temperature");
         }
 
         private readonly struct BothFiniteOutput
@@ -84,11 +84,11 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
             [MethodImpl(MethodImplOptions.NoInlining)]
             private static void ThrowTemperature() =>
-                throw new ArgumentOutOfRangeException(nameof(temperature));
+                throw new ArgumentOutOfRangeException("temperature");
 
             [MethodImpl(MethodImplOptions.NoInlining)]
             private static void ThrowLiquidFraction() =>
-                throw new ArgumentOutOfRangeException(nameof(liquidFraction));
+                throw new ArgumentOutOfRangeException("liquidFraction");
         }
 
         private readonly struct FiniteLowerBoundOutput
@@ -115,11 +115,11 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
             [MethodImpl(MethodImplOptions.NoInlining)]
             private static void ThrowTemperature() =>
-                throw new ArgumentOutOfRangeException(nameof(temperature));
+                throw new ArgumentOutOfRangeException("temperature");
 
             [MethodImpl(MethodImplOptions.NoInlining)]
             private static void ThrowLiquidFraction() =>
-                throw new ArgumentOutOfRangeException(nameof(liquidFraction));
+                throw new ArgumentOutOfRangeException("liquidFraction");
         }
 
         private readonly struct LocalFullValidationOutput
@@ -159,34 +159,6 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
                     "Liquid phase fraction must be finite and within [0, 1].");
         }
 
-        private sealed class Buffers
-        {
-            public Buffers(int count)
-            {
-                Public = new DerivedThermodynamicState[count];
-                Raw = new RawOutput[count];
-                TemperatureFinite = new TemperatureFiniteOutput[count];
-                BothFinite = new BothFiniteOutput[count];
-                FiniteLowerBound = new FiniteLowerBoundOutput[count];
-                LocalFull = new LocalFullValidationOutput[count];
-            }
-
-            public DerivedThermodynamicState[] Public { get; }
-            public RawOutput[] Raw { get; }
-            public TemperatureFiniteOutput[] TemperatureFinite { get; }
-            public BothFiniteOutput[] BothFinite { get; }
-            public FiniteLowerBoundOutput[] FiniteLowerBound { get; }
-            public LocalFullValidationOutput[] LocalFull { get; }
-        }
-
-        private delegate void Scenario(
-            double[] temperatures,
-            double[] liquidFractions,
-            Buffers buffers,
-            int passes);
-
-        private delegate double Checksum(Buffers buffers);
-
         private static int Main()
         {
             try
@@ -200,12 +172,12 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
                 foreach (var count in ValueCounts)
                 {
-                    Measure("raw_output", count, RunRaw, ChecksumRaw);
-                    Measure("temperature_finite_output", count, RunTemperatureFinite, ChecksumTemperatureFinite);
-                    Measure("both_finite_output", count, RunBothFinite, ChecksumBothFinite);
-                    Measure("finite_lower_bound_output", count, RunFiniteLowerBound, ChecksumFiniteLowerBound);
-                    Measure("local_full_validation_output", count, RunLocalFull, ChecksumLocalFull);
-                    Measure("public_derived_output", count, RunPublic, ChecksumPublic);
+                    MeasureRaw(count);
+                    MeasureTemperatureFinite(count);
+                    MeasureBothFinite(count);
+                    MeasureFiniteLowerBound(count);
+                    MeasureLocalFull(count);
+                    MeasurePublic(count);
                 }
 
                 Console.WriteLine(
@@ -243,37 +215,43 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
         {
             const int count = 1_048_576;
             CreateSourceValues(count, out var temperatures, out var liquidFractions);
-            var buffers = new Buffers(count);
 
-            RunRaw(temperatures, liquidFractions, buffers, 1);
-            RunTemperatureFinite(temperatures, liquidFractions, buffers, 1);
-            RunBothFinite(temperatures, liquidFractions, buffers, 1);
-            RunFiniteLowerBound(temperatures, liquidFractions, buffers, 1);
-            RunLocalFull(temperatures, liquidFractions, buffers, 1);
-            RunPublic(temperatures, liquidFractions, buffers, 1);
+            var publicValues = new DerivedThermodynamicState[count];
+            var raw = new RawOutput[count];
+            var temperatureFinite = new TemperatureFiniteOutput[count];
+            var bothFinite = new BothFiniteOutput[count];
+            var finiteLower = new FiniteLowerBoundOutput[count];
+            var localFull = new LocalFullValidationOutput[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                var temperature = temperatures[i];
+                var fraction = liquidFractions[i];
+                publicValues[i] = new DerivedThermodynamicState(temperature, fraction);
+                raw[i] = new RawOutput(temperature, fraction);
+                temperatureFinite[i] = new TemperatureFiniteOutput(temperature, fraction);
+                bothFinite[i] = new BothFiniteOutput(temperature, fraction);
+                finiteLower[i] = new FiniteLowerBoundOutput(temperature, fraction);
+                localFull[i] = new LocalFullValidationOutput(temperature, fraction);
+            }
 
             var maxTemperatureError = 0.0;
             var maxFractionError = 0.0;
 
             for (var i = 0; i < count; i++)
             {
-                var referenceTemperature = buffers.Public[i].Temperature;
-                var referenceFraction = buffers.Public[i].LiquidPhaseFraction;
+                var referenceTemperature = publicValues[i].Temperature;
+                var referenceFraction = publicValues[i].LiquidPhaseFraction;
 
-                AccumulateError(referenceTemperature, referenceFraction,
-                    buffers.Raw[i].Temperature, buffers.Raw[i].LiquidFraction,
+                Accumulate(referenceTemperature, referenceFraction, raw[i].Temperature, raw[i].LiquidFraction,
                     ref maxTemperatureError, ref maxFractionError);
-                AccumulateError(referenceTemperature, referenceFraction,
-                    buffers.TemperatureFinite[i].Temperature, buffers.TemperatureFinite[i].LiquidFraction,
+                Accumulate(referenceTemperature, referenceFraction, temperatureFinite[i].Temperature, temperatureFinite[i].LiquidFraction,
                     ref maxTemperatureError, ref maxFractionError);
-                AccumulateError(referenceTemperature, referenceFraction,
-                    buffers.BothFinite[i].Temperature, buffers.BothFinite[i].LiquidFraction,
+                Accumulate(referenceTemperature, referenceFraction, bothFinite[i].Temperature, bothFinite[i].LiquidFraction,
                     ref maxTemperatureError, ref maxFractionError);
-                AccumulateError(referenceTemperature, referenceFraction,
-                    buffers.FiniteLowerBound[i].Temperature, buffers.FiniteLowerBound[i].LiquidFraction,
+                Accumulate(referenceTemperature, referenceFraction, finiteLower[i].Temperature, finiteLower[i].LiquidFraction,
                     ref maxTemperatureError, ref maxFractionError);
-                AccumulateError(referenceTemperature, referenceFraction,
-                    buffers.LocalFull[i].Temperature, buffers.LocalFull[i].LiquidFraction,
+                Accumulate(referenceTemperature, referenceFraction, localFull[i].Temperature, localFull[i].LiquidFraction,
                     ref maxTemperatureError, ref maxFractionError);
             }
 
@@ -289,7 +267,7 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             Console.WriteLine("valid_domain_semantic_equivalence_gate: PASS");
         }
 
-        private static void AccumulateError(
+        private static void Accumulate(
             double referenceTemperature,
             double referenceFraction,
             double temperature,
@@ -297,23 +275,125 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             ref double maxTemperatureError,
             ref double maxFractionError)
         {
-            maxTemperatureError = Math.Max(
-                maxTemperatureError,
-                Math.Abs(referenceTemperature - temperature));
-            maxFractionError = Math.Max(
-                maxFractionError,
-                Math.Abs(referenceFraction - fraction));
+            maxTemperatureError = Math.Max(maxTemperatureError, Math.Abs(referenceTemperature - temperature));
+            maxFractionError = Math.Max(maxFractionError, Math.Abs(referenceFraction - fraction));
         }
 
-        private static void Measure(
-            string scenarioName,
+        private static void MeasureRaw(int count)
+        {
+            CreateSourceValues(count, out var temperatures, out var fractions);
+            var output = new RawOutput[count];
+            MeasureCore("raw_output", count,
+                passes =>
+                {
+                    for (var pass = 0; pass < passes; pass++)
+                    {
+                        for (var i = 0; i < count; i++)
+                        {
+                            output[i] = new RawOutput(temperatures[i], fractions[i]);
+                        }
+                    }
+                },
+                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
+        }
+
+        private static void MeasureTemperatureFinite(int count)
+        {
+            CreateSourceValues(count, out var temperatures, out var fractions);
+            var output = new TemperatureFiniteOutput[count];
+            MeasureCore("temperature_finite_output", count,
+                passes =>
+                {
+                    for (var pass = 0; pass < passes; pass++)
+                    {
+                        for (var i = 0; i < count; i++)
+                        {
+                            output[i] = new TemperatureFiniteOutput(temperatures[i], fractions[i]);
+                        }
+                    }
+                },
+                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
+        }
+
+        private static void MeasureBothFinite(int count)
+        {
+            CreateSourceValues(count, out var temperatures, out var fractions);
+            var output = new BothFiniteOutput[count];
+            MeasureCore("both_finite_output", count,
+                passes =>
+                {
+                    for (var pass = 0; pass < passes; pass++)
+                    {
+                        for (var i = 0; i < count; i++)
+                        {
+                            output[i] = new BothFiniteOutput(temperatures[i], fractions[i]);
+                        }
+                    }
+                },
+                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
+        }
+
+        private static void MeasureFiniteLowerBound(int count)
+        {
+            CreateSourceValues(count, out var temperatures, out var fractions);
+            var output = new FiniteLowerBoundOutput[count];
+            MeasureCore("finite_lower_bound_output", count,
+                passes =>
+                {
+                    for (var pass = 0; pass < passes; pass++)
+                    {
+                        for (var i = 0; i < count; i++)
+                        {
+                            output[i] = new FiniteLowerBoundOutput(temperatures[i], fractions[i]);
+                        }
+                    }
+                },
+                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
+        }
+
+        private static void MeasureLocalFull(int count)
+        {
+            CreateSourceValues(count, out var temperatures, out var fractions);
+            var output = new LocalFullValidationOutput[count];
+            MeasureCore("local_full_validation_output", count,
+                passes =>
+                {
+                    for (var pass = 0; pass < passes; pass++)
+                    {
+                        for (var i = 0; i < count; i++)
+                        {
+                            output[i] = new LocalFullValidationOutput(temperatures[i], fractions[i]);
+                        }
+                    }
+                },
+                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidFraction));
+        }
+
+        private static void MeasurePublic(int count)
+        {
+            CreateSourceValues(count, out var temperatures, out var fractions);
+            var output = new DerivedThermodynamicState[count];
+            MeasureCore("public_derived_output", count,
+                passes =>
+                {
+                    for (var pass = 0; pass < passes; pass++)
+                    {
+                        for (var i = 0; i < count; i++)
+                        {
+                            output[i] = new DerivedThermodynamicState(temperatures[i], fractions[i]);
+                        }
+                    }
+                },
+                () => ComputeChecksum(output.Length, i => output[i].Temperature, i => output[i].LiquidPhaseFraction));
+        }
+
+        private static void MeasureCore(
+            string scenario,
             int count,
-            Scenario scenario,
-            Checksum checksum)
+            Action<int> run,
+            Func<double> checksum)
         {
             var passes = Math.Max(1, TargetValueOperations / count);
-            CreateSourceValues(count, out var temperatures, out var liquidFractions);
-            var buffers = new Buffers(count);
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -321,53 +401,45 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
 
             for (var i = 0; i < WarmupSamples; i++)
             {
-                scenario(temperatures, liquidFractions, buffers, passes);
+                run(passes);
             }
 
-            var elapsedMilliseconds = new double[TimedSamples];
-            var allocatedBytes = new long[TimedSamples];
+            var elapsed = new double[TimedSamples];
+            var allocated = new long[TimedSamples];
 
             for (var sample = 0; sample < TimedSamples; sample++)
             {
-                var allocatedBefore = GC.GetAllocatedBytesForCurrentThread();
+                var beforeAllocation = GC.GetAllocatedBytesForCurrentThread();
                 var start = Stopwatch.GetTimestamp();
-
-                scenario(temperatures, liquidFractions, buffers, passes);
-
+                run(passes);
                 var end = Stopwatch.GetTimestamp();
-                var allocatedAfter = GC.GetAllocatedBytesForCurrentThread();
+                var afterAllocation = GC.GetAllocatedBytesForCurrentThread();
 
-                elapsedMilliseconds[sample] =
-                    (end - start) * 1000.0 / Stopwatch.Frequency;
-                allocatedBytes[sample] = allocatedAfter - allocatedBefore;
+                elapsed[sample] = (end - start) * 1000.0 / Stopwatch.Frequency;
+                allocated[sample] = afterAllocation - beforeAllocation;
             }
 
-            var resultChecksum = checksum(buffers);
+            var resultChecksum = checksum();
+            Array.Sort(elapsed);
+            Array.Sort(allocated);
 
-            Array.Sort(elapsedMilliseconds);
-            Array.Sort(allocatedBytes);
-
-            var medianMs = elapsedMilliseconds[TimedSamples / 2];
-            var minMs = elapsedMilliseconds[0];
-            var maxMs = elapsedMilliseconds[TimedSamples - 1];
-            var medianAllocated = allocatedBytes[TimedSamples / 2];
+            var medianMs = elapsed[TimedSamples / 2];
             var operations = (long)count * passes;
             var nsPerValue = medianMs * 1_000_000.0 / operations;
-            var millionValuesPerSecond =
-                operations / (medianMs / 1000.0) / 1_000_000.0;
+            var millionValuesPerSecond = operations / (medianMs / 1000.0) / 1_000_000.0;
 
             Console.WriteLine(string.Join('|', new[]
             {
                 "RESULT",
-                scenarioName,
+                scenario,
                 count.ToString(CultureInfo.InvariantCulture),
                 passes.ToString(CultureInfo.InvariantCulture),
                 medianMs.ToString("R", CultureInfo.InvariantCulture),
-                minMs.ToString("R", CultureInfo.InvariantCulture),
-                maxMs.ToString("R", CultureInfo.InvariantCulture),
+                elapsed[0].ToString("R", CultureInfo.InvariantCulture),
+                elapsed[^1].ToString("R", CultureInfo.InvariantCulture),
                 nsPerValue.ToString("R", CultureInfo.InvariantCulture),
                 millionValuesPerSecond.ToString("R", CultureInfo.InvariantCulture),
-                medianAllocated.ToString(CultureInfo.InvariantCulture),
+                allocated[TimedSamples / 2].ToString(CultureInfo.InvariantCulture),
                 resultChecksum.ToString("R", CultureInfo.InvariantCulture)
             }));
         }
@@ -424,122 +496,17 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
             }
         }
 
-        private static void RunRaw(
-            double[] temperatures, double[] liquidFractions, Buffers buffers, int passes)
-        {
-            for (var pass = 0; pass < passes; pass++)
-            {
-                for (var i = 0; i < temperatures.Length; i++)
-                {
-                    buffers.Raw[i] = new RawOutput(temperatures[i], liquidFractions[i]);
-                }
-            }
-        }
-
-        private static void RunTemperatureFinite(
-            double[] temperatures, double[] liquidFractions, Buffers buffers, int passes)
-        {
-            for (var pass = 0; pass < passes; pass++)
-            {
-                for (var i = 0; i < temperatures.Length; i++)
-                {
-                    buffers.TemperatureFinite[i] =
-                        new TemperatureFiniteOutput(temperatures[i], liquidFractions[i]);
-                }
-            }
-        }
-
-        private static void RunBothFinite(
-            double[] temperatures, double[] liquidFractions, Buffers buffers, int passes)
-        {
-            for (var pass = 0; pass < passes; pass++)
-            {
-                for (var i = 0; i < temperatures.Length; i++)
-                {
-                    buffers.BothFinite[i] =
-                        new BothFiniteOutput(temperatures[i], liquidFractions[i]);
-                }
-            }
-        }
-
-        private static void RunFiniteLowerBound(
-            double[] temperatures, double[] liquidFractions, Buffers buffers, int passes)
-        {
-            for (var pass = 0; pass < passes; pass++)
-            {
-                for (var i = 0; i < temperatures.Length; i++)
-                {
-                    buffers.FiniteLowerBound[i] =
-                        new FiniteLowerBoundOutput(temperatures[i], liquidFractions[i]);
-                }
-            }
-        }
-
-        private static void RunLocalFull(
-            double[] temperatures, double[] liquidFractions, Buffers buffers, int passes)
-        {
-            for (var pass = 0; pass < passes; pass++)
-            {
-                for (var i = 0; i < temperatures.Length; i++)
-                {
-                    buffers.LocalFull[i] =
-                        new LocalFullValidationOutput(temperatures[i], liquidFractions[i]);
-                }
-            }
-        }
-
-        private static void RunPublic(
-            double[] temperatures, double[] liquidFractions, Buffers buffers, int passes)
-        {
-            for (var pass = 0; pass < passes; pass++)
-            {
-                for (var i = 0; i < temperatures.Length; i++)
-                {
-                    buffers.Public[i] =
-                        new DerivedThermodynamicState(temperatures[i], liquidFractions[i]);
-                }
-            }
-        }
-
-        private static double ChecksumRaw(Buffers buffers) =>
-            ComputeChecksum(buffers.Raw.Length, i => buffers.Raw[i].Temperature, i => buffers.Raw[i].LiquidFraction);
-
-        private static double ChecksumTemperatureFinite(Buffers buffers) =>
-            ComputeChecksum(buffers.TemperatureFinite.Length,
-                i => buffers.TemperatureFinite[i].Temperature,
-                i => buffers.TemperatureFinite[i].LiquidFraction);
-
-        private static double ChecksumBothFinite(Buffers buffers) =>
-            ComputeChecksum(buffers.BothFinite.Length,
-                i => buffers.BothFinite[i].Temperature,
-                i => buffers.BothFinite[i].LiquidFraction);
-
-        private static double ChecksumFiniteLowerBound(Buffers buffers) =>
-            ComputeChecksum(buffers.FiniteLowerBound.Length,
-                i => buffers.FiniteLowerBound[i].Temperature,
-                i => buffers.FiniteLowerBound[i].LiquidFraction);
-
-        private static double ChecksumLocalFull(Buffers buffers) =>
-            ComputeChecksum(buffers.LocalFull.Length,
-                i => buffers.LocalFull[i].Temperature,
-                i => buffers.LocalFull[i].LiquidFraction);
-
-        private static double ChecksumPublic(Buffers buffers) =>
-            ComputeChecksum(buffers.Public.Length,
-                i => buffers.Public[i].Temperature,
-                i => buffers.Public[i].LiquidPhaseFraction);
-
         private static double ComputeChecksum(
             int count,
             Func<int, double> temperature,
-            Func<int, double> liquidFraction)
+            Func<int, double> fraction)
         {
             var checksum = 0.0;
             var stride = Math.Max(1, count / 16);
             for (var i = 0; i < count; i += stride)
             {
                 checksum += temperature(i);
-                checksum += liquidFraction(i);
+                checksum += fraction(i);
             }
             return checksum;
         }
@@ -555,8 +522,7 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
                 return;
             }
 
-            throw new InvalidOperationException(
-                "Expected ArgumentOutOfRangeException was not thrown.");
+            throw new InvalidOperationException("Expected ArgumentOutOfRangeException was not thrown.");
         }
 
         private static void PrintEnvironment()
@@ -579,23 +545,21 @@ namespace ThermoCore.Performance.DerivedValidationAttribution
         {
             try
             {
-                if (!File.Exists("/proc/cpuinfo"))
+                if (File.Exists("/proc/cpuinfo"))
                 {
-                    return "unavailable";
-                }
-
-                foreach (var line in File.ReadLines("/proc/cpuinfo"))
-                {
-                    if (line.StartsWith("model name", StringComparison.OrdinalIgnoreCase))
+                    foreach (var line in File.ReadLines("/proc/cpuinfo"))
                     {
-                        var separator = line.IndexOf(':');
-                        return separator >= 0 ? line[(separator + 1)..].Trim() : line.Trim();
+                        if (line.StartsWith("model name", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var separator = line.IndexOf(':');
+                            return separator >= 0 ? line[(separator + 1)..].Trim() : line.Trim();
+                        }
                     }
                 }
             }
             catch
             {
-                // Environment metadata is informative and must not invalidate the benchmark.
+                // Environment metadata is informative only.
             }
 
             return "unavailable";
