@@ -45,13 +45,13 @@ For each working set the harness measures:
 5. `worker_pool_8`
    - eight persistent dedicated workers process eight disjoint contiguous slices.
 
-Worker threads are created before warmup and reused across all timed samples. Thread creation is therefore outside the timed interval. The timed interval includes the synchronization needed to release the workers and wait for completion because that coordination is part of the observable multi-thread batch cost.
+Worker threads are created before warmup and reused across all timed samples. Thread creation is outside the timed interval. The timed interval includes synchronization needed to release workers and wait for completion because coordination is part of observable multi-thread batch cost.
 
 The requested worker count is not treated as a CPU-core count. Each result records `Environment.ProcessorCount`; requested counts above that value are explicitly oversubscribed observations rather than additional-core scaling evidence.
 
 ## Work partitioning
 
-For a worker count `W` and `N` cells:
+For worker count `W` and `N` cells:
 
 - cells are partitioned into `W` disjoint contiguous slices;
 - slice sizes differ by at most one cell;
@@ -60,7 +60,7 @@ For a worker count `W` and `N` cells:
 - workers share the same immutable compiled Material Configuration;
 - no worker mutates persistent Thermodynamic State.
 
-The study therefore changes execution scheduling only. It does not change thermodynamic equations, Runtime State ownership, Derived State semantics, or Material Configuration semantics.
+The study changes execution scheduling only. It does not change thermodynamic equations, Runtime State ownership, Derived State semantics, or Material Configuration semantics.
 
 ## Working sets
 
@@ -70,8 +70,6 @@ Primary working sets:
 - 1,048,576 cells
 - 4,194,304 cells
 
-These sizes emphasize large-batch behavior where thread orchestration is less likely to dominate the thermodynamic work.
-
 For each timed sample, the harness repeats enough full-batch passes to target at least 16,777,216 cell recoveries.
 
 ## Semantic and integrity gates
@@ -79,7 +77,7 @@ For each timed sample, the harness repeats enough full-batch passes to target at
 Before timing is accepted:
 
 - a deterministic 1,048,576-cell mixed-phase input is recovered by the direct formal batch path;
-- worker-pool results at 1, 2, 4, and 8 requested workers must exactly reproduce the direct Temperature and liquid-fraction outputs;
+- worker-pool results at 1, 2, 4, and 8 requested workers must exactly reproduce direct Temperature and liquid-fraction outputs;
 - source Thermodynamic State values remain unchanged;
 - worker partitions must cover the destination exactly once without overlap;
 - any worker exception invalidates the run;
@@ -88,21 +86,31 @@ Before timing is accepted:
 
 ## Timing procedure
 
-For each working set and execution path:
+For each working set:
 
-- 3 warmup samples;
-- 7 timed samples;
-- median, minimum, maximum, nanoseconds/cell, throughput, and speedup relative to `direct_single_thread` are reported;
-- the direct single-thread baseline is remeasured in the same process and runner execution;
+- all five execution paths are created before timing;
+- 3 warmup rounds execute every path;
+- 7 timed rounds execute every path;
+- the starting scenario rotates each round so no path always occupies the coldest or hottest CPU/JIT position;
+- samples are therefore interleaved rather than completing all samples for one scenario before moving to the next;
+- median, minimum, maximum, nanoseconds/cell, and throughput are reported;
 - absolute hosted-runner timing is treated as environment-specific.
 
-The primary scaling metric is:
+The direct caller and one-worker pool are deliberately retained as separate baselines because thread placement and worker-pool orchestration can differ from direct caller execution.
 
-`speedup(W) = median_time(direct_single_thread) / median_time(worker_pool_W)`
+Two relative metrics are reported:
 
-A secondary efficiency value may be reported as:
+`speedup_vs_direct(W) = median_time(direct_single_thread) / median_time(worker_pool_W)`
 
-`parallel_efficiency(W) = speedup(W) / W`
+and, for the worker-pool scaling question:
+
+`speedup_vs_worker1(W) = median_time(worker_pool_1) / median_time(worker_pool_W)`
+
+The second metric is the primary worker-scaling comparison because it keeps the persistent-worker execution model constant while changing only requested worker count.
+
+Descriptive worker scaling efficiency is:
+
+`worker_scaling_efficiency(W) = speedup_vs_worker1(W) / W`
 
 Efficiency is descriptive only, especially when `W > Environment.ProcessorCount`.
 
@@ -116,10 +124,11 @@ If all reviewed runners expose only two logical processors, the study may suppor
 
 The study may support statements such as:
 
-- two-worker recovery improves or does not improve throughput on the tested two-logical-processor environment;
+- two-worker recovery improves or does not improve throughput relative to the one-worker pool on the tested environment;
 - scaling saturates before, at, or after the environment-reported processor count;
 - oversubscribed 4/8-worker execution improves, plateaus, or regresses;
-- coordination overhead is negligible or material for the tested large batches.
+- coordination overhead is negligible or material for the tested large batches;
+- direct caller and one-worker timings differ, without mislabeling that difference as parallel scaling.
 
 The study shall not claim:
 
@@ -135,6 +144,8 @@ No post-hoc performance PASS/FAIL threshold is adopted.
 ## Evidence disposition
 
 A result record may be added only after successful execution logs and semantic gates are reviewed. If scaling differs materially across runner CPU models, the result shall preserve that environment sensitivity rather than collapse it into one universal speedup number.
+
+Historical predecessor runs using non-interleaved scenario ordering may be retained as methodological history but shall not be used as the final scaling basis if run-order bias is observed.
 
 ## Specification impact
 
