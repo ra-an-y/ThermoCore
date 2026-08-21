@@ -26,11 +26,13 @@ The bounded thermodynamic reference implementation is additionally guided by `Do
 
 # Current Status
 
-Active — bounded reference implementation in progress.
+Active — bounded reference implementation established.
 
-The initial implementation profile is backend-independent C# with no Unity-specific runtime dependency. It currently realizes the persistent specific-enthalpy state, compiled thermodynamic parameters, `h -> T` / `h -> phi` recovery, Energy Input dimensional mapping, Thermodynamic Computation state evolution, and Material Definition compilation for a constant-positive-heat-capacity specialization of the reference formulation.
+The current implementation profile is backend-independent C# with no Unity-specific runtime dependency. It realizes persistent specific-enthalpy state, compiled thermodynamic parameters, `h -> T` / `h -> phi` recovery, Energy Input dimensional mapping, Thermodynamic Computation state evolution, Material Definition compilation, and the semantics-preserving batch recovery API for a constant-positive-heat-capacity specialization of the reference formulation.
 
-The current Material Definition compiler normalizes the zero-enthalpy datum from `T_E_ref` onto the solid sensible branch and therefore supports `T_E_ref < T_m` in this first bounded implementation profile. Broader reference-datum placement, variable heat-capacity inversion, Verification, Validation, GPU execution, and Demo integration remain separate subsequent work.
+Implementation correctness is exercised by the bounded reference Verification under `Tests/`. Independent H2O and Gallium caloric Validation evidence is preserved under `Validation/`, and bounded CPU Performance Evaluation evidence is preserved under `Performance/`.
+
+The current Material Definition compiler normalizes the zero-enthalpy datum from `T_E_ref` onto the solid sensible branch and therefore supports `T_E_ref < T_m` in this first bounded implementation profile. Broader reference-datum placement, variable heat-capacity inversion, GPU execution, engine integration, and Reference Applications remain outside the current bounded profile.
 
 ---
 
