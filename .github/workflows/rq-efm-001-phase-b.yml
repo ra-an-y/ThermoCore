@@ -1,0 +1,25 @@
+name: RQ-EFM-001 Phase B
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Research/05_Research_Questions/Execution/RQ_EFM_001_Phase_B/**'
+      - 'Research/05_Research_Questions/RQ_EFM_001_Phase_B_Result_v0.1.md'
+      - '.github/workflows/rq-efm-001-phase-b.yml'
+  workflow_dispatch:
+
+jobs:
+  phase-b-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Execute S0 and S4 controls
+        run: dotnet run --configuration Release --project Research/05_Research_Questions/Execution/RQ_EFM_001_Phase_B/RQ_EFM_001_Phase_B.csproj
