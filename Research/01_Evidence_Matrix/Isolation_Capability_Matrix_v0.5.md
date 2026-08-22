@@ -129,7 +129,7 @@ DDS is not semantically equivalent to ThermoCore because it does not define:
 - OMG Data Distribution Service 1.4 specification index and normative document: https://www.omg.org/spec/DDS/
 - OMG DDS issue record documenting OWNERSHIP on Topic/DataReader/DataWriter: https://issues.omg.org/issues/DDS11-72
 - RTI Connext current OWNERSHIP QoS reference: https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_c/group__DDSOwnershipQosModule.html
-- RTI Connext current OWNERSHIP policy behavior: https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/connext_dds_professional/users_manual/users_manual/OWNERSHIP_QosPolicy.htm
+- RTI Connext current OWNERSHIP policy behavior: https://community.rti.com/static/documentation/connext_dds_professional/users_manual/users_manual/OWNERSHIP_QosPolicy.htm
 
 **Interpretation:**
 
@@ -253,10 +253,9 @@ The following are now explicitly insufficient to establish equivalence on their 
 
 ## 7. Consequence for RQ-ISO-001
 
-The HLA result is the strongest falsification pressure found so far because it is a simulation architecture, not merely middleware, and it already combines:
+HLA provides the strongest falsification pressure found so far because it already combines:
 
-- normative architecture rules;
-- an explicit object model;
+- normative simulation architecture;
 - semantics documentation;
 - publish/subscribe communication;
 - exclusive per-attribute ownership;
