@@ -2,6 +2,10 @@
 
 [English](README.md) | 繁體中文
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22053832.svg)](https://doi.org/10.5281/zenodo.22053832)
+[![Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 ThermoCore 是一套用於即時熱力學模擬、與引擎無關的框架。
 
 本框架將熱力學計算與材質表現解耦，使熱力學狀態計算得以重複使用，同時讓材質模型保持獨立，不與模擬核心綁定。
