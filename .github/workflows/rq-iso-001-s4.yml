@@ -1,0 +1,24 @@
+name: RQ-ISO-001 S4
+
+on:
+  pull_request:
+    paths:
+      - 'Research/05_Research_Questions/Execution/RQ_ISO_001_S4/**'
+      - 'Research/05_Research_Questions/RQ_ISO_001_S4_*.md'
+      - '.github/workflows/rq-iso-001-s4.yml'
+  workflow_dispatch:
+
+jobs:
+  s4-boundary-validity:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Execute S4 boundary classifier
+        run: dotnet run --project Research/05_Research_Questions/Execution/RQ_ISO_001_S4/ThermoCore.RQISO001.S4.csproj --configuration Release
