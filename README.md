@@ -62,9 +62,21 @@ The Framework Specification and repository governance baselines have been establ
 
 A bounded thermodynamic reference formulation has been implemented and verified. Two independent caloric Validation tracks are published, and bounded CPU Performance Evaluation records are preserved under `Performance/`.
 
-Current work concerns evidence consolidation, release readiness, and additional bounded Validation or implementation work where independently justified.
+ThermoCore v1.0.0 is the first stable public repository publication baseline. Current work concerns post-v1.0 research, evidence consolidation, and additional bounded Validation or implementation work where independently justified.
 
 Future releases may publish additional Validation Evidence and optional Reference Applications. Reference Applications are not mandatory release contents.
+
+---
+
+## Citation
+
+ThermoCore v1.0.0 is archived on Zenodo as the first stable repository publication baseline.
+
+- Version: `v1.0.0`
+- DOI: [10.5281/zenodo.22053832](https://doi.org/10.5281/zenodo.22053832)
+- GitHub Release: [ThermoCore v1.0.0](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+
+When citing this software release, use the citation metadata provided by the Zenodo record. The DOI identifies the archived v1.0.0 release; subsequent development on `main` does not alter that archived baseline.
 
 ---
 
