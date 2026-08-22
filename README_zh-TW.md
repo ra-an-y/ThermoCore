@@ -62,9 +62,21 @@ ThermoCore 目前已發布兩條彼此獨立、範圍受限的參考公式 calor
 
 一套範圍受限的熱力學參考公式已完成實作與 Verification；目前亦已發布兩條獨立 caloric Validation 路線，並於 `Performance/` 保存範圍受限的 CPU Performance Evaluation 紀錄。
 
-目前工作重點為證據整合、版本發布準備，以及在具有獨立依據時進行額外的範圍受限 Validation 或實作工作。
+ThermoCore v1.0.0 是第一個穩定公開的倉庫發布基線。目前工作重點為 v1.0 之後的研究、證據整合，以及在具有獨立依據時進行額外的範圍受限 Validation 或實作工作。
 
 未來版本可能發布更多驗證證據與可選的參考應用；參考應用不是版本發布的必要內容。
+
+---
+
+## 引用
+
+ThermoCore v1.0.0 已作為第一個穩定的倉庫發布基線封存於 Zenodo。
+
+- 版本：`v1.0.0`
+- DOI：[10.5281/zenodo.22053832](https://doi.org/10.5281/zenodo.22053832)
+- GitHub Release：[ThermoCore v1.0.0](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+
+引用此軟體版本時，請使用 Zenodo 紀錄所提供的 citation metadata。此 DOI 對應已封存的 v1.0.0；之後 `main` 的持續開發不會改變該封存基線。
 
 ---
 
