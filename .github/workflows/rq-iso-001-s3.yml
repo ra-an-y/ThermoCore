@@ -1,0 +1,26 @@
+name: RQ-ISO-001 S3
+
+on:
+  pull_request:
+    paths:
+      - 'Research/05_Research_Questions/Execution/RQ_ISO_001_S3/**'
+      - 'Research/05_Research_Questions/RQ_ISO_001_S3_Scenario_Freeze_v0.1.md'
+      - 'Research/05_Research_Questions/RQ_ISO_001_S3_Result_v0.1.md'
+      - '.github/workflows/rq-iso-001-s3.yml'
+  workflow_dispatch:
+
+jobs:
+  s3-reaction-heat:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Execute S3 reaction-heat comparison
+        run: dotnet run --project Research/05_Research_Questions/Execution/RQ_ISO_001_S3/ThermoCore.RQISO001.S3.csproj --configuration Release
