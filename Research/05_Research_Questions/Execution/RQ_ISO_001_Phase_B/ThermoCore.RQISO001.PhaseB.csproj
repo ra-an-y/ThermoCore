@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="../../../../Framework/Core/*.cs" />
     <Compile Include="../../../../Framework/Runtime/*.cs" />
+    <Compile Include="../../../../Materials/Definitions/*.cs" />
     <Compile Include="PhaseBProgram.cs" />
   </ItemGroup>
 </Project>
