@@ -1,6 +1,6 @@
 # RQ-ISO-001 Research Gap Analysis v0.1
 
-Status: Draft — Evidence-supported Candidate Gap Analysis  
+Status: Completed Candidate Gap Analysis — Non-Normative  
 Research Question: RQ-ISO-001  
 Date: 2026-08-23  
 Primary evidence dependency: [`Isolation_Capability_Matrix_v0.6.md`](../01_Evidence_Matrix/Isolation_Capability_Matrix_v0.6.md)
@@ -76,13 +76,15 @@ These findings materially narrow the valid candidate gap.
 
 The bounded survey leaves one narrower architectural combination insufficiently matched by the reviewed prior art:
 
-> **Fixed Semantic/Core-State Boundary under Ordinary Extension** — a framework defines an authoritative physical-domain State whose semantic identity and evolution responsibility remain fixed at the Core level; ordinary representations and extensions may consume that State, derive information from it, contribute through declared coupling boundaries, and own mechanism-specific local state, but they do not thereby acquire authority to redefine the State's semantic identity, owner, mandatory Core-State membership, or the completeness conditions of the Framework Core.
+> **Fixed Semantic/Core-State Boundary under Ordinary Extension** — within the evaluated thermodynamic-framework domain, a framework defines an authoritative Thermodynamic State whose semantic identity and evolution responsibility remain fixed at the Core level; ordinary representations and extensions may consume that State, derive information from it, contribute through declared coupling boundaries, and own mechanism-specific local state, but they do not thereby acquire authority to redefine the State's semantic identity, owner, mandatory Core-State membership, or the completeness conditions of the Framework Core.
+
+This candidate is scoped to the thermodynamic-framework problem evaluated by RQ-ISO-001. Generalization to other physical domains is outside this analysis and would require independent evidence.
 
 This candidate contains four coupled invariants.
 
 ### 4.1 Fixed State Semantic Authority
 
-The authoritative physical-domain State is not merely a writable data object. Its semantic identity is defined by the framework responsibility that owns the physical-domain computation.
+The authoritative Thermodynamic State is not merely a writable data object. Its semantic identity is defined by the framework responsibility that owns thermodynamic computation.
 
 A component that consumes, renders, maps, mirrors, transports, or derives from the State does not gain authority to redefine what that State means.
 
@@ -124,7 +126,7 @@ AAS and FACE provide strong semantic governance, but both support governed exten
 
 AUTOSAR State Management fixes a state-management responsibility, but the operational state model is project-specific and may be influenced by project-specific control applications. It therefore does not establish a fixed physical-domain State identity plus non-extensible Core-State membership.
 
-The current candidate gap is therefore not the absence of any individual mechanism. It is the apparent absence, within the bounded survey, of the **joint architectural invariant** that combines fixed physical-state semantic authority, extension-local-state non-promotion, and Core completeness under optional extension absence.
+The current candidate gap is therefore not the absence of any individual mechanism. It is the apparent absence, within the bounded survey, of the **joint architectural invariant** that combines fixed thermodynamic-state semantic authority, extension-local-state non-promotion, and Core completeness under optional extension absence.
 
 ---
 
@@ -132,7 +134,7 @@ The current candidate gap is therefore not the absence of any individual mechani
 
 The evidence supports the following bounded candidate formulation:
 
-> Existing simulation, middleware, digital-twin, semantic-model, and safety-relevant component architectures provide mature mechanisms for modularity, state ownership, semantic governance, controlled state influence, and extension. Within the bounded RQ-ISO-001 survey, however, no reviewed architecture was found that jointly and explicitly preserves a fixed physical-domain State semantic authority and Core-State membership while allowing ordinary extensions and representations to participate without acquiring authority to redefine that State or make Core completeness depend on their presence.
+> Existing simulation, middleware, digital-twin, semantic-model, and safety-relevant component architectures provide mature mechanisms for modularity, state ownership, semantic governance, controlled state influence, and extension. Within the bounded RQ-ISO-001 survey, however, no reviewed architecture was found that jointly and explicitly preserves a fixed Thermodynamic State semantic authority and Core-State membership while allowing ordinary extensions and representations to participate without acquiring authority to redefine that State or make Core completeness depend on their presence.
 
 This is an **evidence-supported Research Gap candidate**, not a novelty finding.
 
@@ -305,7 +307,7 @@ No conclusion from this document retroactively alters the claims of v1.0.0.
 | Central state-management responsibility | Established prior art |
 | Semantic information-model governance | Established prior art |
 | Modular conformance / V&V separation | Established prior art |
-| Fixed physical-State semantic authority under ordinary extension | Evidence-supported candidate distinction |
+| Fixed Thermodynamic-State semantic authority under ordinary extension | Evidence-supported candidate distinction |
 | Non-promotion of extension-local state into mandatory Core State | Evidence-supported candidate distinction |
 | Core completeness invariant under ordinary extension absence | Evidence-supported candidate distinction |
 | Reduced mandatory state growth | Unverified consequence hypothesis |
@@ -320,7 +322,7 @@ No conclusion from this document retroactively alters the claims of v1.0.0.
 
 The RQ-ISO-001 evidence survey has sufficiently narrowed the original broad isolation question to stop generic capability-matrix expansion.
 
-The remaining research candidate is not ownership, modularity, read-only access, state management, semantic modeling, or extension by itself. It is the joint preservation of a **fixed semantic/Core-State boundary under ordinary extension**.
+The remaining research candidate is not ownership, modularity, read-only access, state management, semantic modeling, or extension by itself. It is the joint preservation of a **fixed semantic/Core-State boundary under ordinary extension** within the evaluated thermodynamic-framework scope.
 
 The bounded evidence set did not identify a direct architectural equivalent that jointly enforces the full combination. This justifies treating the property as an evidence-supported Research Gap candidate.
 
