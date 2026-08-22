@@ -2,6 +2,10 @@
 
 English | [繁體中文](README_zh-TW.md)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22053832.svg)](https://doi.org/10.5281/zenodo.22053832)
+[![Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 ThermoCore is an engine-agnostic framework for real-time thermodynamic simulation.
 
 The framework decouples thermodynamic computation from material representation, allowing reusable state computation while keeping material models independent from the simulation core.
