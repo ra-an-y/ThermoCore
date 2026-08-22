@@ -92,23 +92,27 @@ Condition R is an experimental use of an existing architecture property. Its inc
 
 ### 5.2 Condition P — Permissive Shared-State Modular Comparator
 
-Condition P remains modular but allows the shared simulation-state schema to grow when an active extension needs persistent per-element information.
+Condition P remains modular but adopts a centralized shared-state policy: persistent per-element quantities required by an active ordinary extension are integrated into the shared Simulation State schema rather than remaining in a separately owned extension-state category.
 
 Under Condition P:
 
 - extension computation remains implemented in separate modules;
-- an extension may add persistent fields directly to the shared Core/Simulation State schema;
-- the central state update may carry or dispatch extension-specific state fields;
+- persistent per-element state required by S2 or S3 is added to the shared Simulation State schema;
+- the central state update may carry or dispatch those extension-specific state fields;
 - shared interfaces may expand to expose those new state fields; and
 - Core completeness may be defined against the active shared state schema.
 
-Condition P is not claimed to represent any specific prior framework. It is a controlled comparator designed to isolate the consequence of allowing ordinary extensions to enlarge shared authoritative state while preserving modular implementation.
+Condition P shall not add derived or non-persistent S1 representation data to shared state merely to create a difference.
+
+Condition P is not claimed to represent any specific prior framework. It is a controlled, still-modular centralized-state comparator designed to isolate the consequence of permitting ordinary extensions to enlarge shared authoritative state.
 
 ### 5.3 Fairness Requirement
 
 For each ordinary-extension scenario, Conditions R and P shall implement the same declared functional behavior, use the same physical simplifications, and expose equivalent observable outputs wherever practical.
 
 A metric difference is not interpretable if one condition implements less functionality.
+
+The scenario classification, required functionality, and persistent information required by each scenario shall be frozen before scenario implementation begins.
 
 ---
 
@@ -179,9 +183,11 @@ The experiment shall use the same hysteresis rule in both conditions.
 
 Condition R shall place the history variable in extension-owned persistent state and communicate only the information required by declared coupling boundaries.
 
-Condition P may place the same history variable into the shared state schema and expose it through shared state access while keeping hysteresis computation modular.
+Condition P shall place the same history variable into the shared Simulation State schema and expose it through shared state access while keeping hysteresis computation modular.
 
 The experiment is not intended to claim that hysteresis universally belongs outside Thermodynamic State. It tests the consequence of one explicitly classified ordinary-extension case under a frozen scenario definition.
+
+If pre-implementation review determines that the chosen hysteresis history variable is semantically required to be Thermodynamic State rather than extension-owned state, S2 shall be reclassified before measurement rather than forced to fit the hypothesis.
 
 ### 7.4 S3 — Bounded Exothermic Reaction-Heat Extension
 
@@ -200,7 +206,9 @@ These restrictions keep S3 within the intended ordinary-extension boundary while
 
 Condition R shall retain `xi` as extension-owned state.
 
-Condition P may promote `xi` into the shared state schema and permit central state structures/interfaces to grow accordingly.
+Condition P shall promote `xi` into the shared Simulation State schema and permit central state structures/interfaces to grow accordingly.
+
+If pre-implementation review determines that this bounded reaction-progress variable cannot be justified as extension-owned information under the declared scenario, S3 shall be reclassified before measurement.
 
 ### 7.5 S4 — Variable-Mass Compressible Reactive Flow Counterexample
 
@@ -304,31 +312,43 @@ Each hypothesis is classified independently as `SUPPORTED FOR EVALUATED SCENARIO
 H-ISO-01 is `SUPPORTED FOR EVALUATED SCENARIOS` only if:
 
 1. S1 remains a negative control with no artificial Core-State promotion in either condition;
-2. at least S2 and S3 preserve equivalent functionality;
-3. Condition R has fewer extension-specific quantities promoted into mandatory Core State than Condition P for S2 and S3;
+2. S2 and S3 preserve equivalent functionality between conditions;
+3. Condition R has fewer extension-specific quantities promoted into mandatory Core State than Condition P for both S2 and S3;
 4. the difference is not created by omitting required persistent information; and
 5. total persistent state (`M-S5`) is reported so that Core isolation is not misrepresented as total memory reduction.
 
-If Condition R and Condition P require the same mandatory Core-State growth, H-ISO-01 is `NOT SUPPORTED` for the evaluated scenarios.
+H-ISO-01 is `PARTIALLY SUPPORTED` if exactly one of S2 or S3 shows a valid reduction while the other shows equality and neither scenario contradicts the candidate.
+
+If neither S2 nor S3 shows lower mandatory Core-State promotion under Condition R, H-ISO-01 is `NOT SUPPORTED` for the evaluated scenarios.
+
+If Condition R obtains the difference by omitting semantically required state, reclassifying required Core State as extension state after measurement, or otherwise breaking equivalent functionality, H-ISO-01 is `FALSIFIED / RECLASSIFICATION REQUIRED`.
 
 ### 10.2 H-ISO-02 Decision Rule
 
-H-ISO-02 is `SUPPORTED FOR EVALUATED SCENARIOS` only if, for S2 and S3:
+H-ISO-02 is `SUPPORTED FOR EVALUATED SCENARIOS` only if, for both S2 and S3:
 
 - Condition R changes a strict subset of the frozen Core semantic requirements/artifacts/interfaces changed by Condition P; and
 - the hidden-coupling audit does not reveal equivalent extension-specific Core coupling displaced behind generic wrappers.
+
+H-ISO-02 is `PARTIALLY SUPPORTED` if exactly one of S2 or S3 shows a valid strict-subset reduction while the other is equal and the hidden-coupling audit remains clean.
+
+If neither S2 nor S3 shows a strict-subset reduction, H-ISO-02 is `NOT SUPPORTED` for the evaluated scenarios.
 
 S4 must trigger explicit Core-revision consideration in Condition R. If Condition R reports zero Core impact for S4 solely by hiding necessary governing changes in an extension, the candidate boundary is `FALSIFIED / RECLASSIFICATION REQUIRED`.
 
 ### 10.3 H-ISO-03 Decision Rule
 
-H-ISO-03 is `SUPPORTED FOR EVALUATED SCENARIOS` only if, for at least S2 and S3:
+H-ISO-03 is `SUPPORTED FOR EVALUATED SCENARIOS` only if, for both S2 and S3:
 
 - the same dependency-classification rules are used for both conditions;
 - Condition R produces a strict subset of Core Verification and/or Validation evidence requiring re-execution compared with Condition P; and
 - no retained evidence depends on a changed semantic or implementation dependency.
 
-If both conditions require the same justified Core evidence re-execution, H-ISO-03 is `NOT SUPPORTED` even if Condition R has cleaner source-code separation.
+H-ISO-03 is `PARTIALLY SUPPORTED` if exactly one of S2 or S3 produces a valid strict-subset evidence impact while the other is equal under the same dependency rules.
+
+If neither S2 nor S3 produces a smaller justified Core evidence re-execution set, H-ISO-03 is `NOT SUPPORTED` even if Condition R has cleaner source-code separation.
+
+If a smaller result depends on subjective exemption, inconsistent dependency rules, or retained evidence whose dependency changed, H-ISO-03 is `FALSIFIED / RECLASSIFICATION REQUIRED`.
 
 ---
 
@@ -358,7 +378,7 @@ An unacceptable outcome is preserving unchanged Core semantics by silently movin
 1. Freeze repository baseline commit for the experiment.
 2. Freeze Core artifact manifest and evidence dependency map.
 3. Freeze Condition R and Condition P architecture rules.
-4. Freeze scenario requirements and expected observable outputs.
+4. Freeze scenario requirements, classifications, persistent-information requirements, and expected observable outputs.
 
 ### Phase B — Baseline and Negative Control
 
