@@ -50,14 +50,14 @@ internal static class Program
 
             var contradictions = new[]
             {
-                new AssumptionCheck("FixedCellMass", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("ConstantReferenceDensity", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("SpecificEnthalpyOnlyPersistentState", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("NoMomentumState", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("NoSpeciesTransportState", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("NoPressureEvolution", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("LocalEnergyIncrementEvolution", requiredByCurrentCore: true, violatedByS4: true),
-                new AssumptionCheck("NoFlowDependentTransportResponsibility", requiredByCurrentCore: true, violatedByS4: true)
+                new AssumptionCheck("FixedCellMass", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("ConstantReferenceDensity", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("SpecificEnthalpyOnlyPersistentState", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("NoMomentumState", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("NoSpeciesTransportState", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("NoPressureEvolution", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("LocalEnergyIncrementEvolution", RequiredByCurrentCore: true, ViolatedByS4: true),
+                new AssumptionCheck("NoFlowDependentTransportResponsibility", RequiredByCurrentCore: true, ViolatedByS4: true)
             };
 
             var contradictionCount = contradictions.Count(item => item.RequiredByCurrentCore && item.ViolatedByS4);
