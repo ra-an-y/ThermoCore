@@ -1,6 +1,6 @@
 # Extension Boundary
 
-Version: 1.0  
+Version: 1.1  
 Status: Normative Specification
 
 ---
@@ -23,7 +23,7 @@ It shall not redefine the Framework Core, architecture, ownership, Runtime State
 
 ## 2. Purpose
 
-This document defines the normative semantics, responsibilities, ownership boundaries, and constraints of Extension Modules within ThermoCore.
+This document defines the normative semantics, responsibilities, ownership boundaries, admissibility, and constraints of Extension Modules within ThermoCore.
 
 Extension Modules provide optional capability outside the Framework Core. The Framework Core shall remain complete, valid, and conforming without them.
 
@@ -32,6 +32,8 @@ This specification does not prescribe extension implementations, algorithms, API
 ## 3. Extension Overview
 
 An Extension Module is an optional architectural responsibility that expands framework capability without becoming part of or redefining the Framework Core.
+
+A proposed capability qualifies for treatment as an ordinary Extension Module only when it satisfies the extension-admissibility requirements of this specification. Optional packaging, implementation location, mechanism name, physical-domain label, or participation in thermodynamic evolution shall not by themselves establish Extension Module admissibility.
 
 The conceptual relationship is:
 
@@ -133,6 +135,18 @@ An Extension Module shall Read, Supply, Communicate, and Consume framework infor
 
 Communication shall preserve ownership, semantics, responsibility boundaries, and information flow. It shall not grant modification authority or redefine the communicated information.
 
+### 6.6 Ordinary Extension Admissibility
+
+Ordinary Extension Module admissibility shall be determined relative to the applicable thermodynamic formulation and the claimed thermodynamic scope.
+
+A capability may remain an ordinary Extension Module when external, mechanism-specific, or cross-domain governing information can remain outside Thermodynamic State while the existing Thermodynamic State semantics and Thermodynamic Computation responsibility remain sufficient to represent and evolve the claimed thermodynamic condition through permitted Framework Interface communication.
+
+The information communicated through applicable Framework Interfaces may be refined or enriched when additional semantically distinct information is required to preserve that sufficiency. Such refinement or enrichment shall preserve the information's authoritative semantics and ownership and shall not conceal a required Thermodynamic State quantity, Framework Core responsibility, or ownership transfer inside an opaque payload, extension-owned state, Configuration, Representation, or implementation-specific indirection.
+
+A capability shall not be treated as an ordinary Extension Module when correct thermodynamic representation or evolution within the claimed scope requires a change to the authoritative Thermodynamic State semantics, a Framework Core responsibility, or the applicable thermodynamic formulation that cannot be preserved through semantically honest permitted communication. Such a case shall be governed as an explicit Framework Core or applicable specification revision, or the claimed framework scope shall be narrowed to exclude the unsupported behavior.
+
+Mechanism name, physical-domain identity, dependency direction, bidirectional communication, repeated participation, or participation in thermodynamic evolution shall not by themselves establish Thermodynamic State membership, Framework Core membership, or a requirement for Framework Core revision.
+
 ## 7. Extension Constraints
 
 The following constraints are normative:
@@ -149,6 +163,11 @@ The following constraints are normative:
 10. Extension-owned information shall remain distinct from framework-owned information.
 11. Communication shall not imply ownership, modification authority, or Framework Core membership.
 12. An Extension Module shall preserve all applicable parent specifications.
+13. Ordinary Extension Module admissibility shall be determined relative to the applicable thermodynamic formulation and claimed thermodynamic scope.
+14. External, mechanism-specific, or cross-domain governing information shall not be promoted into Thermodynamic State solely because it participates in thermodynamic evolution.
+15. Permitted Communication may be refined or enriched only when the communicated information remains semantically distinct and its ownership remains preserved.
+16. Required Thermodynamic State information, Framework Core responsibility, or ownership shall not be concealed in extension-owned state, opaque Communication, Configuration, Representation, or implementation-specific indirection.
+17. A capability that requires authoritative Thermodynamic State, Framework Core responsibility, or applicable thermodynamic-formulation revision for the claimed scope shall not be classified as an ordinary Extension Module under the unrevised Framework Core.
 
 These constraints apply independently of implementation technique, numerical formulation, execution backend, or Representation Consumer.
 
@@ -188,18 +207,24 @@ The Framework Core shall remain implementation-agnostic, backend-agnostic, and e
 
 An implementation choice made by an Extension Module shall not become a Framework Core requirement.
 
+### 8.7 Governance Rule 7 — Admit by Formulation Completeness, Not Participation
+
+A proposed extension shall be admitted as an ordinary Extension Module only when the applicable thermodynamic formulation and claimed scope remain complete under the existing Thermodynamic State semantics and Framework Core responsibilities with permitted Framework Interface communication.
+
+Participation, dependency, or cross-domain coupling shall not substitute for this determination. When formulation completeness cannot be preserved without changing authoritative Thermodynamic State, a Framework Core responsibility, or the applicable thermodynamic formulation, the change shall be governed as an explicit specification revision or the unsupported scope shall be excluded.
+
 ## 9. Relationship to Conformance and Validation
 
 Framework Conformance does not require the presence of an Extension Module. The Framework Core remains complete without Extension Modules.
 
-When an implementation includes an Extension Module, the applicable Extension requirements form part of the Framework Conformance determination. The presence of an Extension Module does not by itself establish or invalidate Framework Conformance.
+When an implementation includes an Extension Module, the applicable Extension requirements, including ordinary-extension admissibility when applicable, form part of the Framework Conformance determination. The presence of an Extension Module does not by itself establish or invalidate Framework Conformance.
 
-Future Validation documents may provide evidence relevant to Framework Conformance and stated Validation purposes. Extension-specific Validation shall not redefine the Extension semantics, ownership boundaries, Communication requirements, or governance rules established by this document.
+Future Validation documents may provide evidence relevant to Framework Conformance and stated Validation purposes. Extension-specific Validation shall not redefine the Extension semantics, ownership boundaries, admissibility requirements, Communication requirements, or governance rules established by this document.
 
 ## 10. Document Status
 
-This document is the authoritative normative Framework Specification for Extension Module semantics and boundaries within ThermoCore, derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, `Thermodynamic_State.md`, `Material_Representation.md`, `Framework_Interfaces.md`, and `Specification_Governance.md`.
+This document is the authoritative normative Framework Specification for Extension Module semantics, admissibility, and boundaries within ThermoCore, derived from `Framework_Principles.md`, `Core_Architecture.md`, `Data_Flow.md`, `Thermodynamic_State.md`, `Material_Representation.md`, `Framework_Interfaces.md`, and `Specification_Governance.md`.
 
-Later specifications may refine Extension Module semantics within their assigned scope but shall not redefine the Framework Core, Extension Modules, extension ownership, extension Communication, or the boundaries established by the parent specifications and this document.
+Later specifications may refine Extension Module semantics within their assigned scope but shall not redefine the Framework Core, Extension Modules, extension ownership, extension admissibility, extension Communication, or the boundaries established by the parent specifications and this document.
 
 Extension implementations, algorithms, APIs, programming interfaces, numerical formulations, rendering systems, execution mechanisms, backend-specific behavior, and Unity-specific concepts are intentionally outside the scope of this specification.
