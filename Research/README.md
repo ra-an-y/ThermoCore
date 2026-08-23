@@ -26,6 +26,15 @@ Research artifacts do not become Framework requirements merely because they are 
 
 Active
 
+## Completed RQ-001 closure package
+
+The original RQ-001 architectural research-gap line is closed on its current evidence baseline.
+
+- [RQ-001 Research Synthesis and Final Closure](04_Research_Gap/RQ_001_Research_Synthesis_and_Final_Closure_v0.1.md)
+- [RQ-001 External Evidence Backbone](04_Research_Gap/RQ_001_External_Evidence_Backbone_v0.1.md)
+
+The synthesis records the final bounded contribution and reclassification decisions. The external-evidence backbone provides representative primary, standards, official-framework, and peer-reviewed references; detailed source-level scoring remains in the applicable Evidence Matrices.
+
 ---
 
 # Notes
