@@ -172,7 +172,7 @@ https://academic.oup.com/imamci/article/37/4/1400/5877069
 
 **[EXT-CEX-04] Simscape Conserving Ports.**  
 MathWorks. *Simscape Language Guide — Across and Through Variables / Conserving Connections*.  
-https://www.mathworks.com/help/simscape/lang/declaring-across-and-through-variables.html
+https://www.mathworks.com/help/simscape/lang/declare-through-and-across-variables-for-a-domain.html
 
 **Evidence role:** independent engineering precedent for conserving ports with Across/Through variable semantics and balance equations.
 
