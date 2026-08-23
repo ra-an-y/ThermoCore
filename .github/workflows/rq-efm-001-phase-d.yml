@@ -1,0 +1,27 @@
+name: RQ-EFM-001 Phase D
+
+on:
+  pull_request:
+    paths:
+      - 'Research/05_Research_Questions/Execution/RQ_EFM_001_Phase_D/**'
+      - 'Research/05_Research_Questions/RQ_EFM_001_Phase_D_Result_v0.1.md'
+      - '.github/workflows/rq-efm-001-phase-d.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase-d-thermoelectric:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Execute S3 thermoelectric coupling
+        run: dotnet run --configuration Release --project Research/05_Research_Questions/Execution/RQ_EFM_001_Phase_D/RQ_EFM_001_Phase_D.csproj
