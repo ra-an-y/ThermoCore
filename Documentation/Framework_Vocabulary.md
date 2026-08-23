@@ -1,7 +1,7 @@
 # Framework Vocabulary
 
-Version: 1.0  
-Status: Framework Vocabulary v1.0
+Version: 1.1  
+Status: Framework Vocabulary v1.1
 
 ---
 
@@ -66,12 +66,14 @@ It identifies the Definition Owner, Primary Specification, and first normative i
 | Extension Communication | Framework Interfaces | `Framework_Interfaces.md` | `Framework_Interfaces.md` |
 | Extension Module | Extension Boundary | `Extension_Boundary.md` | `Framework_Principles.md` |
 | Extension Boundary | Extension Boundary | `Extension_Boundary.md` | `Framework_Principles.md` |
+| Ordinary Extension Admissibility | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Closed Core, Open Extension | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Extend, Do Not Redefine | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Communicate, Do Not Bypass | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Own Extension Information, Do Not Own Framework Information | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Preserve Parent Specifications | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Preserve Implementation Independence | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
+| Admit by Formulation Completeness, Not Participation | Extension Boundary | `Extension_Boundary.md` | `Extension_Boundary.md` |
 | Framework Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Principles.md` |
 | Conformance | Framework Conformance | `Framework_Conformance.md` | `Framework_Principles.md` |
 | Non-conformance | Framework Conformance | `Framework_Conformance.md` | `Core_Architecture.md` |
@@ -116,6 +118,6 @@ Context-local lifecycle labels and ordinary grammatical uses are governed by the
 
 ## Status
 
-Framework Vocabulary v1.0
+Framework Vocabulary v1.1
 
-This document records terminology extracted from the ThermoCore Framework Specification v1.0 baseline. It introduces no new normative requirement, architectural concept, ownership assignment, or semantic definition.
+This document records terminology extracted from the current ThermoCore Framework Specification set. It introduces no new normative requirement, architectural concept, ownership assignment, or semantic definition.

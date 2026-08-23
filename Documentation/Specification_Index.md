@@ -1,6 +1,6 @@
 # Specification Index
 
-Version: 1.0  
+Version: 1.1  
 Status: Informational Navigation Document
 
 ---
@@ -55,7 +55,7 @@ Many later specifications depend cumulatively on more than the immediately prece
 | [`Thermodynamic_State.md`](Framework_Specification/Thermodynamic_State.md) | Defines the semantics, ownership, classification, lifecycle, and constraints of Thermodynamic State as Runtime State. | `Framework_Principles.md`; `Core_Architecture.md`; `Data_Flow.md` |
 | [`Material_Representation.md`](Framework_Specification/Material_Representation.md) | Defines the semantics, responsibility, ownership, classification, lifecycle, and interpretation principles of Material Representation and Representation. | `Framework_Principles.md`; `Core_Architecture.md`; `Data_Flow.md`; `Thermodynamic_State.md` |
 | [`Framework_Interfaces.md`](Framework_Specification/Framework_Interfaces.md) | Defines the communication semantics, responsibilities, boundaries, ownership preservation, and constraints of Framework Interfaces. | `Framework_Principles.md`; `Core_Architecture.md`; `Data_Flow.md`; `Thermodynamic_State.md`; `Material_Representation.md` |
-| [`Extension_Boundary.md`](Framework_Specification/Extension_Boundary.md) | Defines Extension Module semantics, optionality, ownership, Communication boundaries, and extension constraints. | `Framework_Principles.md`; `Core_Architecture.md`; `Data_Flow.md`; `Thermodynamic_State.md`; `Material_Representation.md`; `Framework_Interfaces.md`; `Specification_Governance.md` |
+| [`Extension_Boundary.md`](Framework_Specification/Extension_Boundary.md) | Defines Extension Module semantics, ordinary-extension admissibility, optionality, ownership, Communication boundaries, and extension constraints. | `Framework_Principles.md`; `Core_Architecture.md`; `Data_Flow.md`; `Thermodynamic_State.md`; `Material_Representation.md`; `Framework_Interfaces.md`; `Specification_Governance.md` |
 | [`Framework_Conformance.md`](Framework_Specification/Framework_Conformance.md) | Defines the semantics by which satisfaction of applicable normative requirements constitutes Framework Conformance. | `Framework_Principles.md`; `Core_Architecture.md`; `Data_Flow.md`; `Thermodynamic_State.md`; `Material_Representation.md`; `Framework_Interfaces.md`; `Extension_Boundary.md`; `Specification_Governance.md` |
 | [`Specification_Governance.md`](Framework_Specification/Specification_Governance.md) | Defines cross-specification Governance for dependency, semantic preservation, ownership, architecture, information, scope, and documentation consistency. | `Framework_Principles.md` |
 
@@ -127,7 +127,7 @@ Framework Specifications are the normative basis for subsequent work. Framework 
 
 Demo and Sandbox artifacts are Reference Applications. They may demonstrate, exercise, or consume a conforming implementation, but they do not define Framework behavior or Framework Conformance.
 
-The authoritative requirements for evaluating future capabilities against existing Core and Extension boundaries are defined by [`Extension_Boundary.md`](Framework_Specification/Extension_Boundary.md) and [`Specification_Governance.md`](Framework_Specification/Specification_Governance.md). This index does not create additional extension or specification-change requirements.
+The authoritative requirements for evaluating future capabilities against existing Core and Extension boundaries, including ordinary-extension admissibility, are defined by [`Extension_Boundary.md`](Framework_Specification/Extension_Boundary.md) and [`Specification_Governance.md`](Framework_Specification/Specification_Governance.md). This index does not create additional extension or specification-change requirements.
 
 ## 8. Document Status
 
