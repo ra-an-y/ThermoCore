@@ -1,0 +1,24 @@
+name: RQ-EFM-001 Phase C
+
+on:
+  pull_request:
+    paths:
+      - 'Research/05_Research_Questions/Execution/RQ_EFM_001_Phase_C/**'
+      - 'Research/05_Research_Questions/RQ_EFM_001_Phase_C_Result_v0.1.md'
+      - '.github/workflows/rq-efm-001-phase-c.yml'
+  workflow_dispatch:
+
+jobs:
+  phase-c-formulation-pair:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Execute S1 and S2 electrocaloric formulation pair
+        run: dotnet run --configuration Release --project Research/05_Research_Questions/Execution/RQ_EFM_001_Phase_C/RQ_EFM_001_Phase_C.csproj
