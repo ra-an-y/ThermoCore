@@ -10,6 +10,8 @@ ThermoCore is an engine-agnostic framework designed for real-time thermodynamic 
 
 The framework separates thermodynamic computation from material representation, enabling reusable thermodynamic-state computation while supplying material-specific configuration independently of computation.
 
+This repository contains the normative Framework Specification, a bounded C# reference implementation, Verification and Validation evidence, Performance records, and supporting research.
+
 ---
 
 ## Framework Design
@@ -44,9 +46,15 @@ Thermodynamic State
       │
       ▼
 Material Representation
+      │
+      ▼
+Representation Consumer
+(outside Framework Core)
 ```
 
 This simplified diagram shows the conceptual runtime dependency. Communication across these dependencies occurs through applicable Framework Interfaces. ThermoCore's normative Core Architecture consists of Thermodynamic Computation, Thermodynamic State, Material Representation, and Framework Interfaces.
+
+The primary Framework Output is Thermodynamic State. Material Representation interprets state and applicable material information for downstream use by a Representation Consumer outside the Framework Core.
 
 See the [Core Architecture specification](Documentation/Framework_Specification/Core_Architecture.md) for the authoritative architectural definition and the [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md) for the current implementation scope.
 
@@ -54,7 +62,7 @@ See the [Core Architecture specification](Documentation/Framework_Specification/
 
 ## Extending ThermoCore
 
-Adding a new physical mechanism is not decided by the mechanism name or coupling strength alone. ThermoCore first asks whether the selected thermodynamic formulation remains complete when the mechanism communicates explicitly with the Core, then whether an accepted ordinary extension preserves authoritative Core-State semantics and ownership.
+Adding a new physical mechanism is not decided by the mechanism name or coupling strength alone. ThermoCore first asks whether the selected thermodynamic formulation remains complete through semantically honest communication with the Core, then whether an accepted ordinary extension preserves authoritative Core-State semantics and ownership.
 
 See the [Extension Design Guide](Documentation/Extension_Design_Guide.md) for a practical decision flow covering extension admissibility, state and information classification, energy-exchange accounting, feedback, and composition of multiple extensions.
 
