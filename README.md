@@ -36,8 +36,17 @@ Material Representation
 
 ---
 
+## Extending ThermoCore
+
+Adding a new physical mechanism is not decided by the mechanism name or coupling strength alone. ThermoCore first asks whether the selected thermodynamic formulation remains complete under semantically honest communication, then whether an accepted ordinary extension preserves authoritative Core-State semantics and ownership.
+
+See the [Extension Design Guide](Documentation/Extension_Design_Guide.md) for a practical decision flow covering extension admissibility, state and information classification, energy-exchange accounting, feedback, and composition of multiple extensions.
+
+---
+
 ## Documentation
 
+- [Extension Design Guide](Documentation/Extension_Design_Guide.md)
 - [Specification Index](Documentation/Specification_Index.md)
 - [Framework Vocabulary](Documentation/Framework_Vocabulary.md)
 - [Repository Governance](Documentation/Repository_Guidelines/Repository_Governance.md)
