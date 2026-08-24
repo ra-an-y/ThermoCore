@@ -36,8 +36,17 @@ ThermoCore 是一套用於即時熱力學模擬、與引擎無關的框架。
 
 ---
 
+## 擴充 ThermoCore
+
+新增物理機制時，不應只依機制名稱、所屬物理領域或耦合強度判斷它是否能成為 Extension。ThermoCore 會先判斷選定的熱力學公式在語意誠實的通訊下是否仍然完整，再判斷已接受的普通 Extension 是否能維持 Core-State 的權威語意與所有權。
+
+請參閱 [Extension Design Guide](Documentation/Extension_Design_Guide.md)。該指南以實際決策流程說明 Extension admissibility、狀態與資訊分類、能量交換 accounting、下游 feedback，以及多 Extension 組合後的重新判定方式。
+
+---
+
 ## 文件導覽
 
+- [Extension Design Guide](Documentation/Extension_Design_Guide.md)
 - [規格索引](Documentation/Specification_Index.md)
 - [框架詞彙表](Documentation/Framework_Vocabulary.md)
 - [倉庫治理](Documentation/Repository_Guidelines/Repository_Governance.md)
