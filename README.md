@@ -34,6 +34,8 @@ Thermodynamic State Update
 Material Representation
 ```
 
+The diagram describes the Framework architecture. The current backend-independent C# reference implementation realizes a bounded thermodynamic-computation, Thermodynamic-State, material-configuration, and reference-formulation slice. It does not yet establish complete implementation or complete Framework Conformance of all four normative Core responsibilities. See the [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md).
+
 ---
 
 ## Extending ThermoCore
@@ -49,6 +51,7 @@ See the [Extension Design Guide](Documentation/Extension_Design_Guide.md) for a 
 - [Extension Design Guide](Documentation/Extension_Design_Guide.md)
 - [Specification Index](Documentation/Specification_Index.md)
 - [Framework Vocabulary](Documentation/Framework_Vocabulary.md)
+- [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md)
 - [Repository Governance](Documentation/Repository_Guidelines/Repository_Governance.md)
 - [Research Guide](Research/README.md)
 - [Validation Evidence](Validation/README.md)

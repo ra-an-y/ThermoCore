@@ -34,6 +34,8 @@ ThermoCore 是一套用於即時熱力學模擬、與引擎無關的框架。
 材質表現
 ```
 
+此圖描述的是 Framework 架構。現有與後端無關的 C# reference implementation 僅實作範圍受限的 Thermodynamic Computation、Thermodynamic State、material Configuration 與 reference formulation 切片；目前尚未建立四個 normative Core responsibilities 的完整實作或完整 Framework Conformance。詳見 [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md)。
+
 ---
 
 ## 擴充 ThermoCore
@@ -49,6 +51,7 @@ ThermoCore 是一套用於即時熱力學模擬、與引擎無關的框架。
 - [Extension Design Guide](Documentation/Extension_Design_Guide.md)
 - [規格索引](Documentation/Specification_Index.md)
 - [框架詞彙表](Documentation/Framework_Vocabulary.md)
+- [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md)
 - [倉庫治理](Documentation/Repository_Guidelines/Repository_Governance.md)
 - [研究導覽](Research/README.md)
 - [驗證證據](Validation/README.md)
