@@ -26,7 +26,7 @@ flowchart TD
     SG["Specification_Governance.md"]
     EB["Extension_Boundary.md"]
     FC["Framework_Conformance.md"]
-    VE["Future Validation Evidence"]
+    VE["Validation Evidence"]
 
     FP --> CA
     FP --> SG
@@ -88,7 +88,9 @@ Framework Specifications define normative requirements.
 
 Validation provides evidence relevant to the applicable Framework Specifications and Framework Conformance. Validation Evidence supports a Conformance determination; it does not define, replace, or modify the normative requirements or Conformance semantics.
 
-The applicable authoritative Framework Specifications require future Validation documents to reference the relevant specifications and identify the requirements or Conformance concerns for which evidence is provided. No `Validation/` directory is represented here as a currently published artifact.
+The applicable authoritative Framework Specifications require Validation documents to reference the relevant specifications and identify the requirements or Conformance concerns for which evidence is provided.
+
+Current repository-published Validation artifacts are navigated from [`Validation/README.md`](../Validation/README.md). The published H2O and Gallium caloric tracks are bounded physical Validation evidence for their declared purposes; they do not by themselves establish complete Framework Validation or Framework Conformance.
 
 Verification and Validation remain distinct activities as established by `Framework_Principles.md` and indexed by `Framework_Vocabulary.md`.
 

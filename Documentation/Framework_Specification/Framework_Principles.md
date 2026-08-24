@@ -1,6 +1,6 @@
 # Framework Principles
 
-Version: 1.0  
+Version: 1.1  
 Status: Normative Specification
 
 ---
@@ -149,16 +149,19 @@ Extension Modules are optional and are not required for Framework Conformance.
 
 ## 9. Verification and Validation Philosophy
 
-The Verification and Validation series provides evidence relevant to Framework Conformance and to the stated Validation purposes.
+Verification and Validation activities provide evidence relevant to Framework Conformance and to their explicitly stated Verification or Validation purposes.
 
-V01–V04 collectively evaluate:
+Such activities may evaluate, within their declared scopes:
 
-- architectural conformance;
+- architectural Conformance concerns;
 - Thermodynamic State evolution;
-- phase behavior; and
-- energy consistency.
+- phase behavior;
+- energy consistency; and
+- other implementation or physical questions appropriate to the stated evidence purpose.
 
-These activities evaluate framework-defined behavior and boundaries. They do not verify or validate:
+The Framework Specification does not require one fixed repository naming scheme or a permanent numbered Validation sequence for these evidence activities.
+
+These activities may evaluate framework-defined behavior, formulation behavior, or stated physical Validation purposes within their declared scope. They do not verify or validate:
 
 - Unity scenes;
 - Unity Physics;
