@@ -8,7 +8,9 @@
 
 ThermoCore 是一套為即時熱力學模擬而設計、與引擎無關的框架。
 
-本框架將 Thermodynamic Computation 與 Material Representation 分離，使 Thermodynamic State 計算可重複使用，同時讓 material-specific Configuration 獨立於計算責任之外供應。
+本框架將 Thermodynamic Computation 與 Material Representation 分離，使 Thermodynamic State 的計算可重複使用；計算所需的材質資訊則以獨立的 Configuration 提供，而不是把材質特定邏輯嵌入 Thermodynamic Computation。
+
+本倉庫包含 normative Framework Specification、範圍受限的 C# reference implementation、Verification 與 Validation evidence、Performance 紀錄，以及相關研究資料。
 
 ---
 
@@ -44,9 +46,15 @@ Thermodynamic State
       │
       ▼
 Material Representation
+      │
+      ▼
+Representation Consumer
+（位於 Framework Core 之外）
 ```
 
 此簡化圖描述的是概念性 runtime dependency。這些 dependency 之間的通訊透過適用的 Framework Interfaces 進行。ThermoCore 的 normative Core Architecture 由 Thermodynamic Computation、Thermodynamic State、Material Representation 與 Framework Interfaces 四項責任組成。
+
+Thermodynamic State 是 Framework 的主要輸出。Material Representation 會解讀 Thermodynamic State 與適用的材質資訊，再提供給位於 Framework Core 之外的 Representation Consumer 使用。
 
 正式架構定義請參閱 [Core Architecture specification](Documentation/Framework_Specification/Core_Architecture.md)；目前實作範圍請參閱 [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md)。
 
@@ -54,7 +62,7 @@ Material Representation
 
 ## 擴充 ThermoCore
 
-新增物理機制時，不應只依機制名稱、所屬物理領域或耦合強度判斷它是否能成為 Extension。ThermoCore 會先判斷該機制與 Core 以明確語意通訊時，選定的熱力學公式是否仍然完整；若可作為普通 Extension，再判斷它是否維持 Core-State 的權威語意與所有權。
+新增物理機制時，不應只依機制名稱、所屬物理領域或耦合強度判斷它是否能成為 Extension。ThermoCore 會先判斷：在與 Core 進行語意誠實且符合既定邊界的通訊時，選定的熱力學公式是否仍然完整；若可作為普通 Extension，再判斷它是否維持 Core-State 的權威語意與所有權。
 
 請參閱 [Extension Design Guide](Documentation/Extension_Design_Guide.md)。該指南以實際決策流程說明 Extension admissibility、狀態與資訊分類、能量交換 accounting、下游 feedback，以及多 Extension 組合後的重新判定方式。
 
