@@ -30,17 +30,21 @@ The Gaussian parameters are an experimental numerical/field representation. They
 
 For the bounded one-dimensional perfect-contact case, an incident thermal Gaussian can be represented by incident, image/reflection, and transmitted Gaussian kernels whose coefficients depend on material diffusivity and thermal effusivity.
 
-The experiment will first verify this bounded case before attempting general geometry.
-
 ### H3 — Material definition and evolving memory remain separate
 
 Material/configuration describes reusable physical properties such as conductivity, volumetric heat capacity, diffusivity, and effusivity.
 
-Any persistent information required because a finite layer has prior physical evolution must be represented separately as experiment-local evolving state. It must not be stored inside the material definition merely because it is material-specific.
+Persistent effects of prior evolution in a finite layer belong to separate experiment-local current state. The current reduced-state prototype stores a mean temperature perturbation and a bounded set of cosine diffusion-mode coefficients; it does not store the sequence of past events.
 
 ### H4 — Representation remains downstream
 
 A renderer may consume a Gaussian-compatible field representation, but rendering parameters such as color and opacity do not become authoritative thermodynamic state and must not write Thermodynamic State.
+
+### H5 — Finite-layer history may be reduced to present modal state
+
+For a finite homogeneous one-dimensional layer, the diffusion field can be expanded in cosine eigenmodes. Retaining a finite number of coefficients provides a bounded reduced current state. Under piecewise-constant inward boundary heat fluxes, each retained mode is updated analytically over a timestep.
+
+This hypothesis is currently a reduced-order numerical experiment, not a claim that a finite mode count is sufficient for arbitrary layered-media accuracy.
 
 ## 3. Responsibility Boundary
 
@@ -48,10 +52,10 @@ A renderer may consume a Gaussian-compatible field representation, but rendering
 Material / Configuration
         |
         v
-Experimental propagation computation <--- experiment-local evolving state
+Experimental state evolution <--- experiment-local current reduced state
         |
         v
-Gaussian-compatible field representation
+Field reconstruction / Gaussian-compatible representation
         |
         +----> physical field query
         |
@@ -63,36 +67,37 @@ The experiment may own mechanism-specific local state and numerical basis data. 
 - redefine Thermodynamic State identity;
 - write Thermodynamic State outside Thermodynamic Computation;
 - reassign Framework ownership;
-- require Gaussian parameters to become mandatory Framework Core State;
+- require Gaussian or modal coefficients to become mandatory Framework Core State;
 - let Representation write or govern thermodynamic evolution;
 - reinterpret implementation-specific Gaussian behavior as a Framework requirement;
 - count the same energy contribution as both internal redistribution and external input.
 
-## 4. Initial Bounded Scope
+## 4. Current Bounded Scope
 
-The first implementation is intentionally narrow:
+The implementation remains intentionally narrow:
 
 - one spatial dimension;
 - homogeneous material regions;
-- perfect thermal contact at a planar interface;
+- perfect thermal contact at planar interfaces;
 - constant material properties;
 - diffusion-only thermal propagation;
-- Gaussian heat-kernel basis;
+- Gaussian heat-kernel basis for the perfect-interface checkpoint;
+- finite-layer cosine reduced state for the state-memory checkpoint;
 - no rendering dependency;
 - no modification of existing `Framework/` implementation files.
 
-Excluded from the first checkpoint:
+Still excluded:
 
 - arbitrary 2D/3D geometry;
 - curved interfaces;
 - anisotropic conductivity;
 - phase change;
 - temperature-dependent material properties;
-- finite-layer reduced-order memory;
+- general finite multilayer transfer operators;
 - Gaussian merge/split heuristics;
 - 3DGS opacity/compositing semantics.
 
-## 5. First Verification Checkpoint
+## 5. Checkpoint 1 — Perfect Interface
 
 The first checkpoint is successful only if the branch-local prototype can demonstrate all of the following in the bounded 1D perfect-interface problem:
 
@@ -103,10 +108,41 @@ The first checkpoint is successful only if the branch-local prototype can demons
 5. material/configuration remains immutable during propagation;
 6. no existing ThermoCore Framework source file is modified to make the experiment work.
 
-A successful checkpoint does **not** establish a new solver, Framework feature, or research contribution. It only establishes feasibility for the bounded experiment.
+## 6. Checkpoint 2 — Finite-Layer Reduced Current State
 
-## 6. Promotion Rule
+The second checkpoint separates reusable material definition from the current state that summarizes prior finite-layer evolution.
+
+The current reduced model uses:
+
+```text
+Current Reduced State
+├── mean temperature perturbation
+└── bounded cosine diffusion-mode coefficients
+```
+
+For constant inward heat flux over one timestep, the implementation verifies:
+
+1. integrated energy change matches the net boundary heat input;
+2. retained non-constant modes decay exponentially when both boundary inputs are zero;
+3. equal inward heat flux at both boundaries does not excite odd cosine modes;
+4. the reconstructed field preserves the corresponding mirror symmetry;
+5. no event-history list is required to advance the current state;
+6. material properties remain separate Configuration.
+
+Passing this checkpoint does **not** establish that a small fixed mode count reproduces the full finite-layer Green function for all times or material contrasts. That accuracy question remains a later checkpoint.
+
+## 7. Build and Verification
+
+The experiment has an isolated `.NET 8` executable project:
+
+```text
+Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.csproj
+```
+
+A branch-local GitHub Actions workflow builds the project and runs the experiment checkpoints without modifying ThermoCore's existing reference-verification workflow.
+
+## 8. Promotion Rule
 
 Nothing in this directory is assumed to belong in ThermoCore `main`.
 
-If the experiment later identifies a genuinely generic Framework-level need, that need must be reviewed independently against the normative specification. Gaussian-specific implementation code is not promoted merely because the experiment succeeds.
+If the experiment later identifies a genuinely generic Framework-level need, that need must be reviewed independently against the normative specification. Gaussian-specific or reduced-order implementation code is not promoted merely because the experiment succeeds.
