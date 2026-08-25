@@ -15,6 +15,7 @@
     <Compile Include="FiniteLayerStateEvolution1D.cs" />
     <Compile Include="FiniteLayerFieldRepresentation1D.cs" />
     <Compile Include="FiniteLayerReducedStateVerification1D.cs" />
+    <Compile Include="FiniteLayerModeConvergence1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
