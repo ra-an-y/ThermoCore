@@ -129,9 +129,18 @@ For constant inward heat flux over one timestep, the implementation verifies:
 5. no event-history list is required to advance the current state;
 6. material properties remain separate Configuration.
 
-Passing this checkpoint does **not** establish that a small fixed mode count reproduces the full finite-layer Green function for all times or material contrasts. That accuracy question remains a later checkpoint.
+## 7. Checkpoint 3 — Reduced-State Dimension / Convergence
 
-## 7. Build and Verification
+The third checkpoint asks whether the bounded current-state dimension produces a controlled accuracy tradeoff rather than an arbitrary truncation.
+
+A 256-mode cosine solution is used only as an internal numerical reference for the same finite-layer formulation. Candidate states with 4, 8, 16, and 32 retained modes are evaluated on a fixed spatial sample set. The checkpoint requires:
+
+1. relative field error decreases monotonically as retained mode count increases;
+2. the 32-mode state reaches a bounded relative-error target for the declared test case.
+
+The current declared 32-mode target is `5e-3` relative L2 error. This is an experiment checkpoint, not a framework accuracy requirement and not a claim of universal sufficiency.
+
+## 8. Build and Verification
 
 The experiment has an isolated `.NET 8` executable project:
 
@@ -139,9 +148,9 @@ The experiment has an isolated `.NET 8` executable project:
 Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.csproj
 ```
 
-A branch-local GitHub Actions workflow builds the project and runs the experiment checkpoints without modifying ThermoCore's existing reference-verification workflow.
+A branch-local GitHub Actions workflow builds the project and runs all experiment checkpoints without modifying ThermoCore's existing reference-verification workflow.
 
-## 8. Promotion Rule
+## 9. Promotion Rule
 
 Nothing in this directory is assumed to belong in ThermoCore `main`.
 
