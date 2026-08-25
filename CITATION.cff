@@ -5,8 +5,8 @@ type: software
 authors:
   - family-names: "Yang"
     given-names: "Ruei-An"
-version: "1.0.0"
-doi: "10.5281/zenodo.22053832"
-date-released: 2026-08-22
+version: "1.1.0"
+doi: "10.5281/zenodo.22096343"
+date-released: 2026-08-25
 repository-code: "https://github.com/ra-an-y/ThermoCore"
 license: "Apache-2.0"

@@ -2,8 +2,8 @@
 
 English | [繁體中文](README_zh-TW.md)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22053832.svg)](https://doi.org/10.5281/zenodo.22053832)
-[![Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22096343.svg)](https://doi.org/10.5281/zenodo.22096343)
+[![Release](https://img.shields.io/badge/release-v1.1.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.1.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ThermoCore is an engine-agnostic framework designed for real-time thermodynamic simulation.
@@ -101,7 +101,9 @@ The Framework Specification and repository governance baselines have been establ
 
 A bounded thermodynamic reference formulation has been implemented and has Verification evidence within its stated scope. Two separate caloric Validation tracks are published, and bounded CPU Performance Evaluation records are preserved under `Performance/`.
 
-ThermoCore v1.0.0 is the first stable public repository publication baseline. Current work concerns post-v1.0 research, evidence consolidation, and additional bounded Validation or implementation work where independently justified.
+ThermoCore v1.1.0 is the current stable public repository release. It refines the Framework specification, closes the bounded RQ-001 research package, and improves extension guidance and publication traceability while preserving the existing bounded reference-implementation scope.
+
+The production C# reference implementation is not materially changed relative to v1.0.0, and v1.1.0 does not claim complete implementation or complete Framework Conformance of all four normative Core responsibilities.
 
 Future releases may publish additional Validation Evidence and optional Reference Applications. Reference Applications are not mandatory release contents.
 
@@ -109,13 +111,13 @@ Future releases may publish additional Validation Evidence and optional Referenc
 
 ## Citation
 
-ThermoCore v1.0.0 is archived on Zenodo as the first stable repository publication baseline.
+ThermoCore v1.1.0 is archived on Zenodo as a version-specific software release.
 
-- Version: `v1.0.0`
-- DOI: [10.5281/zenodo.22053832](https://doi.org/10.5281/zenodo.22053832)
-- GitHub Release: [ThermoCore v1.0.0](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+- Version: `v1.1.0`
+- DOI: [10.5281/zenodo.22096343](https://doi.org/10.5281/zenodo.22096343)
+- GitHub Release: [ThermoCore v1.1.0](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.1.0)
 
-When citing this software release, use the citation metadata provided by the Zenodo record. The DOI identifies the archived v1.0.0 release; subsequent development on `main` does not alter that archived baseline.
+When citing this software release, use the version-specific Zenodo DOI above or the citation metadata in `CITATION.cff`. The earlier v1.0.0 archive remains immutable at DOI `10.5281/zenodo.22053832`.
 
 ---
 
