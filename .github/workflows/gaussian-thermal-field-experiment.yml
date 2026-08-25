@@ -1,0 +1,33 @@
+name: Gaussian Thermal Field Experiment
+
+on:
+  push:
+    branches:
+      - exp/gaussian-thermal-field
+    paths:
+      - 'Experiments/GaussianThermalField/**'
+      - '.github/workflows/gaussian-thermal-field-experiment.yml'
+  pull_request:
+    paths:
+      - 'Experiments/GaussianThermalField/**'
+      - '.github/workflows/gaussian-thermal-field-experiment.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-gaussian-thermal-field:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build experiment
+        run: dotnet build Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.csproj --configuration Release
+
+      - name: Run experiment checkpoints
+        run: dotnet run --project Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.csproj --configuration Release --no-build
