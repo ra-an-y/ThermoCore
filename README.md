@@ -6,41 +6,63 @@ English | [繁體中文](README_zh-TW.md)
 [![Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-ThermoCore is an engine-agnostic framework for real-time thermodynamic simulation.
+ThermoCore is an engine-agnostic framework designed for real-time thermodynamic simulation.
 
-The framework decouples thermodynamic computation from material representation, allowing reusable state computation while keeping material models independent from the simulation core.
+The framework separates thermodynamic computation from material representation, enabling reusable thermodynamic-state computation while supplying material-specific configuration independently of computation.
 
----
-
-## Features
-
-- Decoupled Thermodynamic Computation Layer
-- Material Representation Layer
-- Enthalpy-based State Update
-- GPU-oriented Design
-- Engine-agnostic Architecture
+This repository contains the normative Framework Specification, a bounded C# reference implementation, Verification and Validation evidence, Performance records, and supporting research.
 
 ---
 
-## Architecture
+## Framework Design
+
+- Separation of Thermodynamic Computation and Material Representation
+- Explicit Thermodynamic State ownership
+- Engine-agnostic architecture
+- GPU-oriented architectural design
+- Explicit extension boundaries
+
+### Current Reference Implementation
+
+- Backend-independent C# reference implementation
+- Enthalpy-based reference formulation
+- Bounded Thermodynamic Computation and Thermodynamic State implementation slice
+- Material Definition to compiled Configuration path
+
+The reference implementation is intentionally bounded. It does not yet establish complete implementation or complete Framework Conformance of all four normative Core responsibilities.
+
+---
+
+## Conceptual Runtime Flow
 
 ```text
 Energy Input
       │
       ▼
-Thermodynamic State Update
+Thermodynamic Computation
+      │
+      ▼
+Thermodynamic State
       │
       ▼
 Material Representation
+      │
+      ▼
+Representation Consumer
+(outside Framework Core)
 ```
 
-The diagram describes the Framework architecture. The current backend-independent C# reference implementation realizes a bounded thermodynamic-computation, Thermodynamic-State, material-configuration, and reference-formulation slice. It does not yet establish complete implementation or complete Framework Conformance of all four normative Core responsibilities. See the [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md).
+This simplified diagram shows the conceptual runtime dependency. Communication across these dependencies occurs through applicable Framework Interfaces. ThermoCore's normative Core Architecture consists of Thermodynamic Computation, Thermodynamic State, Material Representation, and Framework Interfaces.
+
+The primary Framework Output is Thermodynamic State. Material Representation interprets state and applicable material information for downstream use by a Representation Consumer outside the Framework Core.
+
+See the [Core Architecture specification](Documentation/Framework_Specification/Core_Architecture.md) for the authoritative architectural definition and the [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md) for the current implementation scope.
 
 ---
 
 ## Extending ThermoCore
 
-Adding a new physical mechanism is not decided by the mechanism name or coupling strength alone. ThermoCore first asks whether the selected thermodynamic formulation remains complete under semantically honest communication, then whether an accepted ordinary extension preserves authoritative Core-State semantics and ownership.
+Adding a new physical mechanism is not decided by the mechanism name or coupling strength alone. ThermoCore first asks whether the selected thermodynamic formulation remains complete through semantically honest communication with the Core, then whether an accepted ordinary extension preserves authoritative Core-State semantics and ownership.
 
 See the [Extension Design Guide](Documentation/Extension_Design_Guide.md) for a practical decision flow covering extension admissibility, state and information classification, energy-exchange accounting, feedback, and composition of multiple extensions.
 
@@ -48,8 +70,9 @@ See the [Extension Design Guide](Documentation/Extension_Design_Guide.md) for a 
 
 ## Documentation
 
-- [Extension Design Guide](Documentation/Extension_Design_Guide.md)
-- [Specification Index](Documentation/Specification_Index.md)
+- [Specification Index](Documentation/Specification_Index.md) — normative specification map and reading order
+- [Core Architecture](Documentation/Framework_Specification/Core_Architecture.md) — authoritative Core responsibilities and boundaries
+- [Extension Design Guide](Documentation/Extension_Design_Guide.md) — practical extension decision flow
 - [Framework Vocabulary](Documentation/Framework_Vocabulary.md)
 - [Implementation Conformance Audit](Documentation/Implementation_Conformance_Audit_v0.1.md)
 - [Repository Governance](Documentation/Repository_Guidelines/Repository_Governance.md)
@@ -61,14 +84,14 @@ See the [Extension Design Guide](Documentation/Extension_Design_Guide.md) for a 
 
 ## Validation Evidence
 
-ThermoCore currently publishes two independent bounded caloric Validation tracks for the reference formulation.
+ThermoCore currently publishes two separate bounded caloric Validation tracks for the reference formulation.
 
 | Validation track | External basis | Repository-published result |
 |---|---|---|
 | [H2O caloric benchmark](Validation/Reference_Formulation_Caloric_Validation_v0.1.md) | IAPWS reference formulations | `COMPLETED — errors reported` |
 | [Gallium caloric benchmark](Validation/Reference_Formulation_Gallium_Caloric_Validation_v0.1.md) | NIST Chemistry WebBook SRD 69 / NIST-JANAF | `COMPLETED — errors reported` |
 
-These records preserve measured error against the declared external references. Neither track adopts a physical PASS/FAIL threshold, establishes complete Framework Validation, or implies Framework Conformance.
+Here, `errors reported` refers to measured deviations from the declared external references, not execution failures. Neither track adopts a physical PASS/FAIL threshold, establishes complete Framework Validation, or implies Framework Conformance.
 
 ---
 
@@ -76,7 +99,7 @@ These records preserve measured error against the declared external references. 
 
 The Framework Specification and repository governance baselines have been established.
 
-A bounded thermodynamic reference formulation has been implemented and verified. Two independent caloric Validation tracks are published, and bounded CPU Performance Evaluation records are preserved under `Performance/`.
+A bounded thermodynamic reference formulation has been implemented and has Verification evidence within its stated scope. Two separate caloric Validation tracks are published, and bounded CPU Performance Evaluation records are preserved under `Performance/`.
 
 ThermoCore v1.0.0 is the first stable public repository publication baseline. Current work concerns post-v1.0 research, evidence consolidation, and additional bounded Validation or implementation work where independently justified.
 

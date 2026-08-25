@@ -7,6 +7,7 @@ on:
       - 'Materials/**'
       - 'Validation/**'
       - '.github/workflows/gallium-caloric-validation.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
