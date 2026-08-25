@@ -2,8 +2,8 @@
 
 [English](README.md) | 繁體中文
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22053832.svg)](https://doi.org/10.5281/zenodo.22053832)
-[![Release](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22096343.svg)](https://doi.org/10.5281/zenodo.22096343)
+[![Release](https://img.shields.io/badge/release-v1.1.0-blue)](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.1.0)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ThermoCore 是一套為即時熱力學模擬而設計、與引擎無關的框架。
@@ -101,7 +101,9 @@ Framework Specification 與倉庫治理基線已建立。
 
 一套範圍受限的熱力學 reference formulation 已完成實作，並在其宣告範圍內具有 Verification evidence。目前亦已發布兩條不同的 caloric Validation 路線，並於 `Performance/` 保存範圍受限的 CPU Performance Evaluation 紀錄。
 
-ThermoCore v1.0.0 是第一個穩定公開的倉庫發布基線。目前工作重點為 v1.0 之後的研究、證據整合，以及在具有獨立依據時進行額外的範圍受限 Validation 或實作工作。
+ThermoCore v1.1.0 是目前穩定的公開倉庫版本。此版本精化 Framework specification、完成範圍受限的 RQ-001 研究封包，並改善 Extension 指引與發布可追溯性，同時維持既有 reference implementation 的受限範圍。
+
+相較於 v1.0.0，production C# reference implementation 並無實質變更；v1.1.0 也不宣稱四個 normative Core responsibilities 已完整實作，或已建立完整 Framework Conformance。
 
 未來版本可能發布更多 Validation Evidence 與可選的 Reference Applications；Reference Applications 不是版本發布的必要內容。
 
@@ -109,13 +111,13 @@ ThermoCore v1.0.0 是第一個穩定公開的倉庫發布基線。目前工作�
 
 ## 引用
 
-ThermoCore v1.0.0 已作為第一個穩定的倉庫發布基線封存於 Zenodo。
+ThermoCore v1.1.0 已作為獨立版本的軟體紀錄封存於 Zenodo。
 
-- 版本：`v1.0.0`
-- DOI：[10.5281/zenodo.22053832](https://doi.org/10.5281/zenodo.22053832)
-- GitHub Release：[ThermoCore v1.0.0](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.0.0)
+- 版本：`v1.1.0`
+- DOI：[10.5281/zenodo.22096343](https://doi.org/10.5281/zenodo.22096343)
+- GitHub Release：[ThermoCore v1.1.0](https://github.com/ra-an-y/ThermoCore/releases/tag/v1.1.0)
 
-引用此軟體版本時，請使用 Zenodo 紀錄所提供的 citation metadata。此 DOI 對應已封存的 v1.0.0；之後 `main` 的持續開發不會改變該封存基線。
+引用此版本時，請使用上方的 version-specific Zenodo DOI，或使用 `CITATION.cff` 所提供的 citation metadata。先前的 v1.0.0 封存版本仍維持不變，其 DOI 為 `10.5281/zenodo.22053832`。
 
 ---
 
