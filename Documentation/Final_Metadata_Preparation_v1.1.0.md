@@ -84,6 +84,8 @@ The Zenodo Concept DOI, if present, is not a substitute for the v1.1.0 version-s
 
 The prepared Zenodo draft must not be deleted after its DOI is reserved, because deletion would invalidate the reservation.
 
+If automatic GitHub-to-Zenodo ingestion is enabled for this repository, it shall be disabled before publishing the GitHub v1.1.0 Release while this manually prepared New Version draft is pending. Otherwise the GitHub Release may be ingested as a separate Zenodo version instead of completing the reserved-DOI draft. The prepared draft shall then be completed with the exact v1.1.0 release/tag archive and published manually; automatic integration may be re-enabled afterward for future releases if desired.
+
 ---
 
 ## 5. Metadata Changes to Apply After DOI Reservation
@@ -159,4 +161,4 @@ Zenodo v1.1.0 record:               NOT PUBLISHED
 
 Reserve the DOI in a Zenodo **New Version** draft derived from the existing ThermoCore v1.0.0 record, then provide the exact reserved DOI for insertion into the final repository metadata.
 
-Do not publish the Zenodo draft yet.
+Do not publish or delete the Zenodo draft yet.
