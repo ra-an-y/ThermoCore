@@ -8,8 +8,12 @@ namespace ThermoCore.Experiments.GaussianThermalField
         {
             var perfectInterfacePassed = RunPerfectInterfaceCheckpoint();
             var finiteLayerPassed = RunFiniteLayerReducedStateCheckpoint();
+            var convergencePassed = RunFiniteLayerModeConvergenceCheckpoint();
 
-            var passed = perfectInterfacePassed && finiteLayerPassed;
+            var passed = perfectInterfacePassed
+                && finiteLayerPassed
+                && convergencePassed;
+
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
 
@@ -73,6 +77,24 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"Maximum symmetric odd-mode magnitude: {verification.MaximumSymmetricOddModeMagnitude:E16}");
             Console.WriteLine($"Symmetric field mirror error: {verification.SymmetricFieldMirrorError:E16}");
             Console.WriteLine($"Tolerance: {tolerance:E2}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunFiniteLayerModeConvergenceCheckpoint()
+        {
+            var convergence = FiniteLayerModeConvergence1D.Evaluate();
+            const double maximum32ModeRelativeError = 5e-3;
+            var passed = convergence.Satisfies(maximum32ModeRelativeError);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Finite Layer Mode-Convergence Checkpoint");
+            Console.WriteLine($"4 modes relative error: {convergence.Error4Modes:E8}");
+            Console.WriteLine($"8 modes relative error: {convergence.Error8Modes:E8}");
+            Console.WriteLine($"16 modes relative error: {convergence.Error16Modes:E8}");
+            Console.WriteLine($"32 modes relative error: {convergence.Error32Modes:E8}");
+            Console.WriteLine($"32-mode limit: {maximum32ModeRelativeError:E2}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
