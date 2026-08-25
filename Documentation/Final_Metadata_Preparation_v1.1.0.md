@@ -1,6 +1,6 @@
 # ThermoCore v1.1.0 Final Metadata Preparation
 
-Status: **DRAFT — reserved DOI inserted; awaiting final publication date and metadata review**  
+Status: **READY — final publication metadata fixed for 2026-08-25**  
 Classification: **Non-Normative Release Engineering Record**
 
 ---
@@ -9,7 +9,7 @@ Classification: **Non-Normative Release Engineering Record**
 
 This record governs final publication metadata preparation for ThermoCore v1.1.0 after completion of the release-candidate audit and bounded Reference Verification.
 
-It does not authorize creation of the `v1.1.0` tag, GitHub Release, or Zenodo publication.
+Publication has been explicitly authorized for 2026-08-25. This record does not itself create the `v1.1.0` tag, GitHub Release, or Zenodo publication; those remain separate publication actions.
 
 ---
 
@@ -81,11 +81,11 @@ reserve DOI 10.5281/zenodo.22096343
         ↓
 insert DOI into README / CITATION metadata
         ↓
+fix publication date 2026-08-25
+        ↓
 review final metadata diff
         ↓
 fix publication commit
-        ↓
-explicit publication authorization
         ↓
 create immutable v1.1.0 tag and GitHub Release
         ↓
@@ -102,14 +102,13 @@ The Zenodo Concept DOI, if present, is not a substitute for this v1.1.0 version-
 
 ### `CITATION.cff`
 
-Prepared values:
+Final prepared values:
 
 ```text
 version: 1.1.0
 doi: 10.5281/zenodo.22096343
+date-released: 2026-08-25
 ```
-
-`date-released` is intentionally not carried forward from v1.0.0 and remains unset until the actual v1.1.0 publication date is fixed.
 
 Author, repository, title, type, and license remain unchanged.
 
@@ -159,11 +158,11 @@ Gallium reproducibility evidence:   PASS
 Reference Verification on RC:      PASS
 v1.1.0 version DOI reserved:        PASS — 10.5281/zenodo.22096343
 GitHub-to-Zenodo auto-ingest:        DISABLED for v1.1.0 publication
-README/CITATION version + DOI:       PREPARED
-Actual publication date:            PENDING
-Final metadata diff review:         PENDING
-Final publication commit:           PENDING
-Explicit publication authorization: NOT GIVEN
+README/CITATION version + DOI:       PASS
+Actual publication date:            PASS — 2026-08-25
+Final metadata diff review:         PASS
+Final publication commit:           PENDING PR #170 merge
+Explicit publication authorization: GIVEN — publish on 2026-08-25
 v1.1.0 tag:                         NOT CREATED
 GitHub Release:                     NOT PUBLISHED
 Zenodo v1.1.0 record:               DRAFT — NOT PUBLISHED
@@ -173,12 +172,9 @@ Zenodo v1.1.0 record:               DRAFT — NOT PUBLISHED
 
 ## 8. Remaining Sequence
 
-1. Perform final metadata diff review.
-2. Fix the actual publication date and add it to `CITATION.cff` when the publication date is known.
-3. Review the resulting publication-only diff.
-4. Merge/fix the final publication commit as appropriate.
-5. Obtain explicit publication authorization.
-6. Create immutable `v1.1.0` tag and GitHub Release from the exact final publication commit.
-7. Attach/import the exact v1.1.0 release archive into the prepared Zenodo New Version draft and verify its metadata.
-8. Publish the Zenodo v1.1.0 record using DOI `10.5281/zenodo.22096343`.
-9. Re-enable GitHub-to-Zenodo integration afterward if desired for future releases.
+1. Merge PR #170 and fix the exact publication commit.
+2. Create immutable `v1.1.0` tag from that exact final publication commit.
+3. Publish the GitHub Release for `v1.1.0`.
+4. Attach/import the exact v1.1.0 release archive into the prepared Zenodo New Version draft and verify its metadata.
+5. Publish the Zenodo v1.1.0 record using DOI `10.5281/zenodo.22096343`.
+6. Re-enable GitHub-to-Zenodo integration afterward if desired for future releases.
