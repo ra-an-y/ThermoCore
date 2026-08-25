@@ -11,6 +11,10 @@
     <Compile Include="GaussianKernel1D.cs" />
     <Compile Include="PerfectInterfacePropagation1D.cs" />
     <Compile Include="PerfectInterfaceVerification1D.cs" />
+    <Compile Include="FiniteLayerReducedState1D.cs" />
+    <Compile Include="FiniteLayerStateEvolution1D.cs" />
+    <Compile Include="FiniteLayerFieldRepresentation1D.cs" />
+    <Compile Include="FiniteLayerReducedStateVerification1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
