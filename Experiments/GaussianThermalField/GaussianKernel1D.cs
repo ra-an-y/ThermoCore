@@ -50,16 +50,32 @@ namespace ThermoCore.Experiments.GaussianThermalField
 
         public double Evaluate(double x)
         {
-            if (double.IsNaN(x) || double.IsInfinity(x))
-            {
-                throw new ArgumentOutOfRangeException(nameof(x));
-            }
+            ValidatePosition(x);
 
             var displacement = x - Mean;
             var normalization = 1.0 / Math.Sqrt(2.0 * Math.PI * Variance);
             var exponent = -(displacement * displacement) / (2.0 * Variance);
 
             return Amplitude * normalization * Math.Exp(exponent);
+        }
+
+        /// <summary>
+        /// Evaluates dG/dx for the signed normalized Gaussian basis term.
+        /// </summary>
+        public double EvaluateDerivative(double x)
+        {
+            ValidatePosition(x);
+
+            var value = Evaluate(x);
+            return -((x - Mean) / Variance) * value;
+        }
+
+        private static void ValidatePosition(double x)
+        {
+            if (double.IsNaN(x) || double.IsInfinity(x))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x));
+            }
         }
     }
 }
