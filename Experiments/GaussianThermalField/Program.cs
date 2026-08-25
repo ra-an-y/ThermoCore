@@ -9,10 +9,12 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var perfectInterfacePassed = RunPerfectInterfaceCheckpoint();
             var finiteLayerPassed = RunFiniteLayerReducedStateCheckpoint();
             var convergencePassed = RunFiniteLayerModeConvergenceCheckpoint();
+            var independentReferencePassed = RunFiniteLayerIndependentReferenceCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
-                && convergencePassed;
+                && convergencePassed
+                && independentReferencePassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -95,6 +97,30 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"16 modes relative error: {convergence.Error16Modes:E8}");
             Console.WriteLine($"32 modes relative error: {convergence.Error32Modes:E8}");
             Console.WriteLine($"32-mode limit: {maximum32ModeRelativeError:E2}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunFiniteLayerIndependentReferenceCheckpoint()
+        {
+            var verification = FiniteLayerIndependentReference1D.Evaluate();
+
+            const double maximumConstantFluxRelativeError = 5e-3;
+            const double maximumPulseRelativeError = 1e-3;
+            const double maximumEnergyError = 1e-10;
+
+            var passed = verification.Satisfies(
+                maximumConstantFluxRelativeError,
+                maximumPulseRelativeError,
+                maximumEnergyError);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Independent Finite-Volume Checkpoint");
+            Console.WriteLine($"32-mode constant-flux relative error: {verification.ConstantFluxRelativeError32Modes:E8}");
+            Console.WriteLine($"4-mode pulse-history relative error: {verification.PulseHistoryRelativeError4Modes:E8}");
+            Console.WriteLine($"Constant-flux energy error: {verification.ConstantFluxEnergyError:E16}");
+            Console.WriteLine($"Pulse energy error: {verification.PulseEnergyError:E16}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
