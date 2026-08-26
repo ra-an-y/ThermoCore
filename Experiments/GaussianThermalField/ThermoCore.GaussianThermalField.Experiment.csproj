@@ -32,6 +32,8 @@
     <Compile Include="GlobalErrorBudgetFormulaCheckpointInitializer.cs" />
     <Compile Include="RegionalErrorCurveLawStudy1D.cs" />
     <Compile Include="RegionalErrorCurveLawCheckpointInitializer.cs" />
+    <Compile Include="CurvatureDependentPowerLawStudy1D.cs" />
+    <Compile Include="CurvatureDependentPowerLawCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
