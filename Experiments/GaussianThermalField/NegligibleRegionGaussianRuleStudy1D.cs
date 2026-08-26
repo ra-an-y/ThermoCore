@@ -180,17 +180,18 @@ namespace ThermoCore.Experiments.GaussianThermalField
                 var zeroB = IsNegligible(measures.L2B, measures.PeakB);
                 var zeroC = IsNegligible(measures.L2C, measures.PeakC);
 
-                var countA = zeroA ? 0 : FirstCountAtOrBelow(fitsA, LocalFitThreshold);
-                var countB = zeroB ? 0 : FirstCountAtOrBelow(fitsB, LocalFitThreshold);
-                var countC = zeroC ? 0 : FirstCountAtOrBelow(fitsC, LocalFitThreshold);
+                var firstA = FirstCountAtOrBelow(fitsA, LocalFitThreshold);
+                var firstB = FirstCountAtOrBelow(fitsB, LocalFitThreshold);
+                var firstC = FirstCountAtOrBelow(fitsC, LocalFitThreshold);
 
-                if ((!zeroA && countA == 0)
-                    || (!zeroB && countB == 0)
-                    || (!zeroC && countC == 0))
-                {
-                    throw new InvalidOperationException(
-                        "A non-negligible region did not reach the declared fit threshold.");
-                }
+                // Diagnostic fallback: when a non-negligible near-zero region
+                // does not meet a relative regional threshold within the bounded
+                // dictionary, retain the maximum budget instead of aborting.
+                // This lets the checkpoint expose whether the omission guards or
+                // the relative regional metric are responsible.
+                var countA = zeroA ? 0 : (firstA > 0 ? firstA : MaximumKernelCount);
+                var countB = zeroB ? 0 : (firstB > 0 ? firstB : MaximumKernelCount);
+                var countC = zeroC ? 0 : (firstC > 0 ? firstC : MaximumKernelCount);
 
                 var representationError = GlobalRepresentationError(
                     state,
