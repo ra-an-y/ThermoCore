@@ -41,6 +41,8 @@
     <Compile Include="PredictionResidualUncertaintyStudy1D.cs" />
     <Compile Include="HeldOutResidualStructureStudy1D.cs" />
     <Compile Include="PredictionResidualUncertaintyCheckpointInitializer.cs" />
+    <Compile Include="HybridFormulaLocalVerifyStudy1D.cs" />
+    <Compile Include="HybridFormulaLocalVerifyCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
