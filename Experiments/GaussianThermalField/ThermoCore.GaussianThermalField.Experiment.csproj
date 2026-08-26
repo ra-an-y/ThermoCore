@@ -52,6 +52,7 @@
     <Compile Include="FineCadenceWarmStartCheckpointInitializer.cs" />
     <Compile Include="SequentialWarmStartSchedulerStudy1D.cs" />
     <Compile Include="SequentialWarmStartSchedulerCheckpointInitializer.cs" />
+    <Compile Include="Checkpoint_20_Trend_Guided_Count_Bound_Study1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
