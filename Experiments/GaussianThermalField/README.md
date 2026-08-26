@@ -46,16 +46,31 @@ For a finite homogeneous one-dimensional layer, the diffusion field can be expan
 
 This hypothesis is currently a reduced-order numerical experiment, not a claim that a finite mode count is sufficient for arbitrary layered-media accuracy.
 
+### H6 — Gaussian representation may bridge into and out of bounded current state
+
+An incoming Gaussian field may be projected into the finite-layer reduced current state without making Gaussian parameters authoritative state. After state-driven evolution, the current field may be approximated again with a fixed-size signed Gaussian mixture for downstream field representation.
+
+The recovery representation is allowed to be approximate. It may not write back into the current state merely to improve rendering or representation quality.
+
 ## 3. Responsibility Boundary
 
 ```text
-Material / Configuration
+Gaussian / external field representation
         |
         v
-Experimental state evolution <--- experiment-local current reduced state
+Projection
         |
         v
-Field reconstruction / Gaussian-compatible representation
+Experimental current reduced state
+        |
+        v
+State evolution <--- Material / Configuration + Interfaces
+        |
+        v
+Current reduced state
+        |
+        v
+Field reconstruction / Gaussian-compatible recovery
         |
         +----> physical field query
         |
@@ -82,8 +97,10 @@ The implementation remains intentionally narrow:
 - constant material properties;
 - diffusion-only thermal propagation;
 - Gaussian heat-kernel basis for the perfect-interface checkpoint;
-- finite-layer cosine reduced state for the state-memory checkpoint;
+- finite-layer cosine reduced state for physical memory;
 - state-driven A-B-C interface coupling;
+- Gaussian-to-state projection;
+- fixed-size signed Gaussian field recovery;
 - no rendering dependency;
 - no modification of existing `Framework/` implementation files.
 
@@ -95,7 +112,7 @@ Still excluded:
 - phase change;
 - temperature-dependent material properties;
 - arbitrary multilayer networks;
-- Gaussian merge/split heuristics;
+- adaptive Gaussian merge/split heuristics;
 - 3DGS opacity/compositing semantics.
 
 ## 5. Checkpoint 1 — Perfect Interface
@@ -184,7 +201,53 @@ fixed retained state scalars                     : 99
 
 The retained state size remains fixed during the test. No reflection/transmission event tree or growing list of Gaussian paths is stored. This supports bounded current-state feasibility for the declared 1D case only; it does not establish a general multilayer solver.
 
-## 10. Build and Verification
+## 10. Checkpoint 6 — Gaussian / Current-State Bridge
+
+The sixth checkpoint tests the full bounded bridge:
+
+```text
+initial Gaussian field
+        |
+        v
+Gaussian -> 32-mode reduced-state projection
+        |
+        v
+state-driven A-B-C evolution
+        |
+        v
+current reduced states
+        |
+        v
+fixed-size signed Gaussian recovery
+```
+
+Projection uses numerical cosine coefficients on each finite region. Recovery fits eight fixed Gaussian basis terms per region and adds one broad signed correction term whose only purpose is to preserve the region-integrated scalar quantity represented by the state's mean term. The recovered Gaussian mixture remains downstream representation and never writes the current state.
+
+Current declared results after the same 0.6 s heterogeneous A-B-C evolution:
+
+```text
+initial Gaussian -> 32-mode state relative L2 error : 7.82044259e-4
+recovered Gaussian vs current state relative L2      : 2.87965236e-3
+recovered Gaussian vs heterogeneous finite volume    : 4.44475782e-3
+recovered representation energy error                : 2.42107889e-10
+maximum interface temperature jump                   : 4.99600361e-16
+fixed recovered Gaussian terms                       : 27
+```
+
+The fixed recovered size is three regions times nine Gaussian terms per region. It does not grow with simulation time or the number of prior interface interactions in this declared test.
+
+This supports a cleaner bounded division of responsibility:
+
+```text
+Gaussian representation  -> compact input/output field description
+Reduced current state     -> physical memory
+Interface coupling        -> material-to-material exchange
+Finite-volume solve       -> independent numerical reference
+```
+
+This is not evidence that nine Gaussian terms per region are sufficient in general, nor that Gaussian recovery should become Framework state.
+
+## 11. Build and Verification
 
 The experiment has an isolated `.NET 8` executable project:
 
@@ -194,7 +257,7 @@ Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.cspr
 
 A branch-local GitHub Actions workflow builds the project and runs all experiment checkpoints without modifying ThermoCore's existing reference-verification workflow.
 
-## 11. Promotion Rule
+## 12. Promotion Rule
 
 Nothing in this directory is assumed to belong in ThermoCore `main`.
 
