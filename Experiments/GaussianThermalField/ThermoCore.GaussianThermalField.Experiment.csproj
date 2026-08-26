@@ -48,6 +48,8 @@
     <Compile Include="FixedBasisGaussianWarmStart1D.cs" />
     <Compile Include="PreviousStateWarmStartBenchmark1D.cs" />
     <Compile Include="PreviousStateWarmStartBenchmarkCheckpointInitializer.cs" />
+    <Compile Include="FineCadenceWarmStartStudy1D.cs" />
+    <Compile Include="FineCadenceWarmStartCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
