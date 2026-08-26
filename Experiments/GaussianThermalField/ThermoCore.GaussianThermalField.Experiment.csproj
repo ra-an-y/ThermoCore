@@ -22,6 +22,8 @@
     <Compile Include="GaussianStateBridge1D.cs" />
     <Compile Include="GaussianStateBridgeVerification1D.cs" />
     <Compile Include="MinimumGaussianRepresentationStudy1D.cs" />
+    <Compile Include="ConstrainedGaussianSparseFitter1D.cs" />
+    <Compile Include="AdaptiveGaussianBudgetStudy1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
