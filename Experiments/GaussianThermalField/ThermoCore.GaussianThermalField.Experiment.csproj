@@ -25,6 +25,7 @@
     <Compile Include="ConstrainedGaussianSparseFitter1D.cs" />
     <Compile Include="AdaptiveGaussianBudgetStudy1D.cs" />
     <Compile Include="TimeAdaptiveGaussianBudgetStudy1D.cs" />
+    <Compile Include="NegligibleRegionGaussianRuleStudy1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
