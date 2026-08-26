@@ -11,12 +11,14 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var convergencePassed = RunFiniteLayerModeConvergenceCheckpoint();
             var independentReferencePassed = RunFiniteLayerIndependentReferenceCheckpoint();
             var threeLayerCoupledPassed = RunThreeLayerCoupledCheckpoint();
+            var gaussianStateBridgePassed = RunGaussianStateBridgeCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
                 && convergencePassed
                 && independentReferencePassed
-                && threeLayerCoupledPassed;
+                && threeLayerCoupledPassed
+                && gaussianStateBridgePassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -144,6 +146,38 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"Maximum |q_AB|: {verification.MaximumAbsoluteFluxAB:E8}");
             Console.WriteLine($"Maximum |q_BC|: {verification.MaximumAbsoluteFluxBC:E8}");
             Console.WriteLine($"Fixed retained state scalars: {verification.RetainedStateScalars}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunGaussianStateBridgeCheckpoint()
+        {
+            var verification = GaussianStateBridgeVerification1D.Evaluate();
+
+            const double maximumProjectionError = 1e-3;
+            const double maximumRecoveryError = 3.5e-3;
+            const double maximumFiniteVolumeError = 5e-3;
+            const double maximumEnergyError = 1e-8;
+            const double maximumInterfaceJump = 1e-10;
+            const int expectedGaussianTerms = 27;
+
+            var passed = verification.Satisfies(
+                maximumProjectionError,
+                maximumRecoveryError,
+                maximumFiniteVolumeError,
+                maximumEnergyError,
+                maximumInterfaceJump,
+                expectedGaussianTerms);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Gaussian/State Bridge Checkpoint");
+            Console.WriteLine($"Initial Gaussian -> state relative error: {verification.InitialProjectionRelativeError:E8}");
+            Console.WriteLine($"Recovered Gaussian vs state relative error: {verification.RecoveredVsStateRelativeError:E8}");
+            Console.WriteLine($"Recovered Gaussian vs heterogeneous FV: {verification.RecoveredVsFiniteVolumeRelativeError:E8}");
+            Console.WriteLine($"Recovered representation energy error: {verification.RecoveredEnergyError:E16}");
+            Console.WriteLine($"Maximum interface temperature jump: {verification.MaximumInterfaceJump:E16}");
+            Console.WriteLine($"Fixed recovered Gaussian terms: {verification.RecoveredGaussianTerms}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
