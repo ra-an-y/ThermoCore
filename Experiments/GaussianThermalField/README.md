@@ -83,6 +83,7 @@ The implementation remains intentionally narrow:
 - diffusion-only thermal propagation;
 - Gaussian heat-kernel basis for the perfect-interface checkpoint;
 - finite-layer cosine reduced state for the state-memory checkpoint;
+- state-driven A-B-C interface coupling;
 - no rendering dependency;
 - no modification of existing `Framework/` implementation files.
 
@@ -93,26 +94,24 @@ Still excluded:
 - anisotropic conductivity;
 - phase change;
 - temperature-dependent material properties;
-- general finite multilayer transfer operators;
+- arbitrary multilayer networks;
 - Gaussian merge/split heuristics;
 - 3DGS opacity/compositing semantics.
 
 ## 5. Checkpoint 1 — Perfect Interface
 
-The first checkpoint is successful only if the branch-local prototype can demonstrate all of the following in the bounded 1D perfect-interface problem:
+The first checkpoint verifies the bounded 1D analytic Gaussian interface case:
 
-1. the Gaussian kernel evaluator reproduces its declared scalar field;
-2. interface coefficients are computed from declared material properties rather than manually fitted constants;
-3. the constructed piecewise field satisfies temperature continuity within numerical tolerance;
-4. the constructed piecewise field satisfies heat-flux continuity within numerical tolerance;
+1. Gaussian field evaluation is explicit and signed;
+2. interface coefficients are derived from material properties;
+3. temperature continuity is satisfied within numerical tolerance;
+4. conductive-gradient continuity is satisfied within numerical tolerance;
 5. material/configuration remains immutable during propagation;
-6. no existing ThermoCore Framework source file is modified to make the experiment work.
+6. no existing ThermoCore Framework source file is modified.
 
 ## 6. Checkpoint 2 — Finite-Layer Reduced Current State
 
-The second checkpoint separates reusable material definition from the current state that summarizes prior finite-layer evolution.
-
-The current reduced model uses:
+The second checkpoint separates reusable material definition from current state that summarizes prior finite-layer evolution.
 
 ```text
 Current Reduced State
@@ -120,27 +119,72 @@ Current Reduced State
 └── bounded cosine diffusion-mode coefficients
 ```
 
-For constant inward heat flux over one timestep, the implementation verifies:
-
-1. integrated energy change matches the net boundary heat input;
-2. retained non-constant modes decay exponentially when both boundary inputs are zero;
-3. equal inward heat flux at both boundaries does not excite odd cosine modes;
-4. the reconstructed field preserves the corresponding mirror symmetry;
-5. no event-history list is required to advance the current state;
-6. material properties remain separate Configuration.
+It verifies energy accounting, autonomous modal decay, symmetry under equal boundary forcing, and future evolution without an event-history list.
 
 ## 7. Checkpoint 3 — Reduced-State Dimension / Convergence
 
-The third checkpoint asks whether the bounded current-state dimension produces a controlled accuracy tradeoff rather than an arbitrary truncation.
+A 256-mode cosine solution is used only as an internal numerical reference. Candidate states with 4, 8, 16, and 32 retained modes must show monotonically decreasing relative field error.
 
-A 256-mode cosine solution is used only as an internal numerical reference for the same finite-layer formulation. Candidate states with 4, 8, 16, and 32 retained modes are evaluated on a fixed spatial sample set. The checkpoint requires:
+Current result for the declared constant-flux case:
 
-1. relative field error decreases monotonically as retained mode count increases;
-2. the 32-mode state reaches a bounded relative-error target for the declared test case.
+```text
+4 modes   : 4.98293052e-2
+8 modes   : 2.03643098e-2
+16 modes  : 8.26089068e-3
+32 modes  : 3.44733256e-3
+```
 
-The current declared 32-mode target is `5e-3` relative L2 error. This is an experiment checkpoint, not a framework accuracy requirement and not a claim of universal sufficiency.
+The current declared 32-mode target is `5e-3` relative L2 error. This is an experiment checkpoint, not a Framework requirement.
 
-## 8. Build and Verification
+## 8. Checkpoint 4 — Independent Finite-Volume Reference
+
+To avoid comparing the reduced model only against the same modal formulation, an independent cell-centered finite-volume solver is used as a numerical reference.
+
+Current declared results:
+
+```text
+32-mode constant-flux relative L2 error : 2.38601679e-3
+4-mode pulse-history relative L2 error   : 6.37315446e-6
+```
+
+The pulse-history case applies heat for an initial interval and then removes the input. Subsequent evolution therefore depends on the retained current state rather than an event log.
+
+## 9. Checkpoint 5 — State-Driven A-B-C Coupling
+
+Three finite homogeneous regions are coupled through two perfect-contact interfaces:
+
+```text
+Gaussian initial field in A
+        |
+        v
+Current State A
+        |
+      q_AB  <- solved from current boundary response
+        |
+        v
+Current State B
+        |
+      q_BC  <- solved from current boundary response
+        |
+        v
+Current State C
+```
+
+`q_AB` and `q_BC` are not prescribed. At every timestep they are solved simultaneously from the current reduced states by requiring end-of-step temperature continuity at both interfaces. Equal and opposite interface fluxes are applied to adjacent regions.
+
+For the declared 0.6 s heterogeneous test with 32 modes per region:
+
+```text
+relative L2 error vs heterogeneous finite volume : 3.41684060e-3
+maximum interface temperature jump               : 4.99600361e-16
+reduced-state energy drift                       : -1.66533454e-16
+reference energy drift                           : 5.55111512e-17
+fixed retained state scalars                     : 99
+```
+
+The retained state size remains fixed during the test. No reflection/transmission event tree or growing list of Gaussian paths is stored. This supports bounded current-state feasibility for the declared 1D case only; it does not establish a general multilayer solver.
+
+## 10. Build and Verification
 
 The experiment has an isolated `.NET 8` executable project:
 
@@ -150,7 +194,7 @@ Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.cspr
 
 A branch-local GitHub Actions workflow builds the project and runs all experiment checkpoints without modifying ThermoCore's existing reference-verification workflow.
 
-## 9. Promotion Rule
+## 11. Promotion Rule
 
 Nothing in this directory is assumed to belong in ThermoCore `main`.
 
