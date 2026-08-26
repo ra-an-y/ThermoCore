@@ -15,6 +15,7 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var minimumRepresentationPassed = RunMinimumGaussianRepresentationCheckpoint();
             var adaptiveBudgetPassed = RunAdaptiveGaussianBudgetCheckpoint();
             var timeAdaptiveBudgetPassed = RunTimeAdaptiveGaussianBudgetCheckpoint();
+            var negligibleRegionRulePassed = RunNegligibleRegionGaussianRuleCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
@@ -24,7 +25,8 @@ namespace ThermoCore.Experiments.GaussianThermalField
                 && gaussianStateBridgePassed
                 && minimumRepresentationPassed
                 && adaptiveBudgetPassed
-                && timeAdaptiveBudgetPassed;
+                && timeAdaptiveBudgetPassed
+                && negligibleRegionRulePassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -305,6 +307,34 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"Allocation changed over time: {study.AllocationChanged}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
+            return passed;
+        }
+
+        private static bool RunNegligibleRegionGaussianRuleCheckpoint()
+        {
+            var study = NegligibleRegionGaussianRuleStudy1D.Evaluate();
+            const double maximumGlobalRepresentationError = 5e-3;
+            var passed = study.Satisfies(maximumGlobalRepresentationError);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Negligible Region / Zero-Gaussian Rule");
+            Console.WriteLine(
+                $"Omission guards: global L2 <= {study.L2OmissionThreshold:E2}, "
+                + $"peak/global peak <= {study.PeakOmissionThreshold:E2}");
+            Console.WriteLine("time | L2 A/B/C | peak A/B/C | counts A/B/C | total | global vs state");
+
+            for (var index = 0; index < study.Count; index++)
+            {
+                var point = study.GetPoint(index);
+                Console.WriteLine(
+                    $"{point.Time,4:F2} | "
+                    + $"{point.L2ContributionA:E3}/{point.L2ContributionB:E3}/{point.L2ContributionC:E3} | "
+                    + $"{point.PeakContributionA:E3}/{point.PeakContributionB:E3}/{point.PeakContributionC:E3} | "
+                    + $"{point.CountA}/{point.CountB}/{point.CountC} | "
+                    + $"{point.TotalCount} | {point.GlobalRepresentationError:E8}");
+            }
+
+            Console.WriteLine(passed ? "PASS" : "FAIL");
             return passed;
         }
     }
