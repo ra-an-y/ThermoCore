@@ -11,17 +11,24 @@ namespace ThermoCore.Experiments.GaussianThermalField
         internal static void Run()
         {
             var study = PredictionResidualUncertaintyStudy1D.Evaluate();
-            var dataPass = study.SatisfiesDataIntegrity();
+            var heldOutResiduals = HeldOutResidualStructureStudy1D.Evaluate();
+            var dataPass = study.SatisfiesDataIntegrity()
+                && heldOutResiduals.SatisfiesDataIntegrity();
 
             Console.WriteLine();
             Console.WriteLine("Gaussian Thermal Field — Prediction Residual / Uncertainty Structure");
-            Console.WriteLine($"Residual corr(log N): {study.ResidualCorrelationWithLogCount:F6}");
-            Console.WriteLine($"Residual corr(log(1+C)): {study.ResidualCorrelationWithLogCurvature:F6}");
-            Console.WriteLine($"Residual corr(log(1+B)): {study.ResidualCorrelationWithLogBoundaryContrast:F6}");
-            Console.WriteLine("N | mean training-only safety | max training-only safety");
+            Console.WriteLine("Held-out residual diagnostics (training residual correlations are intentionally not used):");
+            Console.WriteLine($"Residual corr(log N): {heldOutResiduals.CorrelationWithLogCount:F6}");
+            Console.WriteLine($"Residual corr(log(1+C)): {heldOutResiduals.CorrelationWithLogCurvature:F6}");
+            Console.WriteLine($"Residual corr(log(1+B)): {heldOutResiduals.CorrelationWithLogBoundaryContrast:F6}");
+            Console.WriteLine($"Held-out residual points: {heldOutResiduals.ResidualPointCount}");
+            Console.WriteLine("N | mean training safety | max training safety | held-out max underprediction | held-out log-RMS");
             for (var n = 1; n <= 8; n++)
             {
-                Console.WriteLine($"{n} | {study.GetMeanCountSafety(n),9:F4} | {study.GetMaximumCountSafety(n),9:F4}");
+                Console.WriteLine(
+                    $"{n} | {study.GetMeanCountSafety(n),9:F4} | {study.GetMaximumCountSafety(n),9:F4} | "
+                    + $"{heldOutResiduals.GetMaxUnderpredictionByCount(n),12:F4} | "
+                    + $"{heldOutResiduals.GetRmsLogResidualByCount(n),9:F4}");
             }
 
             Console.WriteLine();
