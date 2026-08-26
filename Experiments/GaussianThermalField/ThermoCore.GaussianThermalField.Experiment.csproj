@@ -45,6 +45,9 @@
     <Compile Include="HybridFormulaLocalVerifyCheckpointInitializer.cs" />
     <Compile Include="HybridWallClockBenchmark1D.cs" />
     <Compile Include="HybridWallClockBenchmarkCheckpointInitializer.cs" />
+    <Compile Include="FixedBasisGaussianWarmStart1D.cs" />
+    <Compile Include="PreviousStateWarmStartBenchmark1D.cs" />
+    <Compile Include="PreviousStateWarmStartBenchmarkCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
