@@ -21,6 +21,7 @@
     <Compile Include="ThreeLayerCoupledVerification1D.cs" />
     <Compile Include="GaussianStateBridge1D.cs" />
     <Compile Include="GaussianStateBridgeVerification1D.cs" />
+    <Compile Include="MinimumGaussianRepresentationStudy1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
