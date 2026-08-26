@@ -43,6 +43,8 @@
     <Compile Include="PredictionResidualUncertaintyCheckpointInitializer.cs" />
     <Compile Include="HybridFormulaLocalVerifyStudy1D.cs" />
     <Compile Include="HybridFormulaLocalVerifyCheckpointInitializer.cs" />
+    <Compile Include="HybridWallClockBenchmark1D.cs" />
+    <Compile Include="HybridWallClockBenchmarkCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
