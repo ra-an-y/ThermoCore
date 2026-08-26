@@ -36,6 +36,8 @@
     <Compile Include="CurvatureDependentPowerLawCheckpointInitializer.cs" />
     <Compile Include="RegionalErrorLawFeatureSelectionStudy1D.cs" />
     <Compile Include="RegionalErrorLawFeatureSelectionCheckpointInitializer.cs" />
+    <Compile Include="HeldOutFormulaDrivenAllocationStudy1D.cs" />
+    <Compile Include="HeldOutFormulaDrivenAllocationCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
