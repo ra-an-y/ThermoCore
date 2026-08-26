@@ -27,6 +27,7 @@
     <Compile Include="TimeAdaptiveGaussianBudgetStudy1D.cs" />
     <Compile Include="NegligibleRegionGaussianRuleStudy1D.cs" />
     <Compile Include="StateComplexityMetricStudy1D.cs" />
+    <Compile Include="StateComplexityMetricCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
