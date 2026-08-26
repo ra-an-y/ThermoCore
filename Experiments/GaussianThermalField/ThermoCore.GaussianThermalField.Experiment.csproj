@@ -17,6 +17,8 @@
     <Compile Include="FiniteLayerReducedStateVerification1D.cs" />
     <Compile Include="FiniteLayerModeConvergence1D.cs" />
     <Compile Include="FiniteLayerIndependentReference1D.cs" />
+    <Compile Include="ThreeLayerCoupledState1D.cs" />
+    <Compile Include="ThreeLayerCoupledVerification1D.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
