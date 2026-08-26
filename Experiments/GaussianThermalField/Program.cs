@@ -10,11 +10,13 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var finiteLayerPassed = RunFiniteLayerReducedStateCheckpoint();
             var convergencePassed = RunFiniteLayerModeConvergenceCheckpoint();
             var independentReferencePassed = RunFiniteLayerIndependentReferenceCheckpoint();
+            var threeLayerCoupledPassed = RunThreeLayerCoupledCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
                 && convergencePassed
-                && independentReferencePassed;
+                && independentReferencePassed
+                && threeLayerCoupledPassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -24,21 +26,15 @@ namespace ThermoCore.Experiments.GaussianThermalField
 
         private static bool RunPerfectInterfaceCheckpoint()
         {
-            var materialA = new ThermalMaterial1D(
-                thermalConductivity: 0.40,
-                volumetricHeatCapacity: 2.0);
-
-            var materialB = new ThermalMaterial1D(
-                thermalConductivity: 0.06,
-                volumetricHeatCapacity: 1.2);
+            var materialA = new ThermalMaterial1D(0.40, 2.0);
+            var materialB = new ThermalMaterial1D(0.06, 1.2);
 
             const double sourcePosition = -0.55;
             const double interfacePosition = 0.0;
             const double elapsedTime = 0.9;
             const double sourceEnergy = 1.0;
 
-            var incidentAmplitude =
-                sourceEnergy / materialA.VolumetricHeatCapacity;
+            var incidentAmplitude = sourceEnergy / materialA.VolumetricHeatCapacity;
 
             var solution = PerfectInterfacePropagation1D.Create(
                 sourcePosition,
@@ -121,6 +117,33 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"4-mode pulse-history relative error: {verification.PulseHistoryRelativeError4Modes:E8}");
             Console.WriteLine($"Constant-flux energy error: {verification.ConstantFluxEnergyError:E16}");
             Console.WriteLine($"Pulse energy error: {verification.PulseEnergyError:E16}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunThreeLayerCoupledCheckpoint()
+        {
+            var verification = ThreeLayerCoupledVerification1D.Evaluate();
+
+            const double maximumRelativeFieldError = 5e-3;
+            const double maximumInterfaceJump = 1e-10;
+            const double maximumEnergyDrift = 1e-10;
+
+            var passed = verification.Satisfies(
+                maximumRelativeFieldError,
+                maximumInterfaceJump,
+                maximumEnergyDrift);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — State-Driven A-B-C Coupling Checkpoint");
+            Console.WriteLine($"Relative field error vs heterogeneous FV: {verification.RelativeFieldError:E8}");
+            Console.WriteLine($"Maximum interface temperature jump: {verification.MaximumInterfaceJump:E16}");
+            Console.WriteLine($"Reduced-state energy drift: {verification.ReducedEnergyDrift:E16}");
+            Console.WriteLine($"Reference energy drift: {verification.ReferenceEnergyDrift:E16}");
+            Console.WriteLine($"Maximum |q_AB|: {verification.MaximumAbsoluteFluxAB:E8}");
+            Console.WriteLine($"Maximum |q_BC|: {verification.MaximumAbsoluteFluxBC:E8}");
+            Console.WriteLine($"Fixed retained state scalars: {verification.RetainedStateScalars}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
