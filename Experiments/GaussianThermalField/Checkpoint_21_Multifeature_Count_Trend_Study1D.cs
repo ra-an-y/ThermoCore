@@ -8,11 +8,11 @@ namespace ThermoCore.Experiments.GaussianThermalField
     /// Checkpoint 21: test whether a state-change vector is more informative than
     /// a single curvature trend for predicting the direction of Gaussian-count change.
     ///
-    /// The predictor is deliberately simple and leakage-controlled: for each held-out
-    /// transition, feature weights are estimated only from the other transitions using
-    /// the Pearson association between feature change and count change. The held-out
-    /// score is the weighted standardized feature-change sum. This is a directional
-    /// predictor only; representation fitting remains the safety authority.
+    /// For each held-out transition, feature associations are estimated only from
+    /// the other transitions. Feature deltas are standardized using training-only
+    /// mean/std values, then combined using training-only Pearson associations.
+    /// This is a directional predictor only; representation fitting remains the
+    /// safety authority.
     /// </summary>
     internal static class Checkpoint21MultifeatureCountTrendStudy1D
     {
@@ -29,6 +29,20 @@ namespace ThermoCore.Experiments.GaussianThermalField
             "d-peak"
         };
 
+        private readonly struct FeatureModel
+        {
+            public FeatureModel(double mean, double standardDeviation, double association)
+            {
+                Mean = mean;
+                StandardDeviation = standardDeviation;
+                Association = association;
+            }
+
+            public double Mean { get; }
+            public double StandardDeviation { get; }
+            public double Association { get; }
+        }
+
         [ModuleInitializer]
         internal static void Run()
         {
@@ -43,7 +57,7 @@ namespace ThermoCore.Experiments.GaussianThermalField
 
             Console.WriteLine();
             Console.WriteLine("Gaussian Thermal Field — Checkpoint 21 Multi-Feature Count Trend Study");
-            Console.WriteLine("LOTO directional predictor; fitting authority remains exact representation verification.");
+            Console.WriteLine("LOTO directional predictor; training-only standardization and associations.");
             Console.WriteLine("transition | region | dN | predicted | score | top training feature association");
 
             for (var transition = 1; transition < Times.Length; transition++)
@@ -58,15 +72,14 @@ namespace ThermoCore.Experiments.GaussianThermalField
                     var training = new List<int>();
                     for (var otherTransition = 1; otherTransition < Times.Length; otherTransition++)
                     {
-                        if (otherTransition == transition)
+                        if (otherTransition != transition)
                         {
-                            continue;
+                            training.Add(otherTransition);
                         }
-                        training.Add(otherTransition);
                     }
 
-                    var weights = EstimateFeatureAssociations(samples, region, training);
-                    var score = Score(featureDelta, weights);
+                    var models = EstimateFeatureModels(samples, region, training);
+                    var score = Score(featureDelta, models);
                     var prediction = Sign(score);
                     if (Math.Abs(score) < 1e-9)
                     {
@@ -88,7 +101,7 @@ namespace ThermoCore.Experiments.GaussianThermalField
                         correct++;
                     }
 
-                    var topFeature = TopFeature(weights);
+                    var topFeature = TopFeature(models);
                     Console.WriteLine(
                         $"{Times[transition],8:F2} | {(char)('A' + region),6} | {dN,2} | {prediction,9} | {score,7:F3} | {topFeature}");
                 }
@@ -149,12 +162,12 @@ namespace ThermoCore.Experiments.GaussianThermalField
             };
         }
 
-        private static double[] EstimateFeatureAssociations(
+        private static FeatureModel[] EstimateFeatureModels(
             StateComplexityMetricSample1D[,] samples,
             int region,
             List<int> trainingTransitions)
         {
-            var weights = new double[FeatureNames.Length];
+            var models = new FeatureModel[FeatureNames.Length];
             for (var feature = 0; feature < FeatureNames.Length; feature++)
             {
                 var x = new double[trainingTransitions.Count];
@@ -168,37 +181,67 @@ namespace ThermoCore.Experiments.GaussianThermalField
                     y[i] = current.RequiredGaussianCount - previous.RequiredGaussianCount;
                 }
 
-                weights[feature] = Pearson(x, y);
+                var mean = Mean(x);
+                var standardDeviation = StandardDeviation(x, mean);
+                var association = Pearson(x, y);
+                models[feature] = new FeatureModel(mean, standardDeviation, association);
             }
 
-            return weights;
+            return models;
         }
 
-        private static double Score(double[] delta, double[] weights)
+        private static double Score(double[] delta, FeatureModel[] models)
         {
             var score = 0.0;
             for (var i = 0; i < delta.Length; i++)
             {
-                var scale = Math.Sqrt(Math.Abs(weights[i]) + Epsilon);
-                score += Math.Sign(weights[i]) * delta[i] * scale;
+                var standardDeviation = Math.Max(models[i].StandardDeviation, Epsilon);
+                var standardizedDelta = (delta[i] - models[i].Mean) / standardDeviation;
+                score += standardizedDelta * models[i].Association;
             }
             return score;
         }
 
-        private static string TopFeature(double[] weights)
+        private static string TopFeature(FeatureModel[] models)
         {
             var index = 0;
-            var best = Math.Abs(weights[0]);
-            for (var i = 1; i < weights.Length; i++)
+            var best = Math.Abs(models[0].Association);
+            for (var i = 1; i < models.Length; i++)
             {
-                var candidate = Math.Abs(weights[i]);
+                var candidate = Math.Abs(models[i].Association);
                 if (candidate > best)
                 {
                     best = candidate;
                     index = i;
                 }
             }
-            return $"{FeatureNames[index]} ({weights[index]:F3})";
+            return $"{FeatureNames[index]} ({models[index].Association:F3})";
+        }
+
+        private static double Mean(double[] values)
+        {
+            var sum = 0.0;
+            for (var i = 0; i < values.Length; i++)
+            {
+                sum += values[i];
+            }
+            return sum / Math.Max(1, values.Length);
+        }
+
+        private static double StandardDeviation(double[] values, double mean)
+        {
+            if (values.Length < 2)
+            {
+                return 0.0;
+            }
+
+            var sum = 0.0;
+            for (var i = 0; i < values.Length; i++)
+            {
+                var delta = values[i] - mean;
+                sum += delta * delta;
+            }
+            return Math.Sqrt(sum / (values.Length - 1));
         }
 
         private static int Sign(double value)
@@ -215,16 +258,8 @@ namespace ThermoCore.Experiments.GaussianThermalField
                 return 0.0;
             }
 
-            var meanX = 0.0;
-            var meanY = 0.0;
-            for (var i = 0; i < x.Length; i++)
-            {
-                meanX += x[i];
-                meanY += y[i];
-            }
-            meanX /= x.Length;
-            meanY /= y.Length;
-
+            var meanX = Mean(x);
+            var meanY = Mean(y);
             var numerator = 0.0;
             var sumX2 = 0.0;
             var sumY2 = 0.0;
