@@ -12,13 +12,15 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var independentReferencePassed = RunFiniteLayerIndependentReferenceCheckpoint();
             var threeLayerCoupledPassed = RunThreeLayerCoupledCheckpoint();
             var gaussianStateBridgePassed = RunGaussianStateBridgeCheckpoint();
+            var minimumRepresentationPassed = RunMinimumGaussianRepresentationCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
                 && convergencePassed
                 && independentReferencePassed
                 && threeLayerCoupledPassed
-                && gaussianStateBridgePassed;
+                && gaussianStateBridgePassed
+                && minimumRepresentationPassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -178,6 +180,43 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"Recovered representation energy error: {verification.RecoveredEnergyError:E16}");
             Console.WriteLine($"Maximum interface temperature jump: {verification.MaximumInterfaceJump:E16}");
             Console.WriteLine($"Fixed recovered Gaussian terms: {verification.RecoveredGaussianTerms}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunMinimumGaussianRepresentationCheckpoint()
+        {
+            var study = MinimumGaussianRepresentationStudy1D.Evaluate();
+
+            const double maximumEightKernelGlobalError = 1e-3;
+            const double maximumEightKernelFiniteVolumeError = 4e-3;
+            const double maximumIntegralError = 1e-9;
+
+            var passed = study.Satisfies(
+                maximumEightKernelGlobalError,
+                maximumEightKernelFiniteVolumeError,
+                maximumIntegralError);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Minimum Gaussian Representation Study");
+            Console.WriteLine("N/region | total N | global vs state | max region vs state | vs heterogeneous FV | max integral error");
+
+            for (var index = 0; index < study.Count; index++)
+            {
+                var point = study.GetPoint(index);
+                Console.WriteLine(
+                    $"{point.KernelsPerRegion,8} | {point.TotalKernelCount,7} | "
+                    + $"{point.GlobalRelativeErrorVsState:E8} | "
+                    + $"{point.MaximumRegionRelativeErrorVsState:E8} | "
+                    + $"{point.RelativeErrorVsFiniteVolume:E8} | "
+                    + $"{point.MaximumRegionIntegralError:E8}");
+            }
+
+            Console.WriteLine(
+                $"First N/region with global state error <= 0.5%: {study.FirstGlobalCountBelowHalfPercent}");
+            Console.WriteLine(
+                $"First N/region with every-region state error <= 0.5%: {study.FirstEveryRegionCountBelowHalfPercent}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
