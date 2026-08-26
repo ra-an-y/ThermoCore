@@ -13,6 +13,7 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var threeLayerCoupledPassed = RunThreeLayerCoupledCheckpoint();
             var gaussianStateBridgePassed = RunGaussianStateBridgeCheckpoint();
             var minimumRepresentationPassed = RunMinimumGaussianRepresentationCheckpoint();
+            var adaptiveBudgetPassed = RunAdaptiveGaussianBudgetCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
@@ -20,7 +21,8 @@ namespace ThermoCore.Experiments.GaussianThermalField
                 && independentReferencePassed
                 && threeLayerCoupledPassed
                 && gaussianStateBridgePassed
-                && minimumRepresentationPassed;
+                && minimumRepresentationPassed
+                && adaptiveBudgetPassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -217,6 +219,42 @@ namespace ThermoCore.Experiments.GaussianThermalField
                 $"First N/region with global state error <= 0.5%: {study.FirstGlobalCountBelowHalfPercent}");
             Console.WriteLine(
                 $"First N/region with every-region state error <= 0.5%: {study.FirstEveryRegionCountBelowHalfPercent}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunAdaptiveGaussianBudgetCheckpoint()
+        {
+            var study = AdaptiveGaussianBudgetStudy1D.Evaluate();
+
+            const double perRegionThreshold = 5e-3;
+            const double finiteVolumeThreshold = 5e-3;
+            const int maximumValidatedTotalCount = 11;
+            const double maximumIntegralError = 1e-9;
+
+            var passed = study.Satisfies(
+                perRegionThreshold,
+                finiteVolumeThreshold,
+                maximumValidatedTotalCount,
+                maximumIntegralError);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Adaptive Per-Region Gaussian Budget");
+            Console.WriteLine(
+                $"Representation-local counts A/B/C: "
+                + $"{study.LocalCountA}/{study.LocalCountB}/{study.LocalCountC} "
+                + $"(total {study.LocalTotalCount})");
+            Console.WriteLine($"Local global vs state: {study.LocalGlobalStateError:E8}");
+            Console.WriteLine($"Local vs heterogeneous FV: {study.LocalFiniteVolumeError:E8}");
+            Console.WriteLine(
+                $"Validation-aware counts A/B/C: "
+                + $"{study.ValidatedCountA}/{study.ValidatedCountB}/{study.ValidatedCountC} "
+                + $"(total {study.ValidatedTotalCount})");
+            Console.WriteLine($"Validated global vs state: {study.ValidatedGlobalStateError:E8}");
+            Console.WriteLine($"Validated max region vs state: {study.MaximumValidatedRegionStateError:E8}");
+            Console.WriteLine($"Validated vs heterogeneous FV: {study.ValidatedFiniteVolumeError:E8}");
+            Console.WriteLine($"Validated max integral error: {study.MaximumIntegralError:E8}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
