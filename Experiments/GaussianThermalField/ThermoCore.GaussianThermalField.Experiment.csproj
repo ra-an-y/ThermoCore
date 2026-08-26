@@ -28,6 +28,8 @@
     <Compile Include="NegligibleRegionGaussianRuleStudy1D.cs" />
     <Compile Include="StateComplexityMetricStudy1D.cs" />
     <Compile Include="StateComplexityMetricCheckpointInitializer.cs" />
+    <Compile Include="GlobalErrorBudgetFormulaStudy1D.cs" />
+    <Compile Include="GlobalErrorBudgetFormulaCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
