@@ -52,6 +52,12 @@ An incoming Gaussian field may be projected into the finite-layer reduced curren
 
 The recovery representation is allowed to be approximate. It may not write back into the current state merely to improve rendering or representation quality.
 
+### H7 — Useful Gaussian representation may be much smaller than the reduced state
+
+The non-trivial count floor for representing a non-zero same-sign region is one Gaussian term. A bounded sparse-recovery study should therefore begin at one term rather than from the previous nine-term recovery design.
+
+For each retained Gaussian count, the selected amplitudes should satisfy the region-integrated scalar constraint directly. An extra energy-correction Gaussian must not be assumed when measuring the minimum useful representation size.
+
 ## 3. Responsibility Boundary
 
 ```text
@@ -101,6 +107,7 @@ The implementation remains intentionally narrow:
 - state-driven A-B-C interface coupling;
 - Gaussian-to-state projection;
 - fixed-size signed Gaussian field recovery;
+- constrained sparse Gaussian representation study from one term per region;
 - no rendering dependency;
 - no modification of existing `Framework/` implementation files.
 
@@ -113,6 +120,7 @@ Still excluded:
 - temperature-dependent material properties;
 - arbitrary multilayer networks;
 - adaptive Gaussian merge/split heuristics;
+- proof of globally optimal Gaussian mixture parameters;
 - 3DGS opacity/compositing semantics.
 
 ## 5. Checkpoint 1 — Perfect Interface
@@ -236,7 +244,50 @@ fixed recovered Gaussian terms                       : 27
 
 The fixed recovered size is three regions times nine Gaussian terms per region. It does not grow with simulation time or the number of prior interface interactions in this declared test.
 
-This supports a cleaner bounded division of responsibility:
+## 11. Checkpoint 7 — Minimum Gaussian Representation Study
+
+The seventh checkpoint starts from the non-trivial representation count floor of one Gaussian per region and increases the count one term at a time through eight terms per region.
+
+The implementation uses a bounded candidate dictionary of signed normalized Gaussians with candidate centers allowed both inside and outside a region and multiple candidate widths. Selection is greedy sparse approximation. At every retained count, all selected amplitudes are re-solved together with an equality constraint:
+
+```text
+integral(recovered Gaussian mixture)
+=
+integral(current reduced-state field)
+```
+
+No separate energy-correction Gaussian is appended.
+
+Current results for the same final A-B-C state are:
+
+```text
+N/region   total N   global vs state   max region vs state   vs heterogeneous FV
+1          3         1.78720182e-2     8.21719069e-2         1.45266520e-2
+2          6         8.08563239e-3     3.26982487e-2         7.42204209e-3
+3          9         3.30042739e-3     1.19026298e-2         4.06435372e-3
+4          12        1.49252539e-3     6.54091605e-3         3.72455466e-3
+5          15        9.46420593e-4     4.49467842e-3         3.49082833e-3
+6          18        6.72994244e-4     3.69951094e-3         3.43452398e-3
+7          21        5.28476910e-4     3.23772557e-3         3.41819237e-3
+8          24        4.56221906e-4     3.03041410e-3         3.39677029e-3
+```
+
+The constrained regional integral error remains at floating-point scale (maximum observed approximately `1.39e-17`).
+
+For the declared `0.5%` representation-error threshold:
+
+```text
+first N/region with global state error <= 0.5%       : 3
+first N/region with every-region state error <= 0.5% : 5
+```
+
+This distinction matters because the global norm can hide a relatively large error in a low-energy region. In the declared test, three Gaussians per region are sufficient for the global criterion, while five are needed for the stricter every-region criterion.
+
+The finite-volume comparison approaches a floor near the existing reduced-state solver error as Gaussian count increases. This indicates that beyond a certain representation size, further Gaussian terms primarily reduce representation error rather than the underlying reduced-model error.
+
+These counts are empirical minima for this bounded candidate dictionary, state, and threshold. They are not a proof of the globally minimal Gaussian count for arbitrary fields.
+
+This supports the current bounded division of responsibility:
 
 ```text
 Gaussian representation  -> compact input/output field description
@@ -245,9 +296,7 @@ Interface coupling        -> material-to-material exchange
 Finite-volume solve       -> independent numerical reference
 ```
 
-This is not evidence that nine Gaussian terms per region are sufficient in general, nor that Gaussian recovery should become Framework state.
-
-## 11. Build and Verification
+## 12. Build and Verification
 
 The experiment has an isolated `.NET 8` executable project:
 
@@ -257,7 +306,7 @@ Experiments/GaussianThermalField/ThermoCore.GaussianThermalField.Experiment.cspr
 
 A branch-local GitHub Actions workflow builds the project and runs all experiment checkpoints without modifying ThermoCore's existing reference-verification workflow.
 
-## 12. Promotion Rule
+## 13. Promotion Rule
 
 Nothing in this directory is assumed to belong in ThermoCore `main`.
 
