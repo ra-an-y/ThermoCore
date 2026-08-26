@@ -50,6 +50,8 @@
     <Compile Include="PreviousStateWarmStartBenchmarkCheckpointInitializer.cs" />
     <Compile Include="FineCadenceWarmStartStudy1D.cs" />
     <Compile Include="FineCadenceWarmStartCheckpointInitializer.cs" />
+    <Compile Include="SequentialWarmStartSchedulerStudy1D.cs" />
+    <Compile Include="SequentialWarmStartSchedulerCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
