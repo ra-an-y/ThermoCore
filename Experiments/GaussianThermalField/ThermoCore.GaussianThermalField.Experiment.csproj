@@ -38,6 +38,8 @@
     <Compile Include="RegionalErrorLawFeatureSelectionCheckpointInitializer.cs" />
     <Compile Include="HeldOutFormulaDrivenAllocationStudy1D.cs" />
     <Compile Include="HeldOutFormulaDrivenAllocationCheckpointInitializer.cs" />
+    <Compile Include="PredictionResidualUncertaintyStudy1D.cs" />
+    <Compile Include="PredictionResidualUncertaintyCheckpointInitializer.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
