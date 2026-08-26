@@ -14,6 +14,7 @@ namespace ThermoCore.Experiments.GaussianThermalField
             var gaussianStateBridgePassed = RunGaussianStateBridgeCheckpoint();
             var minimumRepresentationPassed = RunMinimumGaussianRepresentationCheckpoint();
             var adaptiveBudgetPassed = RunAdaptiveGaussianBudgetCheckpoint();
+            var timeAdaptiveBudgetPassed = RunTimeAdaptiveGaussianBudgetCheckpoint();
 
             var passed = perfectInterfacePassed
                 && finiteLayerPassed
@@ -22,7 +23,8 @@ namespace ThermoCore.Experiments.GaussianThermalField
                 && threeLayerCoupledPassed
                 && gaussianStateBridgePassed
                 && minimumRepresentationPassed
-                && adaptiveBudgetPassed;
+                && adaptiveBudgetPassed
+                && timeAdaptiveBudgetPassed;
 
             Console.WriteLine();
             Console.WriteLine(passed ? "OVERALL PASS" : "OVERALL FAIL");
@@ -255,6 +257,52 @@ namespace ThermoCore.Experiments.GaussianThermalField
             Console.WriteLine($"Validated max region vs state: {study.MaximumValidatedRegionStateError:E8}");
             Console.WriteLine($"Validated vs heterogeneous FV: {study.ValidatedFiniteVolumeError:E8}");
             Console.WriteLine($"Validated max integral error: {study.MaximumIntegralError:E8}");
+            Console.WriteLine(passed ? "PASS" : "FAIL");
+
+            return passed;
+        }
+
+        private static bool RunTimeAdaptiveGaussianBudgetCheckpoint()
+        {
+            var study = TimeAdaptiveGaussianBudgetStudy1D.Evaluate();
+
+            const double perRegionThreshold = 5e-3;
+            const double finiteVolumeThreshold = 5e-3;
+            const double maximumIntegralError = 1e-9;
+
+            var passed = study.Satisfies(
+                perRegionThreshold,
+                finiteVolumeThreshold,
+                maximumIntegralError);
+
+            Console.WriteLine();
+            Console.WriteLine("Gaussian Thermal Field — Time-Adaptive Gaussian Budget");
+            Console.WriteLine("time | state-vs-FV | local A/B/C | validated A/B/C | total | validated-vs-FV | max region");
+
+            for (var index = 0; index < study.Count; index++)
+            {
+                var point = study.GetPoint(index);
+                var validatedCounts = point.HasValidatedBudget
+                    ? $"{point.ValidatedCountA}/{point.ValidatedCountB}/{point.ValidatedCountC}"
+                    : "none";
+                var validatedTotal = point.HasValidatedBudget
+                    ? point.ValidatedTotalCount.ToString()
+                    : "-";
+                var validatedFv = point.HasValidatedBudget
+                    ? point.ValidatedFiniteVolumeError.ToString("E8")
+                    : "n/a";
+                var maxRegion = point.HasValidatedBudget
+                    ? point.ValidatedMaximumRegionError.ToString("E8")
+                    : "n/a";
+
+                Console.WriteLine(
+                    $"{point.Time,4:F2} | {point.ReducedStateVsFiniteVolumeError:E8} | "
+                    + $"{point.LocalCountA}/{point.LocalCountB}/{point.LocalCountC} | "
+                    + $"{validatedCounts} | {validatedTotal} | {validatedFv} | {maxRegion}");
+            }
+
+            Console.WriteLine($"Validated total range: {study.MinimumValidatedTotal}..{study.MaximumValidatedTotal}");
+            Console.WriteLine($"Allocation changed over time: {study.AllocationChanged}");
             Console.WriteLine(passed ? "PASS" : "FAIL");
 
             return passed;
